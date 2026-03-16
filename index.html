@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rose Decor — CEO Dashboard Lançamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rose:#C8476A;--rD:#8B1A4A;--rP:#FDF5F7;--rL:#F5D0DC;
+  --gold:#C9963A;--gL:#FEF3C7;
+  --green:#2A7A5A;--gnL:#EAF5F0;
+  --blue:#2859A8;--blL:#E8F0FA;
+  --pur:#6B3FA0;--puL:#F0EBF8;
+  --amber:#D97706;--amL:#FEF3C7;
+  --red:#DC2626;--reL:#FEE2E2;
+  --ink:#1A1018;--i70:rgba(26,16,24,.7);--i40:rgba(26,16,24,.4);--i15:rgba(26,16,24,.12);--i08:rgba(26,16,24,.06);
+  --surf:#F8F4F5;--w:#fff;--bd:rgba(200,71,106,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--surf);color:var(--ink);min-height:100vh;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--rL);border-radius:99px;}
+
+/* TOPBAR */
+.topbar{background:var(--ink);height:54px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:400;border-bottom:1px solid rgba(200,71,106,.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:.01em;}
+.logo em{color:var(--rose);font-style:normal;}
+.logo-sub{font-size:.68rem;font-weight:300;color:rgba(255,255,255,.3);margin-left:10px;letter-spacing:.05em;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.tbchip{font-size:.57rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);}
+.tbchip.live{border-color:rgba(76,175,122,.35);color:#6FD4A8;display:flex;align-items:center;gap:4px;}
+.ldot{width:5px;height:5px;border-radius:50%;background:#4CAF7A;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.tbchip.warn{border-color:rgba(201,150,58,.4);color:#E0B060;}
+#tbTime{font-size:.58rem;color:rgba(255,255,255,.25);font-family:'DM Mono',monospace;}
+
+/* PHASE BAR */
+.phasebar{background:var(--w);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;align-items:center;gap:0;height:38px;overflow-x:auto;}
+.phase{display:flex;align-items:center;gap:6px;padding:0 14px;height:100%;font-size:.64rem;font-weight:500;color:var(--i40);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:all .15s;}
+.phase:hover{color:var(--ink);}
+.phase.on{color:var(--rose);border-bottom-color:var(--rose);}
+.phase-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.phase-sep{color:var(--i15);font-size:.8rem;margin:0 2px;}
+
+/* MAIN NAV */
+.mainnav{background:var(--w);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;overflow-x:auto;position:sticky;top:54px;z-index:300;}
+.nt{padding:11px 15px;font-size:.71rem;font-weight:600;color:var(--i40);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s;}
+.nt:hover{color:var(--ink);}
+.nt.on{color:var(--rose);border-bottom-color:var(--rose);}
+.nt-badge{font-size:.56rem;font-weight:700;padding:1px 5px;border-radius:99px;margin-left:4px;background:var(--rose);color:#fff;}
+
+/* LAYOUT */
+.page{max-width:1400px;margin:0 auto;padding:24px 32px 80px;}
+.sec{display:none;animation:fi .2s ease;}
+.sec.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+
+/* TYPOGRAPHY */
+.stitle{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:700;margin-bottom:2px;}
+.ssub{font-size:.73rem;color:var(--i40);margin-bottom:20px;}
+.dv{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--rose);display:flex;align-items:center;gap:8px;margin:22px 0 13px;}
+.dv::after{content:'';flex:1;height:1px;background:var(--bd);}
+
+/* KPI GRID */
+.kg{display:grid;gap:11px;margin-bottom:13px;}
+.k2{grid-template-columns:repeat(2,1fr);}
+.k3{grid-template-columns:repeat(3,1fr);}
+.k4{grid-template-columns:repeat(4,1fr);}
+.k5{grid-template-columns:repeat(5,1fr);}
+.k6{grid-template-columns:repeat(6,1fr);}
+
+.kpi{background:var(--w);border:1px solid var(--bd);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--rose));}
+.kpi.dark{background:var(--ink);border:none;}
+.kpi.dark::before{display:none;}
+.kpi.dark .kl,.kpi.dark .ks{color:rgba(255,255,255,.35);}
+.kpi.dark .kv{color:#fff;}
+.kpi.rose{background:linear-gradient(135deg,var(--rD),var(--rose));border:none;}
+.kpi.rose::before{display:none;}
+.kpi.rose .kl,.kpi.rose .ks{color:rgba(255,255,255,.45);}
+.kpi.rose .kv{color:#fff;}
+.kpi.gn{background:linear-gradient(135deg,#1A4A35,var(--green));border:none;}
+.kpi.gn::before{display:none;}
+.kpi.gn .kl,.kpi.gn .ks{color:rgba(255,255,255,.45);}
+.kpi.gn .kv{color:#fff;}
+.kl{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--i40);margin-bottom:4px;}
+.kv{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;line-height:1.05;color:var(--ink);}
+.kv.sm{font-size:1.25rem;}
+.ks{font-size:.6rem;color:var(--i40);margin-top:3px;}
+.kdelta{font-size:.62rem;font-weight:600;padding:1px 6px;border-radius:99px;display:inline-flex;align-items:center;margin-top:3px;}
+.kdelta.up{background:var(--gnL);color:var(--green);}
+.kdelta.dn{background:var(--reL);color:var(--red);}
+.kdelta.ok{background:var(--gnL);color:var(--green);}
+.kdelta.warn{background:var(--amL);color:var(--amber);}
+
+/* CARDS */
+.card{background:var(--w);border:1px solid var(--bd);border-radius:14px;padding:17px;}
+.ct{font-size:.76rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cs{font-size:.63rem;color:var(--i40);margin-bottom:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:11px;}
+.g12{display:grid;grid-template-columns:1.35fr 1fr;gap:11px;margin-bottom:11px;}
+.g21{display:grid;grid-template-columns:1fr 1.35fr;gap:11px;margin-bottom:11px;}
+.mb{margin-bottom:11px;}
+
+/* BARS */
+.br{display:flex;align-items:center;gap:7px;padding:3px 0;}
+.bl{font-size:.69rem;font-weight:500;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bt{flex:1;height:8px;background:var(--i08);border-radius:99px;overflow:hidden;}
+.bf{height:100%;border-radius:99px;transition:width .7s ease;}
+.bv{font-family:'DM Mono',monospace;font-size:.63rem;font-weight:600;color:var(--i70);text-align:right;flex-shrink:0;min-width:55px;}
+
+/* FEED */
+.feed{display:flex;flex-direction:column;}
+.frow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--i08);}
+.frow:last-child{border-bottom:none;}
+.frow:hover{background:var(--rP);margin:0 -17px;padding:7px 17px;border-radius:6px;}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fi{flex:1;min-width:0;}
+.fn{font-size:.72rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fs{font-size:.6rem;color:var(--i40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ft{font-size:.6rem;color:var(--i40);flex-shrink:0;font-family:'DM Mono',monospace;}
+.fbadge{font-size:.57rem;font-weight:700;padding:2px 6px;border-radius:99px;flex-shrink:0;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.69rem;}
+.tbl th{padding:6px 10px;text-align:left;font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;background:var(--ink);color:rgba(255,255,255,.55);}
+.tbl th:first-child{border-radius:6px 0 0 0;}.tbl th:last-child{border-radius:0 6px 0 0;}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--i08);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--rP);}
+.num{font-family:'DM Mono',monospace;font-weight:600;text-align:right;}
+.rc{color:var(--rD);}.gc{color:var(--green);}.ac{color:var(--amber);}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:99px;}
+.pill.g{background:var(--gnL);color:#1A4A35;}
+.pill.r{background:var(--reL);color:#7A0A0A;}
+.pill.a{background:var(--amL);color:#7A5C00;}
+.pill.b{background:var(--blL);color:#0D3B6E;}
+.pill.p{background:var(--puL);color:#3D1A6B;}
+.pill.rose{background:var(--rP);color:var(--rD);}
+
+/* ALERTS */
+.al{display:flex;gap:9px;padding:11px 13px;border-radius:8px;margin-bottom:8px;font-size:.7rem;line-height:1.55;}
+.al-i{font-size:.9rem;flex-shrink:0;margin-top:1px;}
+.al strong{display:block;font-size:.73rem;margin-bottom:2px;}
+.al.ok{background:var(--gnL);border-left:3px solid var(--green);color:#1A4A35;}
+.al.w{background:var(--amL);border-left:3px solid var(--amber);color:#7A5C00;}
+.al.dn{background:var(--reL);border-left:3px solid var(--red);color:#7A0A0A;}
+.al.nf{background:var(--blL);border-left:3px solid var(--blue);color:#0D3B6E;}
+.al.p{background:var(--puL);border-left:3px solid var(--pur);color:#3D1A6B;}
+
+/* PROGRESS */
+.prog{margin-bottom:10px;}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+.prog-label{font-size:.67rem;color:var(--i40);}
+.prog-val{font-size:.67rem;font-weight:700;}
+.prog-track{height:9px;background:var(--i08);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+
+/* HEATMAP */
+.hm{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;margin:8px 0 4px;}
+.hm-c{height:22px;border-radius:3px;cursor:default;}
+.hm-labels{display:flex;justify-content:space-between;font-size:.55rem;color:var(--i40);}
+
+/* FUNNEL */
+.funnel{display:flex;flex-direction:column;gap:4px;}
+.fn-step{border-radius:5px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+.fn-label{font-size:.71rem;font-weight:600;}
+.fn-val{font-family:'DM Mono',monospace;font-size:.69rem;font-weight:600;}
+.fn-pct{font-size:.6rem;opacity:.7;margin-left:6px;}
+
+/* COUNTDOWN */
+.cd{display:flex;gap:8px;justify-content:center;margin:10px 0;}
+.cd-box{background:var(--ink);border-radius:10px;padding:11px 14px;text-align:center;min-width:60px;}
+.cd-n{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:#fff;line-height:1;}
+.cd-l{font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-top:2px;}
+.cd-sep{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--rose);align-self:center;padding-bottom:10px;}
+
+/* SCORE */
+.score-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.score-track{flex:1;height:5px;background:var(--i08);border-radius:99px;overflow:hidden;}
+.score-fill{height:100%;border-radius:99px;}
+
+/* CONFIG */
+.cfg-section{background:var(--w);border:1px solid var(--bd);border-radius:14px;padding:17px;margin-bottom:12px;}
+.cfg-title{font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.cfg-step{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--i08);}
+.cfg-step:last-child{border-bottom:none;}
+.cfg-n{width:24px;height:24px;border-radius:50%;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.cfg-body{flex:1;}
+.cfg-st{font-size:.74rem;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.cfg-sd{font-size:.67rem;color:var(--i40);line-height:1.65;}
+.cfg-tip{font-size:.63rem;padding:5px 8px;border-radius:5px;margin-top:5px;line-height:1.55;}
+.cfg-tip.ok{background:var(--gnL);color:#1A4A35;}
+.cfg-tip.nf{background:var(--blL);color:#0D3B6E;}
+.cfg-tip.w{background:var(--amL);color:#7A5C00;}
+.code{background:#1A1018;border-radius:8px;padding:10px 13px;font-family:'DM Mono',monospace;font-size:.62rem;color:#a8d8a8;line-height:1.8;overflow-x:auto;margin:6px 0;}
+.code .c{color:rgba(255,255,255,.3);}
+.code .k{color:#89CFF0;}
+.code .s{color:#F4C2C2;}
+.code .v{color:#FFD700;}
+input[type=text]{width:100%;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;font-size:.72rem;font-family:'DM Mono',monospace;background:var(--surf);color:var(--ink);outline:none;transition:border .15s;}
+input[type=text]:focus{border-color:var(--rose);}
+.btn{background:var(--rose);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:.72rem;font-weight:700;cursor:pointer;transition:opacity .15s;}
+.btn:hover{opacity:.88;}
+.btn.sec{background:transparent;color:var(--rose);border:1px solid var(--rose);}
+.input-row{display:flex;gap:8px;margin-top:8px;}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px;gap:12px;}
+.spinner{width:30px;height:30px;border:3px solid var(--rL);border-top-color:var(--rose);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading p{font-size:.73rem;color:var(--i40);}
+
+/* DEMO BANNER */
+.demo-banner{background:linear-gradient(135deg,#3D1A6B,var(--pur));border-radius:10px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.demo-banner .db-icon{font-size:1.2rem;}
+.demo-banner .db-text{font-size:.69rem;color:rgba(255,255,255,.8);line-height:1.55;}
+.demo-banner .db-text strong{color:#fff;}
+
+/* FOOTER */
+.ftr{background:var(--ink);padding:13px 32px;display:flex;justify-content:space-between;align-items:center;}
+.ft{font-size:.57rem;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;}
+
+/* MINI CHART */
+.mini-bars{display:flex;align-items:flex-end;gap:3px;}
+.mb-bar{border-radius:2px 2px 0 0;flex:1;min-width:0;}
+
+/* SCROLLABLE */
+.scroll-x{overflow-x:auto;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:4px;">
+    <div class="logo">Rose<em>Decor</em><span class="logo-sub">CEO Dashboard · Lançamento</span></div>
+  </div>
+  <div class="topbar-right">
+    <div class="tbchip live"><span class="ldot"></span>Ao vivo</div>
+    <div class="tbchip warn" id="refreshChip">⟳ carregando</div>
+    <div id="tbTime"></div>
+  </div>
+</header>
+
+<div class="phasebar">
+  <div class="phase on" data-ph="captacao"><span class="phase-dot"></span>Captação</div>
+  <div class="phase-sep">›</div>
+  <div class="phase" data-ph="preabertura"><span class="phase-dot"></span>Pré-abertura</div>
+  <div class="phase-sep">›</div>
+  <div class="phase" data-ph="carrinho"><span class="phase-dot"></span>Carrinho aberto</div>
+  <div class="phase-sep">›</div>
+  <div class="phase" data-ph="fechamento"><span class="phase-dot"></span>Fechamento</div>
+</div>
+
+<nav class="mainnav">
+  <div class="nt on" data-s="visao">🏠 Visão Geral</div>
+  <div class="nt" data-s="leads">👤 Leads</div>
+  <div class="nt" data-s="trafego">📊 Tráfego Pago</div>
+  <div class="nt" data-s="criativos">🎬 Criativos</div>
+  <div class="nt" data-s="vendas">💳 Vendas</div>
+  <div class="nt" data-s="funil">🔽 Funil</div>
+  <div class="nt" data-s="financeiro">💰 Financeiro</div>
+  <div class="nt" data-s="config">⚙️ Integrações</div>
+</nav>
+
+<main class="page">
+
+<!-- ══ VISÃO GERAL ══ -->
+<div class="sec on" id="sec-visao">
+  <div class="stitle">Visão Geral do Lançamento</div>
+  <div class="ssub" id="visao-sub">Carregando dados...</div>
+  <div id="visao-content"><div class="loading"><div class="spinner"></div><p>Buscando dados da planilha...</p></div></div>
+</div>
+
+<!-- ══ LEADS ══ -->
+<div class="sec" id="sec-leads">
+  <div class="stitle">Leads ao Vivo</div>
+  <div class="ssub">Active Campaign → Google Sheets · atualiza a cada 5 min</div>
+  <div id="leads-content"><div class="loading"><div class="spinner"></div><p>Carregando leads...</p></div></div>
+</div>
+
+<!-- ══ TRÁFEGO ══ -->
+<div class="sec" id="sec-trafego">
+  <div class="stitle">Tráfego Pago — Meta Ads</div>
+  <div class="ssub">Adveronix → Google Sheets · atualiza diariamente</div>
+  <div id="trafego-content"><div class="loading"><div class="spinner"></div><p>Carregando métricas...</p></div></div>
+</div>
+
+<!-- ══ CRIATIVOS ══ -->
+<div class="sec" id="sec-criativos">
+  <div class="stitle">Performance por Criativo</div>
+  <div class="ssub">Qual anúncio gera mais leads com menor custo</div>
+  <div id="criativos-content"><div class="loading"><div class="spinner"></div><p>Analisando criativos...</p></div></div>
+</div>
+
+<!-- ══ VENDAS ══ -->
+<div class="sec" id="sec-vendas">
+  <div class="stitle">Vendas ao Vivo</div>
+  <div class="ssub">Hubla → Google Sheets via Make.com · &lt;60s de delay</div>
+  <div id="vendas-content"><div class="loading"><div class="spinner"></div><p>Carregando vendas...</p></div></div>
+</div>
+
+<!-- ══ FUNIL ══ -->
+<div class="sec" id="sec-funil">
+  <div class="stitle">Funil de Conversão</div>
+  <div class="ssub">Do anúncio à venda — onde estão os gargalos</div>
+  <div id="funil-content"><div class="loading"><div class="spinner"></div><p>Calculando funil...</p></div></div>
+</div>
+
+<!-- ══ FINANCEIRO ══ -->
+<div class="sec" id="sec-financeiro">
+  <div class="stitle">Financeiro do Lançamento</div>
+  <div class="ssub">Orçamento · ROI · CAC · Projeção final</div>
+  <div id="financeiro-content"><div class="loading"><div class="spinner"></div><p>Calculando financeiro...</p></div></div>
+</div>
+
+<!-- ══ CONFIG ══ -->
+<div class="sec" id="sec-config">
+  <div class="stitle">⚙️ Integrações & Configuração</div>
+  <div class="ssub">Como conectar cada fonte de dados ao dashboard</div>
+
+  <!-- CONECTAR URL -->
+  <div class="cfg-section">
+    <div class="cfg-title">🔗 Conectar sua planilha ao dashboard</div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--rP);color:var(--rD);">1</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Cole a URL do seu Apps Script aqui</div>
+        <div class="cfg-sd">Após configurar o Apps Script na sua planilha (veja abaixo), você recebe uma URL pública. Cole ela aqui e clique Conectar. O dashboard passa a ler seus dados reais automaticamente.</div>
+        <div class="input-row">
+          <input type="text" id="apiUrl" placeholder="https://script.google.com/macros/s/SEU_ID/exec">
+          <button class="btn" onclick="conectar()">Conectar</button>
+          <button class="btn sec" onclick="usarDemo()">Ver demo</button>
+        </div>
+        <div id="connectMsg" style="font-size:.65rem;margin-top:6px;color:var(--i40);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANILHA -->
+  <div class="cfg-section">
+    <div class="cfg-title">📊 Passo 1 — Estrutura da planilha</div>
+    <div style="font-size:.7rem;color:var(--i40);margin-bottom:12px;line-height:1.65;">Sua planilha precisa ter <strong style="color:var(--ink);">4 abas</strong> com esses nomes exatos. Cada fonte de dados alimenta uma aba diferente.</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
+      <div style="background:var(--gnL);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:var(--green);margin-bottom:4px;">Aba: leads</div>
+        <div style="font-size:.6rem;color:#1A4A35;line-height:1.6;">Date · Name · Email<br>Tel · utm_source<br>utm_campaign<br>utm_medium · utm_content<br>utm_term · src</div>
+        <div style="margin-top:6px;font-size:.58rem;background:var(--green);color:#fff;border-radius:99px;padding:2px 6px;display:inline-block;">AC integração nativa</div>
+      </div>
+      <div style="background:var(--blL);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:var(--blue);margin-bottom:4px;">Aba: meta_ads</div>
+        <div style="font-size:.6rem;color:#0D3B6E;line-height:1.6;">date · campaign<br>adset · ad<br>spend · impressions<br>clicks · ctr · cpm<br>leads · cpl · roas</div>
+        <div style="margin-top:6px;font-size:.58rem;background:var(--blue);color:#fff;border-radius:99px;padding:2px 6px;display:inline-block;">Adveronix add-on</div>
+      </div>
+      <div style="background:var(--rP);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:var(--rD);margin-bottom:4px;">Aba: vendas</div>
+        <div style="font-size:.6rem;color:var(--rD);line-height:1.6;">date · time · name<br>email · product<br>value · status<br>payment · utm_campaign</div>
+        <div style="margin-top:6px;font-size:.58rem;background:var(--rose);color:#fff;border-radius:99px;padding:2px 6px;display:inline-block;">Make.com · Hubla</div>
+      </div>
+      <div style="background:var(--amL);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:var(--amber);margin-bottom:4px;">Aba: config</div>
+        <div style="font-size:.6rem;color:#7A5C00;line-height:1.6;">meta_leads<br>meta_receita<br>meta_cpl · meta_cac<br>orcamento_total<br>data_abertura<br>nome_lancamento</div>
+        <div style="margin-top:6px;font-size:.58rem;background:var(--amber);color:#fff;border-radius:99px;padding:2px 6px;display:inline-block;">você preenche</div>
+      </div>
+    </div>
+    <div class="al nf"><span class="al-i">💡</span><div><strong>Aba config — preencha agora</strong>É nessa aba que você define as metas e o orçamento. O dashboard usa esses valores para calcular % atingido, projeção e alertas.</div></div>
+  </div>
+
+  <!-- APPS SCRIPT -->
+  <div class="cfg-section">
+    <div class="cfg-title">🤖 Passo 2 — Apps Script (a ponte)</div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--puL);color:var(--pur);">a</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Na planilha: Extensões → Apps Script</div>
+        <div class="cfg-sd">Abre o editor de código. Apague tudo que estiver lá e cole o código abaixo.</div>
+      </div>
+    </div>
+    <div class="code">
+<span class="k">function</span> <span class="v">doGet</span>(e) {<br>
+&nbsp;&nbsp;<span class="k">const</span> ss = SpreadsheetApp.<span class="v">getActiveSpreadsheet</span>();<br>
+&nbsp;&nbsp;<span class="k">const</span> abas = [<span class="s">'leads'</span>, <span class="s">'meta_ads'</span>, <span class="s">'vendas'</span>, <span class="s">'config'</span>];<br>
+&nbsp;&nbsp;<span class="k">const</span> out = {};<br>
+&nbsp;&nbsp;abas.<span class="v">forEach</span>(n => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">const</span> sh = ss.<span class="v">getSheetByName</span>(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span>(!sh) <span class="k">return</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">const</span> d = sh.<span class="v">getDataRange</span>().<span class="v">getValues</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">const</span> h = d[<span class="v">0</span>];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;out[n] = d.<span class="v">slice</span>(<span class="v">1</span>).<span class="v">filter</span>(r=>r[<span class="v">0</span>]).<span class="v">map</span>(r=>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">const</span> o={}; h.<span class="v">forEach</span>((k,i)=>o[k]=r[i]); <span class="k">return</span> o;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="k">return</span> ContentService<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.<span class="v">createTextOutput</span>(JSON.<span class="v">stringify</span>(out))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.<span class="v">setMimeType</span>(ContentService.MimeType.<span class="v">JSON</span>);<br>
+}
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--puL);color:var(--pur);">b</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Implantar → Nova implantação → Aplicativo da Web</div>
+        <div class="cfg-sd">Execute como: <strong>Eu</strong> · Quem tem acesso: <strong>Qualquer pessoa</strong> · Clique Implantar · Autorize quando pedir.</div>
+        <div class="cfg-tip ok">Copie a URL gerada — ela termina em <code style="font-size:.6rem;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px;">/exec</code> — e cole no campo lá em cima.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVERONIX -->
+  <div class="cfg-section">
+    <div class="cfg-title">📊 Passo 3 — Adveronix (Meta Ads → Sheets)</div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--blL);color:var(--blue);">1</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Instalar o complemento Adveronix</div>
+        <div class="cfg-sd">Na planilha: <strong>Extensões → Complementos → Instalar complementos</strong> → buscar "Adveronix" → Instalar.</div>
+        <div class="cfg-tip ok">É gratuito. Não precisa de cartão.</div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--blL);color:var(--blue);">2</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Extensões → Adveronix → Launch → conectar Facebook Ads</div>
+        <div class="cfg-sd">Clique em Connect → Facebook Ads → autorize o acesso à sua conta de anúncios.</div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--blL);color:var(--blue);">3</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Criar relatório com as métricas certas</div>
+        <div class="cfg-sd">Destination: aba <strong>meta_ads</strong> · Breakdown: <strong>Day + Campaign + Ad</strong> · Métricas:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">
+          <span class="pill b">date</span><span class="pill b">campaign_name</span><span class="pill b">adset_name</span><span class="pill b">ad_name</span><span class="pill b">spend</span><span class="pill b">impressions</span><span class="pill b">clicks</span><span class="pill b">ctr</span><span class="pill b">cpm</span><span class="pill b">reach</span><span class="pill b">frequency</span><span class="pill b">leads</span>
+        </div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--blL);color:var(--blue);">4</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Configurar agendamento automático</div>
+        <div class="cfg-sd">No Adveronix, clique em <strong>Schedule → Daily → 8:00 AM</strong>. A partir daí ele atualiza sozinho todo dia sem você fazer nada.</div>
+        <div class="cfg-tip nf">O Meta libera dados com ~3h de atraso. Por isso roda às 8h — traz os dados completos de ontem.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAKE + HUBLA -->
+  <div class="cfg-section">
+    <div class="cfg-title">💳 Passo 4 — Make.com + Hubla (Vendas → Sheets)</div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--rP);color:var(--rD);">1</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Criar conta gratuita no Make.com</div>
+        <div class="cfg-sd">make.com → Sign up grátis. Plano free tem 1.000 operações/mês — suficiente para vários lançamentos.</div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--rP);color:var(--rD);">2</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Criar cenário: Hubla → Google Sheets</div>
+        <div class="cfg-sd">No Make: <strong>Create scenario → Webhooks → Custom webhook</strong>. Copie a URL do webhook gerada.</div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--rP);color:var(--rD);">3</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Configurar webhook na Hubla</div>
+        <div class="cfg-sd">Na Hubla: <strong>Configurações → Integrações → Webhooks → Adicionar</strong>. Cole a URL do Make. Evento: <strong>purchase.approved</strong>.</div>
+        <div class="cfg-tip ok">A partir de agora, cada venda aprovada na Hubla dispara automaticamente o Make.</div>
+      </div>
+    </div>
+    <div class="cfg-step">
+      <div class="cfg-n" style="background:var(--rP);color:var(--rD);">4</div>
+      <div class="cfg-body">
+        <div class="cfg-st">Adicionar ação Google Sheets no Make</div>
+        <div class="cfg-sd">Após o webhook, adicione: <strong>Google Sheets → Add a Row</strong> → selecione sua planilha → aba <strong>vendas</strong> → mapeie: date, name, email, product, value, status, payment.</div>
+        <div class="cfg-tip ok">Venda aprovada → aparece no dashboard em menos de 60 segundos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG VALUES -->
+  <div class="cfg-section">
+    <div class="cfg-title">🎯 Passo 5 — Preencher suas metas na aba config</div>
+    <div style="font-size:.7rem;color:var(--i40);margin-bottom:10px;">Adicione essas linhas na aba <strong style="color:var(--ink);">config</strong> da sua planilha. O dashboard usa esses valores para calcular % atingido, projeção e alertas automáticos.</div>
+    <div class="code">
+<span class="c">chave                    | valor</span><br>
+<span class="v">nome_lancamento</span>          | Natal Encantado 2026<br>
+<span class="v">meta_leads</span>               | 5000<br>
+<span class="v">meta_receita</span>             | 200000<br>
+<span class="v">meta_cpl</span>                 | 10<br>
+<span class="v">meta_cac</span>                 | 200<br>
+<span class="v">meta_roas</span>                | 3<br>
+<span class="v">orcamento_total</span>          | 15000<br>
+<span class="v">orcamento_meta_ads</span>       | 10000<br>
+<span class="v">data_abertura_carrinho</span>   | 2026-04-10<br>
+<span class="v">data_fechamento</span>          | 2026-04-14
+    </div>
+  </div>
+
+</div>
+</main>
+
+<footer class="ftr">
+  <span class="ft">Rose Decor · CEO Dashboard v3 · Leads + Meta Ads + Vendas + Funil</span>
+  <span class="ft" id="ftr-count">—</span>
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG & STATE
+// ══════════════════════════════════════════
+const REFRESH_MS = 5 * 60 * 1000;
+let DATA = { leads:[], meta_ads:[], vendas:[], config:{} };
+let API_URL = localStorage.getItem('rdApiUrl') || '';
+let isDemoMode = true;
+
+// ══════════════════════════════════════════
+// DEMO DATA
+// ══════════════════════════════════════════
+const DEMO = {
+  leads: [
+    {Date:'03/14/2026 21:14',Name:'Ana Alice Monteiro',Email:'ana@gmail.com',Tel:'12981627526',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD01 - Vid - Depoimento Maria',utm_term:'01 - Lookalike Compradores',src:'pago'},
+    {Date:'03/14/2026 21:22',Name:'Rosely Santos',Email:'rosely@gmail.com',Tel:'16992478937',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Feed',utm_content:'AD05 - Img - Nunca fez isso antes',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/14/2026 21:38',Name:'Graciele Flora',Email:'graciele@gmail.com',Tel:'11971641988',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD01 - Vid - Depoimento Maria',utm_term:'02 - Interesse Decoração',src:'pago'},
+    {Date:'03/14/2026 20:55',Name:'Patricia Oliveira',Email:'patricia@gmail.com',Tel:'11987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD02 - Vid - Antes e Depois',utm_term:'01 - Lookalike Compradores',src:'pago'},
+    {Date:'03/14/2026 19:33',Name:'Simone Ferreira',Email:'simone@gmail.com',Tel:'48996543210',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Stories',utm_content:'AD07 - Img - Última Chamada',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/13/2026 22:10',Name:'Carla Mendes',Email:'carla@gmail.com',Tel:'51987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD01 - Vid - Depoimento Maria',utm_term:'03 - Remarketing Site',src:'pago'},
+    {Date:'03/13/2026 21:05',Name:'Fernanda Costa',Email:'fernanda@gmail.com',Tel:'31987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Feed',utm_content:'AD05 - Img - Nunca fez isso antes',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/13/2026 20:48',Name:'Juliana Ramos',Email:'juliana@gmail.com',Tel:'21987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD03 - Vid - 3 erros de decoração',utm_term:'02 - Interesse Decoração',src:'pago'},
+    {Date:'03/13/2026 14:22',Name:'Mariana Silva',Email:'mariana@gmail.com',Tel:'11912345678',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Stories',utm_content:'AD10 - Img - O fim da decoração',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/12/2026 21:55',Name:'Luciana Barros',Email:'luciana@gmail.com',Tel:'47987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD01 - Vid - Depoimento Maria',utm_term:'01 - Lookalike Compradores',src:'pago'},
+    {Date:'03/12/2026 21:30',Name:'Roberta Lima',Email:'roberta@gmail.com',Tel:'62987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Feed',utm_content:'AD05 - Img - Nunca fez isso antes',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/12/2026 20:15',Name:'Sandra Souza',Email:'sandra@gmail.com',Tel:'85987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD02 - Vid - Antes e Depois',utm_term:'03 - Remarketing Site',src:'pago'},
+    {Date:'03/11/2026 22:44',Name:'Tatiana Cruz',Email:'tatiana@gmail.com',Tel:'71987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD01 - Vid - Depoimento Maria',utm_term:'01 - Lookalike Compradores',src:'pago'},
+    {Date:'03/11/2026 21:10',Name:'Vanessa Alves',Email:'vanessa@gmail.com',Tel:'81987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [IMG]',utm_medium:'Instagram_Stories',utm_content:'AD07 - Img - Última Chamada',utm_term:'00 - Seguidores Todos',src:'pago'},
+    {Date:'03/10/2026 19:25',Name:'Beatriz Nunes',Email:'beatriz@gmail.com',Tel:'27987654321',utm_source:'meta',utm_campaign:'? [MAR/26] RDI [CAPTAÇÃO] [VID]',utm_medium:'Instagram_Reels',utm_content:'AD03 - Vid - 3 erros de decoração',utm_term:'02 - Interesse Decoração',src:'pago'},
+  ],
+  meta_ads: [
+    {date:'2026-03-14',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'01 - Lookalike',ad:'AD01 - Vid - Depoimento Maria',spend:198,impressions:10200,clicks:245,ctr:2.4,cpm:19.4,leads:32,cpl:6.19,roas:0},
+    {date:'2026-03-14',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'02 - Interesse',ad:'AD02 - Vid - Antes e Depois',spend:142,impressions:7800,clicks:178,ctr:2.28,cpm:18.2,leads:21,cpl:6.76,roas:0},
+    {date:'2026-03-14',campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]',adset:'00 - Seguidores',ad:'AD05 - Img - Nunca fez isso antes',spend:118,impressions:6400,clicks:140,ctr:2.19,cpm:18.4,leads:14,cpl:8.43,roas:0},
+    {date:'2026-03-14',campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]',adset:'00 - Seguidores',ad:'AD07 - Img - Última Chamada',spend:89,impressions:5200,clicks:98,ctr:1.88,cpm:17.1,leads:8,cpl:11.13,roas:0},
+    {date:'2026-03-14',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'03 - Remarketing',ad:'AD03 - Vid - 3 erros de decoração',spend:76,impressions:4100,clicks:112,ctr:2.73,cpm:18.5,leads:12,cpl:6.33,roas:0},
+    {date:'2026-03-13',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'01 - Lookalike',ad:'AD01 - Vid - Depoimento Maria',spend:185,impressions:9600,clicks:228,ctr:2.38,cpm:19.3,leads:29,cpl:6.38,roas:0},
+    {date:'2026-03-13',campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]',adset:'00 - Seguidores',ad:'AD05 - Img - Nunca fez isso antes',spend:134,impressions:7200,clicks:155,ctr:2.15,cpm:18.6,leads:16,cpl:8.38,roas:0},
+    {date:'2026-03-12',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'01 - Lookalike',ad:'AD01 - Vid - Depoimento Maria',spend:201,impressions:10800,clicks:261,ctr:2.42,cpm:18.6,leads:34,cpl:5.91,roas:0},
+    {date:'2026-03-11',campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]',adset:'01 - Lookalike',ad:'AD01 - Vid - Depoimento Maria',spend:178,impressions:9200,clicks:218,ctr:2.37,cpm:19.3,leads:27,cpl:6.59,roas:0},
+    {date:'2026-03-10',campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]',adset:'02 - Interesse',ad:'AD10 - Img - O fim da decoração',spend:67,impressions:3900,clicks:71,ctr:1.82,cpm:17.2,leads:5,cpl:13.4,roas:0},
+  ],
+  vendas: [
+    {date:'2026-03-14',time:'22:01',name:'Claudia Martins',email:'claudia@gmail.com',product:'Rose Decor Infinity',value:1299,status:'aprovado',payment:'cartao',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]'},
+    {date:'2026-03-14',time:'21:44',name:'Ana Paula Souza',email:'anapaula@gmail.com',product:'Formação Método RD',value:1630,status:'aprovado',payment:'pix',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]'},
+    {date:'2026-03-13',time:'22:18',name:'Marina Rodrigues',email:'marina@gmail.com',product:'Rose Decor Infinity',value:1299,status:'aprovado',payment:'pix',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]'},
+    {date:'2026-03-13',time:'20:55',name:'Fernanda Lima',email:'fernandal@gmail.com',product:'Rose Decor Infinity',value:1299,status:'aprovado',payment:'cartao',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]'},
+    {date:'2026-03-12',time:'21:30',name:'Patricia Nascimento',email:'pnascimento@gmail.com',product:'Formação Método RD',value:1630,status:'aprovado',payment:'pix',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [VID]'},
+    {date:'2026-03-11',time:'22:05',name:'Sandra Oliveira',email:'sandrao@gmail.com',product:'Rose Decor Infinity',value:1299,status:'aprovado',payment:'boleto',utm_campaign:'[MAR/26] RDI [CAPTAÇÃO] [IMG]'},
+  ],
+  config: {
+    nome_lancamento:'Rose Decor Infinity 2026',
+    meta_leads:5000, meta_receita:200000, meta_cpl:10,
+    meta_cac:400, meta_roas:3, orcamento_total:15000,
+    orcamento_meta_ads:10000, data_abertura_carrinho:'2026-04-10',
+    data_fechamento:'2026-04-14'
+  }
+};
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+const fmt = v => Math.round(v).toLocaleString('pt-BR');
+const fmtR = v => 'R$' + Math.round(v).toLocaleString('pt-BR');
+const fmtPct = v => v.toFixed(1) + '%';
+const fmtD = v => v.toFixed(2);
+
+function parseDate(s) {
+  if (!s) return null;
+  try {
+    const d = new Date(s);
+    if (!isNaN(d)) return d;
+    const m = String(s).match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+    if (m) return new Date(`${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`);
+  } catch(e) {}
+  return null;
+}
+
+function timeAgo(d) {
+  if (!d) return '';
+  const s = (Date.now() - d.getTime()) / 1000;
+  if (s < 60) return Math.round(s) + 's';
+  if (s < 3600) return Math.round(s/60) + 'min';
+  if (s < 86400) return Math.round(s/3600) + 'h';
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+}
+
+function count(arr, key) {
+  const m = {};
+  arr.forEach(r => { const v = String(r[key]||'').trim()||'—'; m[v]=(m[v]||0)+1; });
+  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+
+function sum(arr, key) {
+  return arr.reduce((a,r)=>a+(parseFloat(r[key])||0),0);
+}
+
+function cleanName(s) {
+  return (s||'').replace(/^AD\d+\s*-\s*/i,'').trim().substring(0,38);
+}
+
+function cleanCampaign(s) {
+  return (s||'').replace(/^\?\s*/,'').replace(/\[|\]/g,' ').replace(/\s+/g,' ').trim().substring(0,45);
+}
+
+function medColor(m) {
+  const s = (m||'').toLowerCase();
+  if (s.includes('reel')) return '#C8476A';
+  if (s.includes('stor')) return '#C9963A';
+  if (s.includes('feed')) return '#2859A8';
+  if (s.includes('facebook')) return '#1877F2';
+  return '#888';
+}
+
+function medLabel(m) {
+  const s = (m||'').toLowerCase();
+  if (s.includes('instagram_reels') || s.includes('reels')) return 'Reels';
+  if (s.includes('instagram_stories')) return 'Stories IG';
+  if (s.includes('facebook_stories')) return 'Stories FB';
+  if (s.includes('instagram_feed')) return 'Feed IG';
+  if (s.includes('facebook_feed')) return 'Feed FB';
+  if (s.includes('instagram')) return 'Instagram';
+  if (s.includes('facebook')) return 'Facebook';
+  return m||'—';
+}
+
+function bars(items, colorFn, lw=150, vfmt=v=>fmt(v)) {
+  if (!items.length) return '<div style="padding:20px;text-align:center;font-size:.7rem;color:var(--i40);">Sem dados</div>';
+  const max = items[0][1]||1;
+  return items.map(([l,v])=>{
+    const pct = v/max*100;
+    const c = colorFn ? colorFn(l,v) : 'var(--rose)';
+    const disp = l.length>32 ? l.substring(0,32)+'…' : l;
+    return `<div class="br"><div class="bl" style="width:${lw}px;" title="${l}">${disp}</div><div class="bt"><div class="bf" style="width:${pct}%;background:${c};"></div></div><div class="bv">${vfmt(v)}</div></div>`;
+  }).join('');
+}
+
+function miniBarChart(vals, labels, activeIdx=-1) {
+  const max = Math.max(...vals, 1);
+  return `<div class="mini-bars" style="height:64px;align-items:flex-end;gap:3px;">
+    ${vals.map((v,i)=>{
+      const h = Math.max(3, Math.round(v/max*60));
+      const isA = i===activeIdx || (activeIdx===-1 && i===vals.length-1);
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+        <div class="mb-bar" style="height:${h}px;background:${isA?'var(--rose)':'var(--rL)'};width:100%;"></div>
+        ${labels?`<div style="font-size:.55rem;color:var(--i40);white-space:nowrap;">${labels[i]}</div>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function getConfigVal(key) {
+  const cfg = DATA.config;
+  if (Array.isArray(cfg)) {
+    const row = cfg.find(r=>r.chave===key||r[0]===key);
+    return row ? (row.valor||row[1]) : null;
+  }
+  return cfg[key] || null;
+}
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+document.querySelectorAll('.nt').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.nt').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.sec').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById('sec-'+t.dataset.s).classList.add('on');
+  });
+});
+document.querySelectorAll('.phase').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.phase').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+  });
+});
+
+// ══════════════════════════════════════════
+// FETCH
+// ══════════════════════════════════════════
+async function fetchData() {
+  updateChip('loading');
+  if (!API_URL) { DATA = normalizeDemo(DEMO); isDemoMode=true; renderAll(); updateChip('demo'); return; }
+  try {
+    const r = await fetch(API_URL);
+    const raw = await r.json();
+    DATA = normalizeData(raw);
+    isDemoMode = false;
+    renderAll();
+    updateChip('live');
+  } catch(e) {
+    DATA = normalizeDemo(DEMO);
+    isDemoMode = true;
+    renderAll();
+    updateChip('error');
+  }
+}
+
+function normalizeDemo(d) {
+  return { leads:d.leads, meta_ads:d.meta_ads, vendas:d.vendas, config:d.config };
+}
+
+function normalizeData(raw) {
+  const out = { leads:[], meta_ads:[], vendas:[], config:{} };
+  if (Array.isArray(raw)) { out.leads = raw; return out; }
+  if (raw.leads) out.leads = raw.leads;
+  if (raw.meta_ads) out.meta_ads = raw.meta_ads;
+  if (raw.vendas) out.vendas = raw.vendas;
+  if (raw.config) {
+    if (Array.isArray(raw.config)) {
+      raw.config.forEach(r=>{ if(r.chave) out.config[r.chave]=r.valor; });
+    } else { out.config = raw.config; }
+  }
+  return out;
+}
+
+function updateChip(mode) {
+  const chip = document.getElementById('refreshChip');
+  const now = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('tbTime').textContent = now;
+  if (mode==='live') { chip.textContent='✓ ao vivo · '+now; chip.style.cssText='border-color:rgba(76,175,122,.4);color:#6FD4A8;'; }
+  else if (mode==='demo') { chip.textContent='📋 demo — configure em ⚙️'; chip.style.cssText='border-color:rgba(201,150,58,.4);color:#E0B060;'; }
+  else if (mode==='error') { chip.textContent='⚠ usando demo'; chip.style.cssText='border-color:rgba(220,80,80,.4);color:#F08080;'; }
+  else { chip.textContent='⟳ atualizando...'; chip.style.cssText=''; }
+}
+
+// ══════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════
+function renderAll() {
+  const {leads, meta_ads, vendas, config} = DATA;
+  const nomeLanc = config.nome_lancamento || 'Lançamento Rose Decor';
+  document.getElementById('visao-sub').textContent = nomeLanc + ' · dados em tempo real';
+  document.getElementById('ftr-count').textContent = `${fmt(leads.length)} leads · ${fmt(vendas.length)} vendas · ${fmt(meta_ads.length)} linhas Meta`;
+  renderVisao(leads, meta_ads, vendas, config);
+  renderLeads(leads, config);
+  renderTrafego(meta_ads, leads, config);
+  renderCriativos(meta_ads, leads);
+  renderVendas(vendas, config);
+  renderFunil(leads, meta_ads, vendas);
+  renderFinanceiro(leads, meta_ads, vendas, config);
+}
+
+// ══════════════════════════════════════════
+// VISÃO GERAL
+// ══════════════════════════════════════════
+function renderVisao(leads, ads, vendas, cfg) {
+  const totalLeads = leads.length;
+  const totalGasto = sum(ads, 'spend');
+  const totalVendas = sum(vendas, 'value');
+  const totalVendasN = vendas.length;
+  const cpl = totalGasto && totalLeads ? totalGasto/totalLeads : 0;
+  const cac = totalGasto && totalVendasN ? totalGasto/totalVendasN : 0;
+  const roas = totalGasto ? totalVendas/totalGasto : 0;
+  const metaLeads = parseFloat(cfg.meta_leads)||5000;
+  const metaReceita = parseFloat(cfg.meta_receita)||200000;
+  const metaCPL = parseFloat(cfg.meta_cpl)||10;
+  const orcTotal = parseFloat(cfg.orcamento_total)||15000;
+  const pctLeads = Math.min(100, totalLeads/metaLeads*100);
+  const pctReceita = Math.min(100, totalVendas/metaReceita*100);
+  const pctOrc = Math.min(100, totalGasto/orcTotal*100);
+
+  // leads por dia últimos 7
+  const dias = {};
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    dias[d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})]=0;
+  }
+  leads.forEach(r=>{ const d=parseDate(r.Date||r.date); if(!d)return; const k=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}); if(dias.hasOwnProperty(k))dias[k]++; });
+  const diasVals = Object.values(dias);
+  const diasLbls = Object.keys(dias);
+
+  // countdown
+  const abertura = new Date(cfg.data_abertura_carrinho||'2026-04-10');
+  const diff = Math.max(0, Math.ceil((abertura - new Date()) / 86400000));
+  const dias_cd = Math.floor(diff);
+  const hrs_cd = Math.floor((diff - dias_cd)*24);
+
+  const demoBanner = isDemoMode ? `<div class="demo-banner"><div class="db-icon">📋</div><div class="db-text"><strong>Modo demonstração</strong> — Dados fictícios baseados em lançamentos reais da Rose Decor. Vá em <strong>⚙️ Integrações</strong> para conectar sua planilha real.</div></div>` : '';
+
+  document.getElementById('visao-content').innerHTML = `
+    ${demoBanner}
+    <div class="kg k5 mb">
+      <div class="kpi rose" style="grid-column:span 2">
+        <div class="kl">Total de Leads</div>
+        <div class="kv">${fmt(totalLeads)}</div>
+        <div class="ks">de ${fmt(metaLeads)} meta · ${fmtPct(pctLeads)} atingido</div>
+      </div>
+      <div class="kpi dark">
+        <div class="kl">Gasto Meta Ads</div>
+        <div class="kv sm">${fmtR(totalGasto)}</div>
+        <div class="ks">${fmtPct(pctOrc)} do orçamento</div>
+      </div>
+      <div class="kpi gn">
+        <div class="kl">Receita</div>
+        <div class="kv sm">${fmtR(totalVendas)}</div>
+        <div class="ks">${fmtPct(pctReceita)} da meta</div>
+      </div>
+      <div class="kpi" style="--kc:var(--gold)">
+        <div class="kl">ROAS</div>
+        <div class="kv sm">${roas>0?roas.toFixed(1)+'×':'—'}</div>
+        <div class="ks">meta ${cfg.meta_roas||3}× · ${roas>=(cfg.meta_roas||3)?'✓ acima':'⚠ abaixo'}</div>
+      </div>
+    </div>
+
+    <div class="kg k4 mb">
+      <div class="kpi" style="--kc:var(--rose)">
+        <div class="kl">CPL</div>
+        <div class="kv sm">${cpl>0?fmtR(cpl):'—'}</div>
+        <div class="ks">meta ${fmtR(metaCPL)}</div>
+        ${cpl>0?`<div class="kdelta ${cpl<=metaCPL?'ok':'warn'}">${cpl<=metaCPL?'✓ dentro da meta':'⚠ acima da meta'}</div>`:''}
+      </div>
+      <div class="kpi" style="--kc:var(--blue)">
+        <div class="kl">CAC</div>
+        <div class="kv sm">${cac>0?fmtR(cac):'—'}</div>
+        <div class="ks">custo por venda</div>
+      </div>
+      <div class="kpi" style="--kc:var(--green)">
+        <div class="kl">Vendas</div>
+        <div class="kv sm">${fmt(totalVendasN)}</div>
+        <div class="ks">ticket médio ${totalVendasN?fmtR(totalVendas/totalVendasN):'—'}</div>
+      </div>
+      <div class="kpi" style="--kc:var(--pur)">
+        <div class="kl">Abertura carrinho</div>
+        <div class="kv sm">${dias_cd}d ${hrs_cd}h</div>
+        <div class="ks">${abertura.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}</div>
+      </div>
+    </div>
+
+    <div class="g2 mb">
+      <div class="card">
+        <div class="ct">📅 Leads nos últimos 7 dias</div>
+        <div class="cs">Ritmo diário de captação</div>
+        ${miniBarChart(diasVals, diasLbls)}
+      </div>
+      <div class="card">
+        <div class="ct">🎯 Progresso das metas</div>
+        <div class="cs">% atingido em relação às metas do lançamento</div>
+        <div class="prog">
+          <div class="prog-top"><span class="prog-label">Leads (${fmt(totalLeads)} de ${fmt(metaLeads)})</span><span class="prog-val" style="color:var(--rose);">${fmtPct(pctLeads)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pctLeads}%;background:var(--rose);"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-top"><span class="prog-label">Receita (${fmtR(totalVendas)} de ${fmtR(metaReceita)})</span><span class="prog-val" style="color:var(--green);">${fmtPct(pctReceita)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pctReceita}%;background:var(--green);"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-top"><span class="prog-label">Orçamento usado (${fmtR(totalGasto)} de ${fmtR(orcTotal)})</span><span class="prog-val" style="color:var(--amber);">${fmtPct(pctOrc)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pctOrc}%;background:var(--amber);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g3 mb">
+      <div class="card">
+        <div class="ct">📱 Leads por formato</div>
+        ${bars(count(leads,'utm_medium').slice(0,5),(l)=>medColor(l),110)}
+      </div>
+      <div class="card">
+        <div class="ct">💳 Receita por produto</div>
+        ${bars(Object.entries(vendas.reduce((a,r)=>{a[r.product]=(a[r.product]||0)+(parseFloat(r.value)||0);return a;},{})).sort((a,b)=>b[1]-a[1]).slice(0,5), ()=>'var(--green)', 130, fmtR)}
+      </div>
+      <div class="card">
+        <div class="ct">🎬 Top criativos</div>
+        ${bars(count(leads,'utm_content').slice(0,5),(l)=>'var(--rD)',130)}
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// LEADS
+// ══════════════════════════════════════════
+function renderLeads(leads, cfg) {
+  const sorted = [...leads].sort((a,b)=>(parseDate(b.Date||b.date)||0)-(parseDate(a.Date||a.date)||0));
+  const horaD = new Array(24).fill(0);
+  const dowD = new Array(7).fill(0);
+  const dowN = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  leads.forEach(r=>{ const d=parseDate(r.Date||r.date); if(!d)return; horaD[d.getHours()]++; dowD[d.getDay()]++; });
+  const maxH = Math.max(...horaD,1);
+  const peakH = horaD.indexOf(Math.max(...horaD));
+  const peakDow = dowD.indexOf(Math.max(...dowD));
+  const semUTM = leads.filter(r=>!r.utm_source||r.utm_source==='?'||r.utm_source==='').length;
+
+  const hm = horaD.map((v,h)=>{
+    const p=v/maxH;
+    const rr=Math.round(200*p+55*(1-p)), g=Math.round(10+40*(1-p)), b=Math.round(60+40*(1-p));
+    return `<div class="hm-c" style="background:rgb(${rr},${g},${b});opacity:${.15+p*.85};" title="${h}h · ${v} leads"></div>`;
+  }).join('');
+
+  const feedRows = sorted.slice(0,30).map(r=>{
+    const d = parseDate(r.Date||r.date);
+    const nome = (r.Name||r.name||'—').split(' ').slice(0,2).join(' ');
+    const contentClean = cleanName(r.utm_content||'');
+    const medium = medLabel(r.utm_medium||'');
+    const camp = cleanCampaign(r.utm_campaign||'');
+    return `<div class="frow">
+      <div class="fdot" style="background:${medColor(r.utm_medium)};"></div>
+      <div class="fi"><div class="fn">${nome}</div><div class="fs">${medium} · ${contentClean||camp||'—'}</div></div>
+      <div style="text-align:right;flex-shrink:0;">
+        <span class="fbadge" style="background:var(--rP);color:var(--rD);">${(r.src||'pago')}</span>
+        <div class="ft" style="margin-top:2px;">${d?timeAgo(d):'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('leads-content').innerHTML = `
+    <div class="kg k4 mb">
+      <div class="kpi dark"><div class="kl">Total de Leads</div><div class="kv">${fmt(leads.length)}</div><div class="ks">lançamento completo</div></div>
+      <div class="kpi" style="--kc:var(--rose)"><div class="kl">Hoje</div><div class="kv sm">${fmt(horaD.reduce((a,b)=>a+b,0))}</div><div class="ks">nos últimos dados</div></div>
+      <div class="kpi" style="--kc:var(--gold)"><div class="kl">Sem UTM</div><div class="kv sm ${semUTM/leads.length>.15?'':''}${semUTM>0?'warn':''}">${fmt(semUTM)}</div><div class="ks">${leads.length?fmtPct(semUTM/leads.length*100):'0%'} sem rastreio</div></div>
+      <div class="kpi" style="--kc:var(--green)"><div class="kl">Melhor horário</div><div class="kv sm">${peakH}h</div><div class="ks">${horaD[peakH]} leads no pico</div></div>
+    </div>
+    <div class="g12 mb">
+      <div class="card">
+        <div class="ct">⚡ Feed ao vivo — últimos 30 leads</div>
+        <div class="cs">Mais recentes primeiro · atualiza a cada 5 minutos</div>
+        <div class="feed">${feedRows}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="card">
+          <div class="ct">⏰ Heatmap por hora</div>
+          <div class="cs">Quando seus leads chegam</div>
+          <div class="hm">${hm}</div>
+          <div class="hm-labels"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div>
+          <div class="al ok" style="margin-top:8px;"><span class="al-i">🌙</span><div><strong>Pico: ${peakH}h</strong>Publique e abra carrinho nesse horário.</div></div>
+        </div>
+        <div class="card">
+          <div class="ct">📅 Por dia da semana</div>
+          <div style="display:flex;gap:4px;margin-top:8px;">
+            ${dowD.map((v,i)=>{const maxD=Math.max(...dowD,1);const pct=v/maxD*100;const isT=i===peakDow;return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-size:.6rem;font-family:'DM Mono',monospace;color:${isT?'var(--rose)':'var(--i40)'};">${v}</div><div style="width:100%;height:48px;display:flex;align-items:flex-end;"><div style="width:100%;height:${Math.max(3,Math.round(pct*.45))}px;background:${isT?'var(--rose)':'var(--rL)'};border-radius:2px 2px 0 0;"></div></div><div style="font-size:.6rem;color:${isT?'var(--rose)':'var(--i40)'};">${dowN[i]}</div></div>`;}).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="g2 mb">
+      <div class="card"><div class="ct">🌐 Por fonte (utm_source)</div>${bars(count(leads,'utm_source').slice(0,6),()=>'var(--rose)',120)}</div>
+      <div class="card"><div class="ct">👥 Por público (utm_term)</div>${bars(count(leads,'utm_term').slice(0,6),()=>'var(--pur)',165)}</div>
+    </div>
+    <div class="g2 mb">
+      <div class="card"><div class="ct">📱 Por formato (utm_medium)</div>${bars(count(leads,'utm_medium').slice(0,8).map(([l,v])=>[medLabel(l),v]),(l)=>medColor(l),130)}</div>
+      <div class="card"><div class="ct">🎯 Por campanha</div>${bars(count(leads,'utm_campaign').slice(0,5).map(([l,v])=>[cleanCampaign(l),v]),()=>'var(--rD)',180)}</div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// TRÁFEGO
+// ══════════════════════════════════════════
+function renderTrafego(ads, leads, cfg) {
+  if (!ads.length) {
+    document.getElementById('trafego-content').innerHTML = `<div class="al nf"><span class="al-i">→</span><div><strong>Aba meta_ads vazia</strong>Configure o Adveronix para alimentar essa aba automaticamente. Veja as instruções em ⚙️ Integrações.</div></div>`;
+    return;
+  }
+  const totalGasto = sum(ads,'spend');
+  const totalImpr = sum(ads,'impressions');
+  const totalCliques = sum(ads,'clicks');
+  const totalLeadsAds = sum(ads,'leads');
+  const ctr = totalImpr ? totalCliques/totalImpr*100 : 0;
+  const cpm = totalImpr ? totalGasto/totalImpr*1000 : 0;
+  const cpc = totalCliques ? totalGasto/totalCliques : 0;
+  const cpl = totalLeadsAds ? totalGasto/totalLeadsAds : 0;
+  const metaCPL = parseFloat(cfg.meta_cpl)||10;
+  const metaROAS = parseFloat(cfg.meta_roas)||3;
+
+  // gasto por dia
+  const gastoD = {};
+  ads.forEach(r=>{ const k=r.date||r.Date||''; gastoD[k]=(gastoD[k]||0)+(parseFloat(r.spend)||0); });
+  const gastoDArr = Object.entries(gastoD).sort((a,b)=>a[0]<b[0]?-1:1).slice(-7);
+
+  // por campanha
+  const campMap = {};
+  ads.forEach(r=>{
+    const c=r.campaign||r.campaign_name||'—';
+    if(!campMap[c]) campMap[c]={spend:0,leads:0,impressions:0,clicks:0};
+    campMap[c].spend+=parseFloat(r.spend)||0;
+    campMap[c].leads+=parseFloat(r.leads)||0;
+    campMap[c].impressions+=parseFloat(r.impressions)||0;
+    campMap[c].clicks+=parseFloat(r.clicks)||0;
+  });
+
+  const campRows = Object.entries(campMap).sort((a,b)=>b[1].spend-a[1].spend).map(([c,m])=>{
+    const _cpl = m.leads?m.spend/m.leads:0;
+    const _ctr = m.impressions?m.clicks/m.impressions*100:0;
+    const status = _cpl>0&&_cpl<=metaCPL?'ok':_cpl>metaCPL*1.5?'r':'a';
+    const disp = c.length>40?c.substring(0,40)+'…':c;
+    return `<tr>
+      <td title="${c}">${disp}</td>
+      <td class="num">${fmtR(m.spend)}</td>
+      <td class="num">${fmt(m.impressions)}</td>
+      <td class="num">${fmtPct(_ctr)}</td>
+      <td class="num">${fmt(m.leads)}</td>
+      <td class="num ${_cpl<=metaCPL?'gc':_cpl>metaCPL*1.5?'rc':'ac'}">${_cpl?fmtR(_cpl):'—'}</td>
+      <td><span class="pill ${status}">${status==='ok'?'✓ Ok':status==='r'?'⚠ Alto':'→ Manter'}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('trafego-content').innerHTML = `
+    <div class="kg k6 mb">
+      <div class="kpi dark"><div class="kl">Gasto Total</div><div class="kv sm">${fmtR(totalGasto)}</div><div class="ks">Meta Ads</div></div>
+      <div class="kpi" style="--kc:var(--rose)"><div class="kl">CPL</div><div class="kv sm">${fmtR(cpl)}</div><div class="ks ${cpl<=metaCPL?'':''}">meta ${fmtR(metaCPL)}</div><div class="kdelta ${cpl<=metaCPL?'ok':'warn'}">${cpl<=metaCPL?'✓ dentro':'⚠ acima'}</div></div>
+      <div class="kpi" style="--kc:var(--blue)"><div class="kl">CPM</div><div class="kv sm">${fmtR(cpm)}</div><div class="ks">custo/mil impressões</div></div>
+      <div class="kpi" style="--kc:var(--gold)"><div class="kl">CTR</div><div class="kv sm">${fmtPct(ctr)}</div><div class="ks">clique/impressão</div></div>
+      <div class="kpi" style="--kc:var(--pur)"><div class="kl">CPC</div><div class="kv sm">${fmtR(cpc)}</div><div class="ks">custo por clique</div></div>
+      <div class="kpi gn"><div class="kl">Leads gerados</div><div class="kv sm">${fmt(totalLeadsAds)}</div><div class="ks">via pixel Meta</div></div>
+    </div>
+    <div class="g2 mb">
+      <div class="card">
+        <div class="ct">📈 Gasto diário — últimos 7 dias</div>
+        ${miniBarChart(gastoDArr.map(x=>x[1]), gastoDArr.map(x=>x[0].slice(5)))}
+      </div>
+      <div class="card">
+        <div class="ct">📱 CPL por formato</div>
+        <div class="cs">Qual formato tem o menor custo por lead</div>
+        ${bars(
+          Object.entries(
+            ads.reduce((a,r)=>{
+              const m=medLabel(r.utm_medium||r.adset||'Feed');
+              if(!a[m])a[m]={s:0,l:0};
+              a[m].s+=parseFloat(r.spend)||0;
+              a[m].l+=parseFloat(r.leads)||0;
+              return a;
+            },{})
+          ).map(([k,v])=>[k,v.l?+(v.s/v.l).toFixed(2):0]).sort((a,b)=>a[1]-b[1]),
+          (l,v)=>v<=metaCPL?'var(--green)':v<=metaCPL*1.5?'var(--gold)':'var(--red)',
+          120, fmtR
+        )}
+      </div>
+    </div>
+    <div class="card mb scroll-x">
+      <div class="ct">📊 Por campanha — detalhado</div>
+      <div class="cs">Gasto, leads, CTR e CPL por campanha</div>
+      <table class="tbl">
+        <thead><tr><th>Campanha</th><th style="text-align:right">Gasto</th><th style="text-align:right">Impressões</th><th style="text-align:right">CTR</th><th style="text-align:right">Leads</th><th style="text-align:right">CPL</th><th>Status</th></tr></thead>
+        <tbody>${campRows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// CRIATIVOS
+// ══════════════════════════════════════════
+function renderCriativos(ads, leads) {
+  // por ad/criativo a partir de meta_ads
+  const adMap = {};
+  ads.forEach(r=>{
+    const ad = r.ad||r.ad_name||r.utm_content||'—';
+    if(!adMap[ad]) adMap[ad]={spend:0,leads:0,impressions:0,clicks:0,tipo:ad.toUpperCase().includes('VID')?'Vídeo':'Imagem'};
+    adMap[ad].spend+=parseFloat(r.spend)||0;
+    adMap[ad].leads+=parseFloat(r.leads)||0;
+    adMap[ad].impressions+=parseFloat(r.impressions)||0;
+    adMap[ad].clicks+=parseFloat(r.clicks)||0;
+  });
+
+  // também contar por utm_content dos leads
+  const leadsCount = count(leads,'utm_content');
+
+  const adRows = Object.entries(adMap).sort((a,b)=>b[1].leads-a[1].leads).map(([ad,m],i)=>{
+    const cpl = m.leads?m.spend/m.leads:0;
+    const ctr = m.impressions?m.clicks/m.impressions*100:0;
+    const cleaned = cleanName(ad);
+    const icon = m.tipo==='Vídeo'?'🎬':'🖼️';
+    const leadsFromLeadSheet = (leadsCount.find(([k])=>k===ad)||[null,0])[1];
+    return `<tr>
+      <td style="font-weight:600;">${i+1}.</td>
+      <td title="${ad}">${icon} ${cleaned}</td>
+      <td>${m.tipo}</td>
+      <td class="num">${fmt(m.leads)}</td>
+      <td class="num">${fmt(leadsFromLeadSheet)}</td>
+      <td class="num ${cpl&&cpl<=10?'gc':cpl>15?'rc':'ac'}">${cpl?fmtR(cpl):'—'}</td>
+      <td class="num">${fmtPct(ctr)}</td>
+      <td><span class="pill ${i===0?'g':cpl>15?'r':'a'}">${i===0?'🚀 Escalar':cpl>15?'⏸ Pausar':'→ Manter'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // tipo vídeo vs imagem
+  const tipoLeads = {Vídeo:0,Imagem:0,Outro:0};
+  leads.forEach(r=>{
+    const c=(r.utm_content||'').toUpperCase();
+    if(c.includes('VID'))tipoLeads.Vídeo++;
+    else if(c.includes('IMG'))tipoLeads.Imagem++;
+    else tipoLeads.Outro++;
+  });
+
+  document.getElementById('criativos-content').innerHTML = `
+    <div class="g2 mb">
+      <div class="card">
+        <div class="ct">🎬 Vídeo vs Imagem</div>
+        <div class="cs">Qual formato gera mais leads</div>
+        ${bars(Object.entries(tipoLeads).filter(([,v])=>v>0),(l)=>l==='Vídeo'?'var(--rose)':l==='Imagem'?'var(--blue)':'var(--gold)',90,v=>fmt(v)+' leads')}
+      </div>
+      <div class="card">
+        <div class="ct">🏆 Top criativos por leads</div>
+        <div class="cs">utm_content — leads captados</div>
+        ${bars(leadsCount.slice(0,6),(l)=>'var(--rD)',155,v=>fmt(v)+' leads')}
+      </div>
+    </div>
+    ${adRows ? `
+    <div class="card mb scroll-x">
+      <div class="ct">📋 Ranking completo — Meta Ads por criativo</div>
+      <div class="cs">Gasto, leads, CPL e CTR por anúncio individual</div>
+      <table class="tbl">
+        <thead><tr><th>#</th><th>Criativo</th><th>Tipo</th><th style="text-align:right">Leads Meta</th><th style="text-align:right">Leads AC</th><th style="text-align:right">CPL</th><th style="text-align:right">CTR</th><th>Ação</th></tr></thead>
+        <tbody>${adRows}</tbody>
+      </table>
+    </div>` : `<div class="al nf"><span class="al-i">→</span><div>Configure o Adveronix para ver o ranking completo por criativo com CPL e CTR.</div></div>`}
+  `;
+}
+
+// ══════════════════════════════════════════
+// VENDAS
+// ══════════════════════════════════════════
+function renderVendas(vendas, cfg) {
+  const total = sum(vendas,'value');
+  const n = vendas.length;
+  const ticket = n ? total/n : 0;
+  const metaReceita = parseFloat(cfg.meta_receita)||200000;
+  const sorted = [...vendas].sort((a,b)=>(b.date||'')>(a.date||'')?1:-1);
+
+  const prodMap = {};
+  vendas.forEach(r=>{ const p=r.product||'—'; if(!prodMap[p])prodMap[p]={n:0,v:0}; prodMap[p].n++; prodMap[p].v+=parseFloat(r.value)||0; });
+
+  const feedRows = sorted.slice(0,20).map(r=>{
+    const prod = r.product||'—';
+    const val = parseFloat(r.value)||0;
+    return `<div class="frow">
+      <div class="fdot" style="background:${val>=1299?'var(--green)':'var(--gold)'}"></div>
+      <div class="fi">
+        <div class="fn">${prod}</div>
+        <div class="fs">${(r.name||'').split(' ').slice(0,2).join(' ')} · ${r.payment||'—'} · ${r.utm_campaign||'—'}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;color:var(--green);">${fmtR(val)}</div>
+        <div class="ft">${r.date||'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('vendas-content').innerHTML = `
+    <div class="kg k4 mb">
+      <div class="kpi rose"><div class="kl">Receita Total</div><div class="kv">${fmtR(total)}</div><div class="ks">${fmtPct(total/metaReceita*100)} da meta</div></div>
+      <div class="kpi" style="--kc:var(--green)"><div class="kl">Vendas</div><div class="kv sm">${fmt(n)}</div><div class="ks">aprovadas</div></div>
+      <div class="kpi" style="--kc:var(--gold)"><div class="kl">Ticket Médio</div><div class="kv sm">${ticket?fmtR(ticket):'—'}</div><div class="ks">por venda</div></div>
+      <div class="kpi gn"><div class="kl">Meta</div><div class="kv sm">${fmtR(metaReceita - total)}</div><div class="ks">faltam para a meta</div></div>
+    </div>
+    <div class="g12 mb">
+      <div class="card">
+        <div class="ct">💳 Vendas ao vivo</div>
+        <div class="cs">Hubla → Make.com → Planilha → Dashboard</div>
+        <div class="feed">${feedRows||'<div style="padding:20px;text-align:center;font-size:.7rem;color:var(--i40);">Nenhuma venda registrada ainda</div>'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="card">
+          <div class="ct">📦 Por produto</div>
+          ${bars(Object.entries(prodMap).map(([k,v])=>[k,v.v]).sort((a,b)=>b[1]-a[1]),()=>'var(--green)',130,fmtR)}
+        </div>
+        <div class="card">
+          <div class="ct">💳 Por pagamento</div>
+          ${bars(count(vendas,'payment').slice(0,5),()=>'var(--blue)',90)}
+        </div>
+        <div class="card">
+          <div class="ct">📈 Meta de receita</div>
+          <div class="prog" style="margin-top:8px;">
+            <div class="prog-top"><span class="prog-label">${fmtR(total)} de ${fmtR(metaReceita)}</span><span class="prog-val" style="color:var(--green);">${fmtPct(total/metaReceita*100)}</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,total/metaReceita*100)}%;background:var(--green);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// FUNIL
+// ══════════════════════════════════════════
+function renderFunil(leads, ads, vendas) {
+  const impressoes = sum(ads,'impressions');
+  const cliques = sum(ads,'clicks');
+  const leadsN = leads.length;
+  const vendasN = vendas.length;
+  const ctr = impressoes ? cliques/impressoes*100 : 0;
+  const clicToLead = cliques ? leadsN/cliques*100 : 0;
+  const leadToVenda = leadsN ? vendasN/leadsN*100 : 0;
+
+  const steps = [
+    {label:'Impressões', val:impressoes, pct:100, color:'#1A1018', ref:'—'},
+    {label:'Cliques no link', val:cliques, pct:ctr, color:'#3D1020', ref:fmtPct(ctr)+' das impressões'},
+    {label:'Leads capturados', val:leadsN, pct:clicToLead, color:'var(--rD)', ref:fmtPct(clicToLead)+' dos cliques'},
+    {label:'Vendas', val:vendasN, pct:leadToVenda, color:'var(--green)', ref:fmtPct(leadToVenda)+' dos leads'},
+  ];
+
+  const funnelHTML = steps.map((s,i)=>{
+    const w = 100 - i*18;
+    return `<div class="fn-step" style="background:${s.color};width:${w}%;margin:0 auto;">
+      <span class="fn-label" style="color:#fff;">${s.label}</span>
+      <span class="fn-val" style="color:rgba(255,255,255,.85);">${s.val?fmt(s.val):'—'} <span class="fn-pct">${s.ref}</span></span>
+    </div>`;
+  }).join('');
+
+  // alertas de gargalo
+  const alertas = [];
+  if (ctr > 0 && ctr < 1.5) alertas.push({t:'dn',m:'CTR abaixo de 1,5% — criativo fraco ou público errado. Testar novos anúncios.'});
+  if (clicToLead > 0 && clicToLead < 8) alertas.push({t:'dn',m:'Menos de 8% dos cliques viram leads — página de captura precisa de otimização.'});
+  if (leadToVenda > 0 && leadToVenda < 2) alertas.push({t:'w',m:'Menos de 2% dos leads comprando — sequência de e-mail ou follow-up pode melhorar.'});
+  if (leadToVenda > 5) alertas.push({t:'ok',m:`${fmtPct(leadToVenda)} de conversão lead→venda — excelente! Escalar o tráfego agora.`});
+
+  document.getElementById('funil-content').innerHTML = `
+    <div class="g2 mb">
+      <div class="card">
+        <div class="ct">🔽 Funil visual</div>
+        <div class="cs">Do anúncio até a venda</div>
+        <div class="funnel" style="margin-top:8px;">${funnelHTML}</div>
+      </div>
+      <div class="card">
+        <div class="ct">📊 Taxas de conversão</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.7rem;">Impressão → Clique (CTR)</span><span style="font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;">${fmtPct(ctr)}</span></div>
+            <div class="score-track"><div class="score-fill" style="width:${Math.min(100,ctr/3*100)}%;background:${ctr>=2?'var(--green)':'var(--amber)'}"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.7rem;">Clique → Lead (conv. página)</span><span style="font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;">${fmtPct(clicToLead)}</span></div>
+            <div class="score-track"><div class="score-fill" style="width:${Math.min(100,clicToLead/15*100)}%;background:${clicToLead>=8?'var(--green)':'var(--amber)'}"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.7rem;">Lead → Venda (conv. lista)</span><span style="font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;">${fmtPct(leadToVenda)}</span></div>
+            <div class="score-track"><div class="score-fill" style="width:${Math.min(100,leadToVenda/8*100)}%;background:${leadToVenda>=3?'var(--green)':leadToVenda>0?'var(--amber)':'var(--i15)'}"></div></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;">
+          ${alertas.map(a=>`<div class="al ${a.t}"><span class="al-i">${a.t==='ok'?'✓':a.t==='w'?'⚠':'🚨'}</span><div>${a.m}</div></div>`).join('')}
+          ${!alertas.length?'<div class="al nf"><span class="al-i">→</span><div>Conecte as abas meta_ads e vendas para ver alertas automáticos de gargalo.</div></div>':''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// FINANCEIRO
+// ══════════════════════════════════════════
+function renderFinanceiro(leads, ads, vendas, cfg) {
+  const totalGasto = sum(ads,'spend');
+  const totalReceita = sum(vendas,'value');
+  const totalVendasN = vendas.length;
+  const metaReceita = parseFloat(cfg.meta_receita)||200000;
+  const orcTotal = parseFloat(cfg.orcamento_total)||15000;
+  const orcMeta = parseFloat(cfg.orcamento_meta_ads)||10000;
+  const lucro = totalReceita - totalGasto;
+  const roi = totalGasto ? (lucro/totalGasto*100) : 0;
+  const roas = totalGasto ? totalReceita/totalGasto : 0;
+  const cac = totalVendasN ? totalGasto/totalVendasN : 0;
+  const pctOrc = totalGasto/orcTotal*100;
+
+  // projeção: ritmo atual × dias restantes
+  const abertura = new Date(cfg.data_abertura_carrinho||'2026-04-10');
+  const fechamento = new Date(cfg.data_fechamento||'2026-04-14');
+  const hoje = new Date();
+  const diasDecorridos = Math.max(1,Math.ceil((hoje-new Date('2026-03-01'))/86400000));
+  const diasTotais = Math.ceil((fechamento-new Date('2026-03-01'))/86400000);
+  const ritmo = totalReceita/diasDecorridos;
+  const projecao = ritmo * diasTotais;
+  const pctProjecao = projecao/metaReceita*100;
+
+  document.getElementById('financeiro-content').innerHTML = `
+    <div class="kg k4 mb">
+      <div class="kpi dark"><div class="kl">Receita Total</div><div class="kv sm">${fmtR(totalReceita)}</div><div class="ks">${fmt(totalVendasN)} vendas</div></div>
+      <div class="kpi" style="--kc:var(--rose)"><div class="kl">Gasto Meta Ads</div><div class="kv sm">${fmtR(totalGasto)}</div><div class="ks">${fmtPct(pctOrc)} do orçamento</div></div>
+      <div class="kpi gn"><div class="kl">Lucro Estimado</div><div class="kv sm">${fmtR(lucro)}</div><div class="ks">receita − gasto</div></div>
+      <div class="kpi" style="--kc:var(--gold)"><div class="kl">ROI</div><div class="kv sm">${roi>0?'+'+roi.toFixed(0)+'%':'—'}</div><div class="ks">retorno sobre gasto</div></div>
+    </div>
+    <div class="kg k3 mb">
+      <div class="kpi" style="--kc:var(--blue)"><div class="kl">ROAS</div><div class="kv sm">${roas>0?roas.toFixed(1)+'×':'—'}</div><div class="ks">meta ${cfg.meta_roas||3}× · ${roas>=(cfg.meta_roas||3)?'✓ atingido':'⚠ abaixo'}</div></div>
+      <div class="kpi" style="--kc:var(--pur)"><div class="kl">CAC Real</div><div class="kv sm">${cac?fmtR(cac):'—'}</div><div class="ks">custo real por venda</div></div>
+      <div class="kpi" style="--kc:var(--green)"><div class="kl">Projeção final</div><div class="kv sm">${fmtR(projecao)}</div><div class="ks">${fmtPct(pctProjecao)} da meta · no ritmo atual</div></div>
+    </div>
+    <div class="g2 mb">
+      <div class="card">
+        <div class="ct">💰 Orçamento do lançamento</div>
+        <div class="prog" style="margin-top:10px;">
+          <div class="prog-top"><span class="prog-label">Meta Ads (${fmtR(totalGasto)} de ${fmtR(orcMeta)})</span><span class="prog-val" style="color:var(--rose);">${fmtPct(totalGasto/orcMeta*100)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,totalGasto/orcMeta*100)}%;background:var(--rose);"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-top"><span class="prog-label">Total gasto (${fmtR(totalGasto)} de ${fmtR(orcTotal)})</span><span class="prog-val" style="color:var(--amber);">${fmtPct(pctOrc)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,pctOrc)}%;background:var(--amber);"></div></div>
+        </div>
+        <div class="prog">
+          <div class="prog-top"><span class="prog-label">Receita (${fmtR(totalReceita)} de ${fmtR(metaReceita)})</span><span class="prog-val" style="color:var(--green);">${fmtPct(totalReceita/metaReceita*100)}</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,totalReceita/metaReceita*100)}%;background:var(--green);"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">📈 Projeção de receita final</div>
+        <div class="cs">Baseada no ritmo atual do lançamento</div>
+        <div style="text-align:center;padding:14px 0;">
+          <div style="font-size:.6rem;color:var(--i40);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Projeção Final</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:${pctProjecao>=100?'var(--green)':pctProjecao>=80?'var(--amber)':'var(--red)'};">${fmtR(projecao)}</div>
+          <div style="font-size:.7rem;color:var(--i40);margin-top:4px;">${fmtPct(pctProjecao)} da meta de ${fmtR(metaReceita)}</div>
+        </div>
+        ${pctProjecao>=100?`<div class="al ok"><span class="al-i">🚀</span><div><strong>No ritmo certo!</strong>Projeção acima da meta. Manter ou escalar o tráfego.</div></div>`
+        :pctProjecao>=80?`<div class="al w"><span class="al-i">⚠</span><div><strong>Perto da meta</strong>Precisa de um push. Considere aumentar orçamento ou adicionar uma live.</div></div>`
+        :`<div class="al dn"><span class="al-i">🚨</span><div><strong>Abaixo da projeção</strong>Ritmo atual não atinge a meta. Ação urgente: aumentar orçamento ou otimizar funil.</div></div>`}
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// CONNECT
+// ══════════════════════════════════════════
+async function conectar() {
+  const url = document.getElementById('apiUrl').value.trim();
+  if (!url) { document.getElementById('connectMsg').textContent='⚠ Cole a URL primeiro.'; return; }
+  document.getElementById('connectMsg').textContent='🔄 Testando conexão...';
+  try {
+    const r = await fetch(url);
+    const raw = await r.json();
+    const rows = Array.isArray(raw) ? raw : (raw.leads||raw);
+    if (!Array.isArray(rows)) throw new Error('formato inválido');
+    localStorage.setItem('rdApiUrl', url);
+    API_URL = url;
+    document.getElementById('connectMsg').innerHTML=`<span style="color:var(--green);">✓ Conectado! ${fmt(rows.length)} registros encontrados. Carregando...</span>`;
+    await fetchData();
+    // navegar para visão geral
+    document.querySelectorAll('.nt').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.sec').forEach(x=>x.classList.remove('on'));
+    document.querySelector('[data-s="visao"]').classList.add('on');
+    document.getElementById('sec-visao').classList.add('on');
+  } catch(e) {
+    document.getElementById('connectMsg').innerHTML=`<span style="color:var(--red);">✗ Erro. Verifique se a URL está correta e o Apps Script está implantado com acesso "Qualquer pessoa".</span>`;
+  }
+}
+
+function usarDemo() {
+  API_URL = '';
+  localStorage.removeItem('rdApiUrl');
+  DATA = normalizeDemo(DEMO);
+  isDemoMode = true;
+  renderAll();
+  updateChip('demo');
+  document.getElementById('connectMsg').textContent='Usando dados de demonstração.';
+  document.querySelectorAll('.nt').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.sec').forEach(x=>x.classList.remove('on'));
+  document.querySelector('[data-s="visao"]').classList.add('on');
+  document.getElementById('sec-visao').classList.add('on');
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if (API_URL) document.getElementById('apiUrl').value = API_URL;
+fetchData();
+setInterval(fetchData, REFRESH_MS);
+</script>
+</body>
+</html>

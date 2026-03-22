@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Lançamento</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14;--bg2:#13161d;--bg3:#1a1e28;--bg4:#222738;
+  --border:#2a2f3e;--border2:#353b50;
+  --text:#e8eaf0;--text2:#9097b0;--text3:#5c6380;
+  --accent:#4f6ef7;--accent2:#3a56e0;--ag:rgba(79,110,247,0.15);
+  --green:#22c97a;--gbg:rgba(34,201,122,0.1);
+  --red:#f05454;--rbg:rgba(240,84,84,0.1);
+  --yellow:#f0b429;--ybg:rgba(240,180,41,0.1);
+  --purple:#a78bfa;--pbg:rgba(167,139,250,0.1);
+  --orange:#fb923c;--obg:rgba(251,146,60,0.1);
+  --cyan:#38bdf8;--cbg:rgba(56,189,248,0.1);
+  --sw:235px;--hh:64px;--r:12px;
+}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+#sidebar{position:fixed;top:0;left:0;width:var(--sw);height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s;overflow-y:auto}
+.logo-wrap{padding:20px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo-badge{display:inline-flex;align-items:center;gap:8px;background:var(--ag);border:1px solid rgba(79,110,247,.3);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
+.logo-badge svg{width:14px;height:14px}
+.lname{margin-top:10px;font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.ns{padding:12px 12px 4px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border:1px solid transparent}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.active{background:var(--ag);border-color:rgba(79,110,247,.3);color:var(--accent)}
+.ni svg{width:16px;height:16px;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
+.sfooter{margin-top:auto;padding:16px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);flex-shrink:0}
+.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#hdr{position:fixed;top:0;left:var(--sw);right:0;height:var(--hh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90}
+.hl{display:flex;align-items:center;gap:12px}
+.hl h1{font-size:16px;font-weight:600}
+.sub{font-size:12px;color:var(--text3)}
+.hr{display:flex;align-items:center;gap:10px}
+.upd{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btnp{background:var(--accent);color:#fff}.btnp:hover{background:var(--accent2)}.btnp.loading{opacity:.7;pointer-events:none}
+.btng{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}.btng:hover{color:var(--text);border-color:var(--border2)}
+.btn svg{width:14px;height:14px}
+#ham{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+#ham svg{width:20px;height:20px}
+#main{margin-left:var(--sw);margin-top:var(--hh);padding:24px}
+.sec{display:none}.sec.active{display:block}
+.stitle{font-size:18px;font-weight:700;margin-bottom:4px}
+.ssub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.g{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g21{grid-template-columns:2fr 1fr}
+.g12{grid-template-columns:1fr 2fr}
+.mb{margin-bottom:16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ct{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.ci{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci svg{width:16px;height:16px}
+.ci.b{background:var(--ag);color:var(--accent)}.ci.g{background:var(--gbg);color:var(--green)}
+.ci.r{background:var(--rbg);color:var(--red)}.ci.y{background:var(--ybg);color:var(--yellow)}
+.ci.p{background:var(--pbg);color:var(--purple)}.ci.o{background:var(--obg);color:var(--orange)}
+.ci.c{background:var(--cbg);color:var(--cyan)}
+.cv{font-size:26px;font-weight:700;line-height:1.1;font-family:'DM Mono',monospace}
+.cv.sm{font-size:20px}
+.cl{font-size:11px;color:var(--text3);margin-top:6px}
+.cdelta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;margin-top:4px;padding:2px 7px;border-radius:20px}
+.cdelta.up{background:var(--gbg);color:var(--green)}.cdelta.dn{background:var(--rbg);color:var(--red)}
+.split-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.split-item{background:var(--bg3);border-radius:8px;padding:14px;text-align:center;border:1px solid var(--border)}
+.split-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.split-val{font-size:24px;font-weight:700;font-family:'DM Mono',monospace}
+.split-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:12px}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.funnel-wrap{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.funnel-step{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);position:relative}
+.funnel-step::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.funnel-step.s1::before{background:var(--accent)}
+.funnel-step.s2::before{background:var(--yellow)}
+.funnel-step.s3::before{background:var(--orange)}
+.funnel-step.s4::before{background:var(--green)}
+.funnel-step.s5::before{background:var(--purple)}
+.fs-num{font-size:20px;font-weight:700;font-family:'DM Mono',monospace;min-width:60px;color:var(--text)}
+.fs-label{flex:1}
+.fs-name{font-size:13px;font-weight:600;color:var(--text)}
+.fs-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.fs-pct{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.fs-bar{height:4px;background:var(--bg4);border-radius:2px;margin-top:6px;overflow:hidden}
+.fs-bar-fill{height:100%;border-radius:2px;transition:width .8s}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pi{text-align:center;padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
+.pp{font-size:11px;color:var(--text3);margin-bottom:4px}
+.pv{font-size:15px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace}
+.pl{font-size:10px;color:var(--text3);margin-top:2px}
+.cc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.cc:hover{border-color:var(--border2)}
+.cch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cct{font-size:14px;font-weight:600}
+.ccs{font-size:11px;color:var(--text3);margin-top:2px}
+.chart-box{position:relative;width:100%;height:220px}
+.chart-box.tall{height:280px}
+.chart-box.xtall{height:360px}
+.rank-list{display:flex;flex-direction:column;gap:7px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
+.rpos{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.rpos.gold{background:rgba(240,180,41,.2);color:var(--yellow)}
+.rpos.silver{background:rgba(148,163,184,.15);color:#94a3b8}
+.rpos.bronze{background:rgba(251,146,60,.15);color:var(--orange)}
+.rpos.rest{background:var(--bg4);color:var(--text3)}
+.rname{flex:1;font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rval{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);flex-shrink:0}
+.rbar{width:70px;flex-shrink:0}
+.rbar-track{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.rbar-fill{height:100%;border-radius:2px;transition:width .8s}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 12px;background:var(--bg3);color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:10px 12px;color:var(--text2)}
+.tb{font-weight:600;color:var(--text)}
+.tm{font-family:'DM Mono',monospace;font-size:12px}
+.tg{color:var(--green)}.tr{color:var(--red)}.ty{color:var(--yellow)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:var(--gbg);color:var(--green)}.bb{background:var(--ag);color:var(--accent)}
+.by{background:var(--ybg);color:var(--yellow)}.br{background:var(--rbg);color:var(--red)}
+.bp{background:var(--pbg);color:var(--purple)}.bgr{background:var(--bg4);color:var(--text3)}
+.bo{background:var(--obg);color:var(--orange)}.bc{background:var(--cbg);color:var(--cyan)}
+.filt{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.fi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--accent)}.fi::placeholder{color:var(--text3)}
+select.fi{cursor:pointer;min-width:130px}
+.pag{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.pinfo{font-size:12px;color:var(--text3)}
+.pbtns{display:flex;gap:4px}
+.pb{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s}
+.pb:hover{border-color:var(--accent);color:var(--accent)}.pb.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:6px;display:block}
+@keyframes sh{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skv{height:32px;width:60%;margin:8px 0}.skt{height:12px;width:70%;margin-top:4px}
+.ut{display:inline-block;padding:2px 7px;background:var(--bg4);border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xhero{display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;background:var(--bg3);border-radius:10px}
+.xpct{font-size:48px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace}
+#debugBox{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);display:none;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--text);box-shadow:0 4px 24px rgba(0,0,0,.4);display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999}
+#toast.show{transform:translateY(0);opacity:1}
+#toast svg{width:16px;height:16px;flex-shrink:0}
+#toast.success svg{color:var(--green)}#toast.error svg{color:var(--red)}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spin{animation:spin .8s linear infinite}
+.sec-tag{display:inline-flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--text3);margin-bottom:16px}
+
+/* WORD CLOUD */
+.wcloud{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;padding:16px;min-height:140px}
+.wcloud .ww{display:inline-block;padding:4px 10px;border-radius:6px;font-weight:600;cursor:default;transition:transform .15s,box-shadow .15s}
+.wcloud .ww:hover{transform:scale(1.1);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+
+/* SURVEY BARS */
+.survey-bar-wrap{display:flex;flex-direction:column;gap:8px}
+.survey-bar-item{display:flex;align-items:center;gap:10px}
+.survey-bar-label{font-size:12px;color:var(--text);min-width:200px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.survey-bar-track{flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;position:relative}
+.survey-bar-fill{height:100%;border-radius:6px;transition:width .8s ease;display:flex;align-items:center;padding-left:8px}
+.survey-bar-val{font-size:11px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.survey-bar-pct{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;min-width:50px;text-align:right;flex-shrink:0}
+
+/* INSIGHT BOX */
+.insight-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px}
+.insight-icon{font-size:16px;margin-right:6px}
+.insight-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.insight-text{font-size:12px;color:var(--text2);line-height:1.6}
+.insight-text strong{color:var(--text)}
+
+@media(max-width:1300px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1000px){.g21,.g12{grid-template-columns:1fr}}
+@media(max-width:768px){
+  :root{--sw:0px}
+  #sidebar{transform:translateX(-235px);width:235px}
+  #sidebar.open{transform:translateX(0)}
+  #hdr{left:0}#main{margin-left:0;padding:16px}
+  #ham{display:flex}#overlay.show{display:block}
+  .g4,.g3,.g2,.g21,.g12{grid-template-columns:1fr}
+  .upd{display:none}.filt{flex-direction:column}
+  .survey-bar-label{min-width:120px;max-width:140px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="logo-wrap">
+    <div class="logo-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Launch HQ
+    </div>
+    <div class="lname" id="lname">–</div>
+  </div>
+
+  <div class="ns">Visão Geral</div>
+  <div class="ni active" onclick="showSec('overview',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard <span class="nbadge" id="nb">–</span>
+  </div>
+
+  <div class="ns">Funil</div>
+  <div class="ni" onclick="showSec('funnel',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    Funil de Conversão
+  </div>
+
+  <div class="ns">Leads</div>
+  <div class="ni" onclick="showSec('leads',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Captação de Leads
+  </div>
+  <div class="ni" onclick="showSec('creatives',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Conjuntos & Criativos
+  </div>
+
+  <div class="ns">Captação</div>
+  <div class="ni" onclick="showSec('utms',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    UTMs & Links
+  </div>
+  <div class="ni" onclick="showSec('metas',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    Metas & Projeção
+  </div>
+
+  <div class="ns">Tráfego</div>
+  <div class="ni" onclick="showSec('traffic',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Análise de Tráfego
+  </div>
+
+  <div class="ns">Pesquisa</div>
+  <div class="ni" onclick="showSec('pesquisa',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Pesquisa de Leads <span class="nbadge" id="nbPesq" style="background:var(--purple)">–</span>
+  </div>
+
+  <div class="ns">Base</div>
+  <div class="ni" onclick="showSec('cross',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Cruzamento
+  </div>
+  <div class="ni" onclick="showSec('table',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Tabela Completa
+  </div>
+
+  <div class="sfooter"><span class="sdot"></span>Google Sheets conectado</div>
+</aside>
+
+<div id="overlay" onclick="closeSB()"></div>
+
+<header id="hdr">
+  <div class="hl">
+    <button id="ham" onclick="toggleSB()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div><h1 id="htitle">Dashboard</h1><div class="sub" id="hsub">Carregando...</div></div>
+  </div>
+  <div class="hr">
+    <span class="upd" id="upd">–</span>
+    <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;background:var(--bg3);padding:4px 8px;border-radius:6px;border:1px solid var(--border)" id="autoLabel">↻ 5:00</span>
+    <button class="btn btng" onclick="exportCSV()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>CSV
+    </button>
+    <button class="btn btng" onclick="toggleDebug()" style="font-size:11px">🔍 Debug</button>
+    <button class="btn btnp" id="rbtn" onclick="loadData()">
+      <svg id="rico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Atualizar
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ══════════════════════════════════════════
+  OVERVIEW
+══════════════════════════════════════════ -->
+<section id="sec-overview" class="sec active">
+  <div id="debugBox"></div>
+  <div class="stitle">Visão Geral do Lançamento</div>
+  <div class="ssub" id="osub">–</div>
+  <div class="g g4 mb">
+    <div class="card"><div class="ch"><span class="ct">Total de Leads</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv" id="vLeads"><span class="sk skv"></span></div><div class="cl" id="lLeads"><span class="sk skt"></span></div></div>
+    <div class="card"><div class="ch"><span class="ct">Leads Pagos</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="vLeadsPago" style="color:var(--accent)"><span class="sk skv"></span></div><div class="cl" id="lLeadsPago"><span class="sk skt"></span></div></div>
+    <div class="card"><div class="ch"><span class="ct">Leads Orgânicos</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="cv sm" id="vLeadsOrg" style="color:var(--green)"><span class="sk skv"></span></div><div class="cl" id="lLeadsOrg"><span class="sk skt"></span></div></div>
+    <div class="card"><div class="ch"><span class="ct">CPL Pago Real</span><div class="ci r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="cv sm" id="vCPLpago"><span class="sk skv"></span></div><div class="cl" id="lCPLpago"><span class="sk skt"></span></div></div>
+  </div>
+  <div class="g g4 mb">
+    <div class="card"><div class="ch"><span class="ct">Total Investido</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="vInvest">–</div><div class="cl">em mídia paga</div></div>
+    <div class="card"><div class="ch"><span class="ct">Hoje</span><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="cv sm" id="vHoje">–</div><div class="cl">leads captados</div></div>
+    <div class="card"><div class="ch"><span class="ct">Últimas 24h</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="cv sm" id="v24">–</div><div class="cl">leads captados</div></div>
+    <div class="card"><div class="ch"><span class="ct">Últimos 14 dias</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div><div class="cv sm" id="v14">–</div><div class="cl">leads captados</div></div>
+  </div>
+  <div class="g g2 mb">
+    <div class="card"><div class="ch"><span class="ct">Distribuição: Pago vs Orgânico</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div></div>
+      <div class="split-wrap"><div class="split-item"><div class="split-lbl" style="color:var(--accent)">📢 Pago</div><div class="split-val" id="sPago" style="color:var(--accent)">–</div><div class="split-sub" id="sPagoPct">–%</div></div><div class="split-item"><div class="split-lbl" style="color:var(--green)">🌿 Orgânico</div><div class="split-val" id="sOrg" style="color:var(--green)">–</div><div class="split-sub" id="sOrgPct">–%</div></div></div>
+      <div class="bar-track"><div class="bar-fill" id="sPagoBar" style="background:var(--accent);width:50%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px"><span>◀ Pago</span><span>Orgânico ▶</span></div>
+    </div>
+    <div class="card"><div class="ch"><div><div class="ct">Projeção de Receita</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Produto a R$997 — baseado no total de leads</div></div></div>
+      <div class="pg"><div class="pi"><div class="pp">5%</div><div class="pv" id="p5">–</div><div class="pl" id="pl5">–</div></div><div class="pi"><div class="pp">10%</div><div class="pv" id="p10">–</div><div class="pl" id="pl10">–</div></div><div class="pi"><div class="pp">15%</div><div class="pv" id="p15">–</div><div class="pl" id="pl15">–</div></div></div>
+    </div>
+  </div>
+  <div class="cc mb"><div class="cch"><div><div class="cct">Leads por Dia</div><div class="ccs">Barras = volume diário | Linha verde = acumulado</div></div><span id="bestDay" style="font-size:11px;color:var(--text3)"></span></div><div class="chart-box tall"><canvas id="cDay"></canvas></div></div>
+  <div class="g g3 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">🏆 Top Campanhas</div><div class="ccs">utm_campaign</div></div></div><div class="rank-list" id="rankCamp"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">📦 Top Conjuntos</div><div class="ccs">Ad Set Name (tráfego)</div></div></div><div class="rank-list" id="rankAdset"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">🎨 Top Criativos</div><div class="ccs">utm_content</div></div></div><div class="rank-list" id="rankContent"></div></div>
+  </div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">Por Origem (utm_source)</div></div></div><div class="chart-box"><canvas id="cSrc"></canvas></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">Por Medium (utm_medium)</div></div></div><div class="chart-box"><canvas id="cMedOv"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+  FUNIL DE CONVERSÃO
+══════════════════════════════════════════ -->
+<section id="sec-funnel" class="sec">
+  <div class="stitle">Funil de Conversão</div><div class="ssub">Análise de cada etapa do processo — do clique ao lead</div>
+  <div class="g g4 mb">
+    <div class="card"><div class="ch"><span class="ct">Impressões</span><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div><div class="cv sm" id="fImp">–</div><div class="cl">total de impressões</div></div>
+    <div class="card"><div class="ch"><span class="ct">Cliques no Link</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div><div class="cv sm" id="fClicks">–</div><div class="cl" id="fCTRlabel">CTR: –%</div></div>
+    <div class="card"><div class="ch"><span class="ct">View Página</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div></div><div class="cv sm" id="fLP">–</div><div class="cl" id="fLPrate">Taxa view: –%</div></div>
+    <div class="card"><div class="ch"><span class="ct">Leads Pagos</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv sm" id="fLeads">–</div><div class="cl" id="fConvRate">Conv. LP→Lead: –%</div></div>
+  </div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">Funil Completo</div><div class="ccs">Todas as etapas com taxas de conversão</div></div></div><div class="funnel-wrap" id="funnelSteps"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">Gráfico do Funil</div><div class="ccs">Proporção entre etapas</div></div></div><div class="chart-box tall"><canvas id="cFunnel"></canvas></div></div>
+  </div>
+  <div class="cc mb"><div class="cch"><div><div class="cct">Funil por Campanha</div><div class="ccs">Impressões → Cliques → LP Views → Leads</div></div></div><div class="tw"><table><thead><tr><th>Campanha</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>LP Views</th><th>Click→LP</th><th>Leads</th><th>LP→Lead</th><th>Gasto</th><th>CPL</th></tr></thead><tbody id="tbFunnel"></tbody></table></div></div>
+  <div class="cc"><div class="cch"><div><div class="cct">Funil por Conjunto de Anúncio</div><div class="ccs">Ad Set Name</div></div></div><div class="tw"><table><thead><tr><th>Conjunto (Ad Set)</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>LP Views</th><th>Leads</th><th>Conv. LP→Lead</th><th>Gasto</th><th>CPL</th></tr></thead><tbody id="tbFunnelAdset"></tbody></table></div></div>
+</section>
+
+<!-- LEADS -->
+<section id="sec-leads" class="sec">
+  <div class="stitle">Captação de Leads</div><div class="ssub">Análise detalhada por UTMs e evolução temporal</div>
+  <div class="g g4 mb">
+    <div class="card"><div class="ch"><span class="ct">Total</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv" id="lTotal">–</div><div class="cl">leads captados</div></div>
+    <div class="card"><div class="ch"><span class="ct">Pagos (utm=pago)</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="lPago" style="color:var(--accent)">–</div><div class="cl" id="lPagoPct">–</div></div>
+    <div class="card"><div class="ch"><span class="ct">Orgânicos</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="cv sm" id="lOrg" style="color:var(--green)">–</div><div class="cl" id="lOrgPct">–</div></div>
+    <div class="card"><div class="ch"><span class="ct">Média / Dia</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div></div><div class="cv sm" id="lMedia">–</div><div class="cl">leads por dia</div></div>
+  </div>
+  <div class="cc mb"><div class="cch"><div><div class="cct">Evolução Diária</div><div class="ccs">Barras = volume diário | Linha = acumulado total</div></div></div><div class="chart-box tall"><canvas id="cDay2"></canvas></div></div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">Por utm_source</div></div></div><div class="chart-box"><canvas id="cSrc2"></canvas></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">Por utm_medium</div></div></div><div class="chart-box"><canvas id="cMed2"></canvas></div></div>
+  </div>
+  <div class="cc"><div class="cch"><div><div class="cct">Por utm_campaign</div></div></div><div class="chart-box tall"><canvas id="cCamp2"></canvas></div></div>
+</section>
+
+<!-- CONJUNTOS & CRIATIVOS -->
+<section id="sec-creatives" class="sec">
+  <div class="stitle">Conjuntos & Criativos</div><div class="ssub">Performance por Ad Set Name e utm_content</div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">📦 Top Conjuntos de Anúncios</div><div class="ccs">Ad Set Name</div></div></div><div class="rank-list" id="rankAdset2" style="max-height:420px;overflow-y:auto"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">🎨 Top Criativos</div><div class="ccs">utm_content</div></div></div><div class="rank-list" id="rankContent2" style="max-height:420px;overflow-y:auto"></div></div>
+  </div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">Leads por Conjunto (Ad Set)</div></div></div><div class="chart-box xtall"><canvas id="cAdset"></canvas></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">Leads por Criativo (utm_content)</div></div></div><div class="chart-box xtall"><canvas id="cContent"></canvas></div></div>
+  </div>
+  <div class="cc mb"><div class="cch"><div><div class="cct">Tabela de Conjuntos — com métricas de tráfego</div></div></div><div class="tw"><table><thead><tr><th>#</th><th>Conjunto (Ad Set)</th><th>Gasto</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>Leads</th><th>CPL</th></tr></thead><tbody id="tbAdset"></tbody></table></div></div>
+  <div class="cc"><div class="cch"><div><div class="cct">Tabela de Criativos (utm_content)</div></div></div><div class="tw"><table><thead><tr><th>#</th><th>Criativo (utm_content)</th><th>Leads</th><th>% Total</th><th>Principal Fonte</th><th>Principal Medium</th></tr></thead><tbody id="tbContent"></tbody></table></div></div>
+</section>
+
+<!-- TRÁFEGO -->
+<section id="sec-traffic" class="sec">
+  <div class="stitle">📊 Análise de Tráfego Pago — Painel Executivo</div>
+  <div class="ssub" id="trafSub">–</div>
+
+  <!-- HERO KPIs — O que importa pro CEO -->
+  <div class="g g4 mb">
+    <div class="card" style="border-top:3px solid var(--yellow)">
+      <div class="ch"><span class="ct">Total Investido</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+      <div class="cv sm" id="tG">–</div><div class="cl">acumulado no período</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <div class="ch"><span class="ct">CPL Real</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div></div>
+      <div class="cv" id="tCPL2" style="color:var(--accent)">–</div><div class="cl" id="tCPLlbl">–</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="ch"><span class="ct">Leads Pagos</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+      <div class="cv sm" id="tL" style="color:var(--green)">–</div><div class="cl">gerados pelo tráfego pago</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--cyan)">
+      <div class="ch"><span class="ct">Eficiência</span><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div></div>
+      <div class="cv sm" id="tEficiencia" style="color:var(--cyan)">–</div><div class="cl" id="tEfSub">tendência do CPL</div>
+    </div>
+  </div>
+
+  <!-- MÉTRICAS SECUNDÁRIAS -->
+  <div class="g g4 mb">
+    <div class="card"><div class="ch"><span class="ct">Impressões</span></div><div class="cv sm" id="tImp">–</div><div class="cl">alcance total</div></div>
+    <div class="card"><div class="ch"><span class="ct">Cliques</span></div><div class="cv sm" id="tClk">–</div><div class="cl" id="tCTRlbl">CTR: –%</div></div>
+    <div class="card"><div class="ch"><span class="ct">LP Views</span></div><div class="cv sm" id="tLP">–</div><div class="cl" id="tLPrate">–</div></div>
+    <div class="card"><div class="ch"><span class="ct">Gasto Médio/Dia</span></div><div class="cv sm" id="tGastoDia">–</div><div class="cl">investimento diário</div></div>
+  </div>
+
+  <!-- ALERTAS E RECOMENDAÇÕES -->
+  <div class="cc mb" id="trafAlerts">
+    <div class="cch"><div><div class="cct">🧠 Diagnóstico & Recomendações</div><div class="ccs">Análise automática baseada nos dados — ações prioritárias</div></div></div>
+    <div id="trafRecommendations"></div>
+  </div>
+
+  <!-- EVOLUÇÃO CPL + GASTO -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">📉 Evolução do CPL Diário</div><div class="ccs">Tendência do custo por lead — mais baixo = melhor</div></div></div>
+      <div class="chart-box tall"><canvas id="cCPLday"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">💸 Investimento Diário</div><div class="ccs">Quanto está sendo gasto por dia</div></div></div>
+      <div class="chart-box tall"><canvas id="cGastoDay"></canvas></div>
+    </div>
+  </div>
+
+  <!-- RANKING CRIATIVOS/CONJUNTOS — o que funciona melhor -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🏆 Melhores Conjuntos (Ad Sets)</div><div class="ccs">Ordenado por menor CPL — onde escalar investimento</div></div></div>
+      <div class="tw">
+        <table><thead><tr><th>#</th><th>Conjunto (Ad Set)</th><th>Leads</th><th>Gasto</th><th>CPL</th><th>CTR</th><th>Eficiência</th><th>Ação</th></tr></thead>
+        <tbody id="tbAdsetRank"></tbody></table>
+      </div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🏆 Melhores Campanhas</div><div class="ccs">Ordenado por menor CPL — onde concentrar budget</div></div></div>
+      <div class="tw">
+        <table><thead><tr><th>#</th><th>Campanha</th><th>Leads</th><th>Gasto</th><th>CPL</th><th>CTR</th><th>Eficiência</th><th>Ação</th></tr></thead>
+        <tbody id="tbCampRank"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CPL POR CONJUNTO (gráfico) + EFICIÊNCIA SCATTER -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">CPL por Conjunto (Ad Set)</div><div class="ccs">Verde = eficiente · Vermelho = caro</div></div></div>
+      <div class="chart-box tall"><canvas id="cCPLadset"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Gasto vs Leads por Conjunto</div><div class="ccs">Quem gasta mais traz mais resultado?</div></div></div>
+      <div class="chart-box tall"><canvas id="cGastoLeads"></canvas></div>
+    </div>
+  </div>
+
+  <!-- MÉTRICAS DE FUNIL DO TRÁFEGO -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">🔬 Funil de Eficiência por Conjunto</div><div class="ccs">Impressão → Clique → LP View → Lead — onde está o gargalo</div></div></div>
+    <div class="tw">
+      <table><thead><tr><th>Conjunto (Ad Set)</th><th>Impressões</th><th>Cliques</th><th>CTR</th><th>LP Views</th><th>Click→LP</th><th>Leads</th><th>LP→Lead</th><th>CPL</th><th>Gargalo</th></tr></thead>
+      <tbody id="tbFunnelEfic"></tbody></table>
+    </div>
+  </div>
+
+  <!-- CPL POR CAMPANHA -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">CPL por Campanha</div><div class="ccs">Comparativo de custo por lead entre campanhas</div></div></div>
+    <div class="chart-box"><canvas id="cCPL"></canvas></div>
+  </div>
+
+  <!-- TABELA COMPLETA -->
+  <div class="cc">
+    <div class="cch"><div><div class="cct">📋 Dados Completos de Tráfego</div><div class="ccs">Todas as linhas da aba tráfego</div></div></div>
+    <div class="tw" style="max-height:500px;overflow-y:auto">
+      <table><thead><tr><th>Data</th><th>Campanha</th><th>Conjunto</th><th>Gasto</th><th>Imp.</th><th>Cliques</th><th>LP Views</th><th>CTR</th><th>Leads</th><th>CPL</th><th>CPM</th><th>CPC</th></tr></thead>
+      <tbody id="tbTraf"></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- UTMs -->
+<section id="sec-utms" class="sec">
+  <div class="stitle">UTMs & Links do Lançamento</div>
+  <div class="ssub">URL base: <code style="background:var(--bg3);padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;color:var(--accent)">https://rosedecor.com.br/dia-do-consumidor-vitalicio/</code></div>
+  <div class="cc mb"><div class="cch"><div><div class="cct">⚙️ Gerador de Links UTM</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">utm_source *</div><input class="fi" id="uSrc" placeholder="pago / organico / api" style="width:100%" oninput="updateUTMLink()"></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">utm_medium *</div><input class="fi" id="uMed" placeholder="stories / feed / whatsapp" style="width:100%" oninput="updateUTMLink()"></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">utm_campaign *</div><input class="fi" id="uCamp" placeholder="nome-da-campanha" style="width:100%" oninput="updateUTMLink()"></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">utm_content</div><input class="fi" id="uContent" placeholder="video-depoimento-01" style="width:100%" oninput="updateUTMLink()"></div>
+      <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">utm_term</div><input class="fi" id="uTerm" placeholder="conjunto-retargeting" style="width:100%" oninput="updateUTMLink()"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn btnp" style="width:100%" onclick="copyUTMLink()">📋 Copiar Link</button></div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);word-break:break-all;min-height:40px" id="utmPreview">← Preencha os campos acima</div>
+  </div>
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">📢 Meta Ads (src: pago)</div></div></div><div style="display:flex;flex-direction:column;gap:8px" id="linksMetaAds"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">🌿 Orgânico (src: organico)</div></div></div><div style="display:flex;flex-direction:column;gap:8px" id="linksOrganico"></div></div>
+  </div>
+  <div class="g g3 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">💬 Grupos WhatsApp</div></div></div><div style="display:flex;flex-direction:column;gap:8px" id="linksWhatsapp"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">🤖 API Oficial</div></div></div><div style="display:flex;flex-direction:column;gap:8px" id="linksApi"></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">📋 Base & Outros</div></div></div><div style="display:flex;flex-direction:column;gap:8px" id="linksOutros"></div></div>
+  </div>
+  <div class="cc"><div class="cch"><div><div class="cct">📊 Performance por Categoria de Fonte</div></div></div><div class="tw"><table><thead><tr><th>Categoria</th><th>utm_source</th><th>Leads</th><th>% Total</th><th>Hoje</th><th>Últimas 24h</th></tr></thead><tbody id="tbUtmPerf"></tbody></table></div></div>
+</section>
+
+<!-- METAS -->
+<section id="sec-metas" class="sec">
+  <div class="stitle">🎯 Metas, Projeções & Simulador de Escala</div>
+  <div class="ssub">Meta editável · Cenários de escala · Simulador de investimento · ROI projetado</div>
+
+  <!-- META EDITÁVEL + KPIs -->
+  <div class="card mb" style="border-color:var(--accent);border-width:2px">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="flex-shrink:0">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">⚙️ Meta Principal de Leads</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" class="fi" id="metaInput" value="1500" min="100" max="50000" step="100" style="width:120px;font-size:18px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;color:var(--accent);border-color:var(--accent)" onchange="renderMetas()">
+          <span style="font-size:13px;color:var(--text3)">leads até</span>
+          <input type="date" class="fi" id="metaDateInput" value="2026-03-31" style="font-size:13px" onchange="renderMetas()">
+        </div>
+      </div>
+      <div style="flex:1;display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end">
+        <div style="text-align:center;padding:8px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);font-weight:600">CAPTADOS</div><div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace" id="mCaptados">–</div></div>
+        <div style="text-align:center;padding:8px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);font-weight:600">FALTAM</div><div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--red)" id="mFaltam">–</div></div>
+        <div style="text-align:center;padding:8px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);font-weight:600">DIAS REST.</div><div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--yellow)" id="mDias">–</div></div>
+        <div style="text-align:center;padding:8px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);font-weight:600">NECESSÁRIO/DIA</div><div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="mNecDia">–</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA DE PROGRESSO -->
+  <div class="card mb">
+    <div class="ch"><span class="ct">Progresso da Meta</span><span id="mProgPct" style="font-size:13px;font-weight:700;color:var(--accent)">0%</span></div>
+    <div style="height:20px;background:var(--bg4);border-radius:10px;overflow:hidden;margin-bottom:8px;position:relative">
+      <div id="mProgBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:10px;transition:width 1s ease;width:0%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3)"><span>0</span><span id="mMedioLabel">–</span><span id="mMetaLabel2">–</span></div>
+  </div>
+
+  <!-- CENÁRIOS DE ESCALA: 1.5k, 2k, 2.5k, 3k -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">📊 Cenários de Escala — Investimento Necessário</div><div class="ccs">Baseado no CPL atual · Quanto investir por dia para atingir cada cenário</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" id="mCenarios"></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)" id="mCenariosBase">–</div>
+  </div>
+
+  <!-- SIMULADOR INTERATIVO -->
+  <div class="card mb" style="border-color:var(--purple);border-width:2px">
+    <div class="ch"><span class="ct" style="color:var(--purple)">🧮 Simulador Interativo de Investimento</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">Investimento Diário (R$)</div>
+        <input type="range" id="simInvestDia" min="100" max="5000" step="50" value="1000" style="width:100%;accent-color:var(--purple)" oninput="updateSim()">
+        <div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-size:10px;color:var(--text3)">R$ 100</span><span style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--purple)" id="simInvestLabel">R$ 1.000</span><span style="font-size:10px;color:var(--text3)">R$ 5.000</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">CPL Estimado (R$)</div>
+        <input type="range" id="simCPL" min="1" max="30" step="0.5" value="7" style="width:100%;accent-color:var(--orange)" oninput="updateSim()">
+        <div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-size:10px;color:var(--text3)">R$ 1</span><span style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--orange)" id="simCPLlabel">R$ 7,00</span><span style="font-size:10px;color:var(--text3)">R$ 30</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600">Taxa de Conversão (%)</div>
+        <input type="range" id="simConv" min="1" max="25" step="0.5" value="10" style="width:100%;accent-color:var(--green)" oninput="updateSim()">
+        <div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-size:10px;color:var(--text3)">1%</span><span style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="simConvLabel">10%</span><span style="font-size:10px;color:var(--text3)">25%</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" id="simResults"></div>
+  </div>
+
+  <!-- ROI POR CENÁRIO -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">💰 ROI Projetado por Cenário</div><div class="ccs">Receita (produto R$997) − Investimento total = Lucro</div></div></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Cenário</th><th>Leads</th><th>Investimento Total</th><th>Vendas (5%)</th><th>Receita (5%)</th><th>Lucro (5%)</th><th>Vendas (10%)</th><th>Receita (10%)</th><th>Lucro (10%)</th><th>ROI (10%)</th></tr></thead>
+        <tbody id="tbROI"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Realizado vs Meta Diária</div><div class="ccs">Azul = real | Pontilhada = ritmo para meta</div></div></div>
+      <div class="chart-box tall"><canvas id="cMetas"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Gasto Acumulado vs Orçamento por Cenário</div><div class="ccs">Quanto já gastou vs quanto precisaria gastar</div></div></div>
+      <div class="chart-box tall"><canvas id="cGastoVsMeta"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PROJEÇÃO RECEITA: META vs ATUAL vs RITMO -->
+  <div class="g g3 mb">
+    <div class="card"><div class="ch"><span class="ct">Com Meta Principal</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><div class="pi"><div class="pp">5%</div><div class="pv" id="mp5">–</div><div class="pl" id="mpl5">–</div></div><div class="pi"><div class="pp">10%</div><div class="pv" id="mp10">–</div><div class="pl" id="mpl10">–</div></div><div class="pi"><div class="pp">15%</div><div class="pv" id="mp15">–</div><div class="pl" id="mpl15">–</div></div></div></div>
+    <div class="card"><div class="ch"><span class="ct">Realizado Atual</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><div class="pi"><div class="pp">5%</div><div class="pv" id="rp5">–</div><div class="pl" id="rpl5">–</div></div><div class="pi"><div class="pp">10%</div><div class="pv" id="rp10">–</div><div class="pl" id="rpl10">–</div></div><div class="pi"><div class="pp">15%</div><div class="pv" id="rp15">–</div><div class="pl" id="rpl15">–</div></div></div></div>
+    <div class="card"><div class="ch"><span class="ct">Projeção ao Ritmo Atual</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="18 14 12 20 6 14"/></svg></div></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><div class="pi"><div class="pp">5%</div><div class="pv" id="pp5">–</div><div class="pl" id="ppl5">–</div></div><div class="pi"><div class="pp">10%</div><div class="pv" id="pp10">–</div><div class="pl" id="ppl10">–</div></div><div class="pi"><div class="pp">15%</div><div class="pv" id="pp15">–</div><div class="pl" id="ppl15">–</div></div></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+  📋 PESQUISA DE LEADS
+══════════════════════════════════════════ -->
+<section id="sec-pesquisa" class="sec">
+  <div class="stitle">📋 Pesquisa de Leads — Relatório Completo</div>
+  <div class="ssub" id="pesqSub">Análise das respostas da pesquisa de perfil dos leads</div>
+
+  <!-- KPIs PESQUISA -->
+  <div class="g g4 mb">
+    <div class="card">
+      <div class="ch"><span class="ct">Respostas</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div></div>
+      <div class="cv" id="pqTotal">–</div>
+      <div class="cl" id="pqTotalSub">respostas coletadas</div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Já Trabalha c/ Decoração</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+      <div class="cv sm" id="pqJaTrab" style="color:var(--green)">–</div>
+      <div class="cl" id="pqJaTrabPct">–</div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Idade Predominante</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+      <div class="cv sm" id="pqIdade" style="color:var(--yellow)">–</div>
+      <div class="cl" id="pqIdadePct">–</div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Renda Predominante</span><div class="ci o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+      <div class="cv sm" id="pqRenda" style="color:var(--orange)">–</div>
+      <div class="cl" id="pqRendaPct">–</div>
+    </div>
+  </div>
+
+  <!-- GÊNERO + FAIXA ETÁRIA -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">👤 Gênero</div><div class="ccs">Distribuição por gênero</div></div></div>
+      <div class="chart-box"><canvas id="cPqGenero"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🎂 Faixa Etária</div><div class="ccs">Distribuição por idade</div></div></div>
+      <div class="chart-box tall"><canvas id="cPqIdade"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PROFISSÃO + RENDA -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">💼 Profissão</div><div class="ccs">Ocupação principal dos leads</div></div></div>
+      <div class="survey-bar-wrap" id="pqProfBars"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">💰 Renda Mensal</div><div class="ccs">Faixa de renda atual</div></div></div>
+      <div class="chart-box tall"><canvas id="cPqRenda"></canvas></div>
+    </div>
+  </div>
+
+  <!-- JÁ TRABALHA + PERFIL -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🎨 Já Trabalha com Decoração?</div><div class="ccs">Experiência prévia na área</div></div></div>
+      <div class="chart-box"><canvas id="cPqDecor"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🧩 Perfil — "Qual opção melhor te define"</div><div class="ccs">Autoidentificação do lead</div></div></div>
+      <div class="survey-bar-wrap" id="pqPerfilBars"></div>
+    </div>
+  </div>
+
+  <!-- FATURAMENTO EM DECORAÇÃO -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">📊 Faturamento com Decoração</div><div class="ccs">Para quem já fatura na área</div></div></div>
+      <div class="survey-bar-wrap" id="pqFatBars"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🎯 O Que Quer Conquistar</div><div class="ccs">Principal objetivo com a decoração</div></div></div>
+      <div class="chart-box tall"><canvas id="cPqConquista"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TEMPO ACOMPANHANDO -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">⏰ Tempo Acompanhando</div><div class="ccs">"Você me acompanha há quanto tempo?"</div></div></div>
+      <div class="chart-box"><canvas id="cPqTempo"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">📈 Respostas por Dia</div><div class="ccs">Volume diário de respostas na pesquisa</div></div></div>
+      <div class="chart-box"><canvas id="cPqDia"></canvas></div>
+    </div>
+  </div>
+
+  <!-- NUVEM DE PALAVRAS: DESAFIOS + MOTIVAÇÃO -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🔥 Nuvem de Palavras — Desafios</div><div class="ccs">Palavras mais citadas nos 3 maiores desafios</div></div></div>
+      <div class="wcloud" id="pqCloudDesafios"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">💡 Nuvem de Palavras — Motivação</div><div class="ccs">O que motivou a inscrição</div></div></div>
+      <div class="wcloud" id="pqCloudMotivacao"></div>
+    </div>
+  </div>
+
+  <!-- TOP DESAFIOS + MOTIVAÇÕES (ranking) -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🏆 Top Temas nos Desafios</div><div class="ccs">Palavras-chave mais frequentes (campo aberto)</div></div></div>
+      <div class="rank-list" id="pqRankDesafios"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🏆 Top Motivações</div><div class="ccs">O que trouxe os leads — palavras-chave</div></div></div>
+      <div class="rank-list" id="pqRankMotivacao"></div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS EXECUTIVOS -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">🧠 Insights Executivos — Resumo para CEO</div><div class="ccs">Análise automática dos dados da pesquisa</div></div></div>
+    <div id="pqInsights"></div>
+  </div>
+
+  <!-- TABELA COMPLETA DAS RESPOSTAS -->
+  <div class="cc">
+    <div class="cch"><div><div class="cct">📋 Todas as Respostas</div><div class="ccs">Tabela completa com filtros</div></div>
+      <button class="btn btng" onclick="exportPesquisaCSV()" style="font-size:11px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportar
+      </button>
+    </div>
+    <div class="filt">
+      <select class="fi" id="pqFiltIdade" onchange="renderPesquisaTable()"><option value="">Todas as idades</option></select>
+      <select class="fi" id="pqFiltProf" onchange="renderPesquisaTable()"><option value="">Todas as profissões</option></select>
+      <select class="fi" id="pqFiltDecor" onchange="renderPesquisaTable()"><option value="">Trabalha c/ decoração?</option><option value="Sim">Sim</option><option value="Não">Não</option></select>
+      <input class="fi" id="pqFiltQ" placeholder="Buscar nas respostas..." oninput="renderPesquisaTable()" style="min-width:180px">
+    </div>
+    <div class="tw" style="max-height:500px;overflow-y:auto">
+      <table><thead><tr>
+        <th>Data</th><th>Gênero</th><th>Idade</th><th>Decoração?</th><th>Perfil</th><th>Profissão</th><th>Renda</th><th>Conquistar</th><th>Tempo</th>
+      </tr></thead><tbody id="tbPesquisa"></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- CRUZAMENTO -->
+<section id="sec-cross" class="sec">
+  <div class="stitle">Cruzamento Lead × Cliente</div><div class="ssub">Leads que já são ex-alunas / clientes anteriores</div>
+  <div class="g g4 mb">
+    <div class="card"><div class="xhero" style="padding:16px"><div class="xpct" id="xPct" style="font-size:36px">–%</div><div style="font-size:12px;color:var(--text2);margin-top:4px">dos leads na base</div></div></div>
+    <div class="card"><div class="ch"><span class="ct">Só Aluna</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div><div class="cv sm" id="xAluna" style="color:var(--purple)">–</div><div class="cl">leads que são alunas</div></div>
+    <div class="card"><div class="ch"><span class="ct">Aluna + Cliente</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="cv sm" id="xAlunaCliente" style="color:var(--green)">–</div><div class="cl">aluna e cliente da loja</div></div>
+    <div class="card"><div class="ch"><span class="ct">Só Cliente</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="xCliente" style="color:var(--yellow)">–</div><div class="cl">clientes da loja</div></div>
+  </div>
+  <div class="card mb" id="crossResumo" style="padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
+  <div class="cc"><div class="cch"><div><div class="cct">Lista de Ex-Alunas nos Leads</div></div></div><div class="tw"><table><thead><tr><th>Nome</th><th>Email</th><th>Data Lead</th><th>Origem</th><th>Curso Anterior</th><th>Tipo</th></tr></thead><tbody id="tbCross"></tbody></table></div></div>
+</section>
+
+<!-- TABELA COMPLETA -->
+<section id="sec-table" class="sec">
+  <div class="stitle">Tabela Completa de Leads</div><div class="ssub">Filtros avançados e exportação</div>
+  <div class="filt">
+    <input class="fi" type="date" id="fFrom" onchange="applyF()">
+    <input class="fi" type="date" id="fTo" onchange="applyF()">
+    <select class="fi" id="fSrc" onchange="applyF()"><option value="">Todas as origens</option></select>
+    <select class="fi" id="fStt" onchange="applyF()"><option value="">Todos</option><option value="novo">Novo Lead</option><option value="ex">Ex-Aluna</option></select>
+    <input class="fi" id="fQ" placeholder="Buscar nome ou email..." oninput="applyF()" style="min-width:200px">
+    <button class="btn btng" onclick="clearF()">Limpar</button>
+    <button class="btn btnp" onclick="exportCSV()" style="margin-left:auto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportar CSV
+    </button>
+  </div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tel</th><th>Fonte</th><th>Medium</th><th>Campanha</th><th>Conjunto</th><th>Criativo</th><th>Status</th></tr></thead><tbody id="tbLeads"></tbody></table></div><div class="pag"><div class="pinfo" id="pinfo">–</div><div class="pbtns" id="pbtns"></div></div></div>
+</section>
+
+</main>
+<div id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span id="tmsg">–</span></div>
+
+<script>
+/* =====================================================
+   CONFIG
+===================================================== */
+const CFG = {
+  WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbyr1djNUUl8hUfgkVzIVnGQzgszZ3F4xifPKwsJiOe1ynOZKf_KbO3XWBZFNX49strelg/exec',
+  LAUNCH_NAME: 'Lançamento — 2025',
+  PRODUCT_PRICE: 997,
+  META_LEADS: 1500,
+  DATA_FIM: '2026-03-31',
+};
+
+let D = { leads:[], clientes:[], trafego:[], pesquisa:[] };
+let FL = [], pg = 1;
+const PP = 20;
+let CH = {};
+
+/* MAPEAMENTO FLEXÍVEL */
+function gv(row, ...keys) {
+  for (const k of keys) {
+    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return String(row[k]).trim();
+    const kl = k.toLowerCase().replace(/\s+/g,'_').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if (row[kl] !== undefined && row[kl] !== null && row[kl] !== '') return String(row[kl]).trim();
+  }
+  return '';
+}
+
+const L = {
+  date:     r => normDate(gv(r,'date','data','dt')),
+  name:     r => gv(r,'name','nome','nome_completo','first_name'),
+  email:    r => gv(r,'email','e_mail'),
+  phone:    r => gv(r,'telefone','phone','tel','celular','fone'),
+  src:      r => gv(r,'utm_source','source','origem'),
+  medium:   r => gv(r,'utm_medium','medium'),
+  campaign: r => gv(r,'utm_campaign','campaign','campanha'),
+  content:  r => gv(r,'utm_content','content','criativo'),
+  term:     r => gv(r,'utm_term','term','conjunto'),
+};
+
+const CL = {
+  email: r => gv(r,'email_contato','email contato','email','e_mail','emailcontato'),
+  nome:  r => gv(r,'nome_contato','nome contato','nome_da_aluna','nome','name','nomecontato'),
+  curso: r => gv(r,'nome_produto','nome produto','nome_do_curso','curso','produto','nomeproduto'),
+  tipo:  r => gv(r,'tipo','type','categoria','tipo_aluna'),
+};
+
+const TR = {
+  date:   r => gv(r,'day','date','data','dia'),
+  camp:   r => gv(r,'campaign_name','campanha','campaign','nome_campanha'),
+  adset:  r => gv(r,'ad_set_name','adset_name','conjunto','ad_set','adset'),
+  plat:   r => gv(r,'plataforma','platform','canal','fonte'),
+  gasto:  r => gv(r,'amount_spent','valor_gasto','gasto','spend'),
+  imp:    r => gv(r,'impressions','impressoes','impressões'),
+  click:  r => gv(r,'link_clicks','cliques','clicks'),
+  ctr:    r => gv(r,'ctr_all','ctr'),
+  leads:  r => gv(r,'leads','lead','total_leads'),
+  cpl:    r => gv(r,'cost_per_lead','custo_por_lead','cpl'),
+  cpm:    r => gv(r,'cpm_cost_per_1','cpm'),
+  cpc:    r => gv(r,'cpc_all','cpc'),
+  lp:     r => gv(r,'landing_page_vi','landing_page_views','view_pagina'),
+};
+
+// Mapeamento PESQUISA — flexível por nome normalizado
+const PQ = {
+  date:       r => gv(r,'carimbo_de_datahora','carimbo_de_data/hora','timestamp','data'),
+  genero:     r => gv(r,'voce_e','você_é','genero','gênero'),
+  idade:      r => gv(r,'quantos_anos_voce_tem','quantos_anos_você_tem','idade','faixa_etária','faixa_etaria'),
+  trabalha:   r => gv(r,'voce_ja_trabalha_com_decoracao','você_já_trabalha_com_decoração','trabalha_decoracao'),
+  perfil:     r => gv(r,'qual_opcao_melhor_te_define','qual_opção_melhor_te_define','perfil'),
+  profissao:  r => gv(r,'qual_a_sua_profissao','qual_a_sua_profissão','profissao','profissão'),
+  renda:      r => gv(r,'qual_e_a_sua_renda_mensal_hoje','qual_é_a_sua_renda_mensal_hoje','renda','renda_mensal'),
+  faturamento:r => gv(r,'caso_voce_ja_fature_com_decoracao_qual_seu_faturamento_mensal_na_area_de_decoracao','caso_você_já_fature_com_decoração_qual_seu_faturamento_mensal_na_área_de_decoração','faturamento'),
+  desafios:   r => gv(r,'quais_os_seus_3_maiores_desafiosdificuldades_em_comecar_a_criar_vender_e_empreender_com_decoracoes_sazonais','quais_os_seus_3_maiores_desafios/dificuldades_em_começar_a_criar,_vender_e_empreender_com_decorações_sazonais','desafios'),
+  conquistar: r => gv(r,'o_que_voce_mais_quer_conquistar_com_a_decoracao','o_que_você_mais_quer_conquistar_com_a_decoração','conquistar'),
+  tempo:      r => gv(r,'voce_me_acompanha_ha_quanto_tempo','você_me_acompanha_há_quanto_tempo','tempo_acompanha'),
+  motivacao:  r => gv(r,'o_que_mais_te_motivou_a_se_inscrever_no_dia_do_consumidor_vitalicio','o_que_mais_te_motivou_a_se_inscrever_no_dia_do_consumidor_vitalício','motivacao'),
+};
+
+const isPago = l => {
+  const src    = (gv(l,'src','source_type','tipo_fonte')||'').toLowerCase();
+  const medium = (L.medium(l)||'').toLowerCase();
+  const source = (L.src(l)||'').toLowerCase();
+  if (src === 'pago') return true;
+  if (medium === 'pago' || medium === 'paid' || medium === 'cpc' || medium === 'cpm') return true;
+  if (source === 'pago') return true;
+  return false;
+};
+
+/* LOAD */
+async function loadData() {
+  setL(true);
+  try {
+    const res = await fetch(CFG.WEBAPP_URL);
+    const txt = await res.text();
+    log('📡 Resposta (500):\n'+txt.slice(0,500));
+    let json;
+    try { json = JSON.parse(txt); } catch(e) { throw new Error('JSON inválido: '+txt.slice(0,200)); }
+    if (json.status==='error') throw new Error(json.message);
+    D.leads    = json.leads    || [];
+    D.clientes = json.clientes || [];
+    D.trafego  = json.trafego  || [];
+    D.pesquisa = json.pesquisa || [];
+    log('✅ leads: '+D.leads.length+' | pesquisa: '+D.pesquisa.length);
+    if(D.leads[0])    log('   cols leads: '+Object.keys(D.leads[0]).join(', '));
+    if(D.trafego[0])  log('   cols tráfego: '+Object.keys(D.trafego[0]).join(', '));
+    if(D.pesquisa[0]) log('   cols pesquisa: '+Object.keys(D.pesquisa[0]).join(', '));
+    if(D.pesquisa[0]) log('   pesq genero sample: '+PQ.genero(D.pesquisa[0]));
+    if(D.pesquisa[0]) log('   pesq idade sample: '+PQ.idade(D.pesquisa[0]));
+    renderAll();
+    toast('✓ '+D.leads.length+' leads · '+D.pesquisa.length+' pesquisas','success');
+  } catch(e) {
+    log('❌ ERRO: '+e.message); toast('Erro: '+e.message,'error'); showDebug();
+  } finally { setL(false); }
+}
+
+/* RENDER ALL */
+function renderAll() {
+  const now = new Date();
+  q('upd').textContent   = 'Atualizado '+now.toLocaleTimeString('pt-BR');
+  q('htitle').textContent= CFG.LAUNCH_NAME;
+  q('lname').textContent = CFG.LAUNCH_NAME;
+  q('nb').textContent    = D.leads.length;
+  q('nbPesq').textContent= D.pesquisa.length;
+  q('osub').textContent  = D.leads.length+' leads · '+D.trafego.length+' campanhas · '+D.clientes.length+' clientes · '+D.pesquisa.length+' pesquisas';
+  q('hsub').textContent  = D.leads.length+' leads captados';
+  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); populateSrc(); applyF();
+}
+
+/* ═══════════════════════════════════════════
+   📋 RENDER PESQUISA — SEÇÃO COMPLETA
+═══════════════════════════════════════════ */
+function renderPesquisa() {
+  const data = D.pesquisa;
+  if (!data.length) {
+    q('pesqSub').textContent = 'Sem dados de pesquisa — verifique se a aba "pesquisa" existe na planilha e o Apps Script foi atualizado.';
+    return;
+  }
+
+  const total = data.length;
+  q('pqTotal').textContent = total;
+  q('pesqSub').textContent = total + ' respostas coletadas da pesquisa de perfil';
+
+  // Contadores
+  const byGenero    = cnt(data, r => PQ.genero(r) || '–');
+  const byIdade     = cnt(data, r => PQ.idade(r) || '–');
+  const byTrabalha  = cnt(data, r => PQ.trabalha(r) || '–');
+  const byPerfil    = cnt(data, r => PQ.perfil(r) || '–');
+  const byProf      = cnt(data, r => PQ.profissao(r) || '–');
+  const byRenda     = cnt(data, r => PQ.renda(r) || '–');
+  const byFat       = cnt(data, r => PQ.faturamento(r) || '–');
+  const byConquista = cnt(data, r => PQ.conquistar(r) || '–');
+  const byTempo     = cnt(data, r => PQ.tempo(r) || '–');
+
+  // KPIs
+  const simDecor = byTrabalha['Sim'] || 0;
+  q('pqJaTrab').textContent = simDecor;
+  q('pqJaTrabPct').textContent = ((simDecor/total)*100).toFixed(1) + '% dos respondentes';
+
+  const topIdade = Object.entries(byIdade).sort((a,b)=>b[1]-a[1])[0];
+  if (topIdade) {
+    q('pqIdade').textContent = topIdade[0];
+    q('pqIdadePct').textContent = ((topIdade[1]/total)*100).toFixed(1) + '% dos respondentes';
+  }
+
+  const topRenda = Object.entries(byRenda).sort((a,b)=>b[1]-a[1])[0];
+  if (topRenda) {
+    q('pqRenda').textContent = topRenda[0].replace('Entre ','').slice(0,20);
+    q('pqRendaPct').textContent = ((topRenda[1]/total)*100).toFixed(1) + '% dos respondentes';
+  }
+
+  // GÊNERO — doughnut
+  const gKeys = Object.keys(byGenero);
+  mk('cPqGenero', {
+    type:'doughnut',
+    data:{labels:gKeys, datasets:[{data:gKeys.map(k=>byGenero[k]), backgroundColor:['#a78bfa','#38bdf8','#fb923c'], borderWidth:2, borderColor:'#13161d'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#9097b0',font:{family:'DM Sans',size:11},padding:10}}}}
+  });
+
+  // FAIXA ETÁRIA — horizontal bar (ordenada pela faixa)
+  const idadeOrder = ['25 - 34','35 - 40','41 - 44','45 - 51','51 - 55','56 - 60','61 - 65','+ de 65 anos'];
+  const idadeKeys = idadeOrder.filter(k => byIdade[k]);
+  const idadeColors = idadeKeys.map((_,i) => {
+    const colors = ['#38bdf8','#4f6ef7','#a78bfa','#e879f9','#f472b6','#fb923c','#f0b429','#22c97a'];
+    return colors[i % colors.length];
+  });
+  mk('cPqIdade', {
+    type:'bar',
+    data:{labels:idadeKeys, datasets:[{label:'Respostas',data:idadeKeys.map(k=>byIdade[k]),backgroundColor:idadeColors.map(c=>c+'bb'),borderRadius:6}]},
+    options:{...BO,indexAxis:'y',plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{ticks:{color:'#9097b0',font:{family:'DM Sans',size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+
+  // PROFISSÃO — survey bars
+  renderSurveyBars('pqProfBars', byProf, total, '#a78bfa');
+
+  // RENDA — horizontal bar (ordenada)
+  const rendaOrder = ['Menos de R$1.200','Entre R$1.201 e R$2.000','Entre R$2.001 e R$4.000','Entre R$4.001 e R$8.000','Acima de R$8.000','Estou sem renda no momento'];
+  const rendaKeys = rendaOrder.filter(k => byRenda[k]);
+  const rendaColors = ['#f05454','#fb923c','#f0b429','#22c97a','#4f6ef7','#5c6380'];
+  mk('cPqRenda', {
+    type:'bar',
+    data:{labels:rendaKeys.map(k=>k.length>22?k.slice(0,22)+'…':k), datasets:[{label:'Respostas',data:rendaKeys.map(k=>byRenda[k]),backgroundColor:rendaColors.map(c=>c+'bb'),borderRadius:6}]},
+    options:{...BO,indexAxis:'y',plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{ticks:{color:'#9097b0',font:{family:'DM Sans',size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+
+  // JÁ TRABALHA — doughnut
+  mk('cPqDecor', {
+    type:'doughnut',
+    data:{labels:['Sim','Não'], datasets:[{data:[byTrabalha['Sim']||0, byTrabalha['Não']||0], backgroundColor:['#22c97a','#f05454'], borderWidth:2, borderColor:'#13161d'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#9097b0',font:{family:'DM Sans',size:11},padding:10}}}}
+  });
+
+  // PERFIL — survey bars (apenas top 6)
+  const perfilTop = Object.entries(byPerfil).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const perfilObj = Object.fromEntries(perfilTop);
+  renderSurveyBars('pqPerfilBars', perfilObj, total, '#4f6ef7');
+
+  // FATURAMENTO — survey bars
+  renderSurveyBars('pqFatBars', byFat, total, '#f0b429');
+
+  // CONQUISTAR — horizontal bar
+  const conquKeys = Object.entries(byConquista).sort((a,b)=>b[1]-a[1]).filter(([k,v])=>v>=2).slice(0,8);
+  mk('cPqConquista', {
+    type:'bar',
+    data:{labels:conquKeys.map(([k])=>k.length>30?k.slice(0,30)+'…':k), datasets:[{label:'Respostas',data:conquKeys.map(([_,v])=>v),backgroundColor:'rgba(34,201,122,0.7)',borderRadius:6}]},
+    options:{...BO,indexAxis:'y',plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{ticks:{color:'#9097b0',font:{family:'DM Sans',size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+
+  // TEMPO — doughnut
+  const tempoOrder = ['Acabei de te conhecer.','Menos de 6 meses.','Mais de 6 meses','Mais de 1 de ano','Mais de 2 anos'];
+  const tempoKeys = tempoOrder.filter(k => byTempo[k]);
+  mk('cPqTempo', {
+    type:'doughnut',
+    data:{labels:tempoKeys.map(k=>k.replace('.','').slice(0,25)), datasets:[{data:tempoKeys.map(k=>byTempo[k]), backgroundColor:['#5c6380','#38bdf8','#4f6ef7','#a78bfa','#22c97a'], borderWidth:2, borderColor:'#13161d'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{color:'#9097b0',font:{family:'DM Sans',size:10},padding:8}}}}
+  });
+
+  // RESPOSTAS POR DIA
+  const byDay = cnt(data, r => {
+    const d = PQ.date(r);
+    if (!d) return '–';
+    // Parse "DD/MM/YYYY HH:MM:SS" or normalized
+    const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return m[3]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
+    if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0,10);
+    return d.slice(0,10);
+  });
+  delete byDay['–'];
+  const dayKeys = Object.keys(byDay).sort();
+  mk('cPqDia', {
+    type:'bar',
+    data:{labels:dayKeys.map(d=>fd(d)), datasets:[{label:'Respostas',data:dayKeys.map(d=>byDay[d]),backgroundColor:'rgba(167,139,250,0.7)',borderRadius:4}]},
+    options:{...BO,plugins:{...BO.plugins,legend:{display:false}}}
+  });
+
+  // WORD CLOUDS
+  renderWordCloud('pqCloudDesafios', data, r=>PQ.desafios(r), ['#f05454','#fb923c','#f0b429','#e879f9','#f472b6','#ff6b6b','#ffa94d','#a78bfa']);
+  renderWordCloud('pqCloudMotivacao', data, r=>PQ.motivacao(r), ['#22c97a','#38bdf8','#4f6ef7','#34d399','#a78bfa','#06b6d4','#10b981','#818cf8']);
+
+  // RANKINGS KEYWORDS
+  const desafiosKW = extractKeywords(data, r=>PQ.desafios(r));
+  const motivacaoKW = extractKeywords(data, r=>PQ.motivacao(r));
+  makeRank('pqRankDesafios', Object.fromEntries(desafiosKW.slice(0,10)), 10);
+  makeRank('pqRankMotivacao', Object.fromEntries(motivacaoKW.slice(0,10)), 10);
+
+  // INSIGHTS EXECUTIVOS
+  renderPesquisaInsights(data, total, byIdade, byProf, byRenda, byTrabalha, byPerfil, byConquista, byTempo, desafiosKW, motivacaoKW);
+
+  // FILTROS DA TABELA
+  const selIdade = q('pqFiltIdade');
+  selIdade.innerHTML = '<option value="">Todas as idades</option>' + idadeOrder.filter(k=>byIdade[k]).map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+  const selProf = q('pqFiltProf');
+  selProf.innerHTML = '<option value="">Todas as profissões</option>' + Object.keys(byProf).sort().map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+
+  renderPesquisaTable();
+}
+
+/* SURVEY BARS — barras horizontais estilizadas */
+function renderSurveyBars(containerId, data, total, color) {
+  const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const maxVal = sorted[0]?.[1] || 1;
+  q(containerId).innerHTML = sorted.map(([label, val]) => {
+    const pct = ((val/total)*100).toFixed(1);
+    const barW = ((val/maxVal)*100).toFixed(0);
+    const shortLabel = label.length > 40 ? label.slice(0,40)+'…' : label;
+    return '<div class="survey-bar-item">' +
+      '<div class="survey-bar-label" title="'+label+'">'+shortLabel+'</div>' +
+      '<div class="survey-bar-track"><div class="survey-bar-fill" style="width:'+barW+'%;background:'+color+'"><span class="survey-bar-val">'+val+'</span></div></div>' +
+      '<div class="survey-bar-pct" style="color:'+color+'">'+pct+'%</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* WORD CLOUD */
+function renderWordCloud(containerId, data, getter, colors) {
+  const kw = extractKeywords(data, getter);
+  const maxN = kw[0]?.[1] || 1;
+  q(containerId).innerHTML = kw.slice(0,25).map(([word, n], i) => {
+    const ratio = n / maxN;
+    const size = Math.round(12 + ratio * 24);
+    const color = colors[i % colors.length];
+    const opacity = (0.5 + ratio * 0.5).toFixed(2);
+    return '<span class="ww" style="font-size:'+size+'px;color:'+color+';background:'+color+'18;border:1px solid '+color+'33;opacity:'+opacity+'" title="'+word+': '+n+' menções">'+word+' <sup style="font-size:9px;opacity:.7">'+n+'</sup></span>';
+  }).join('');
+}
+
+/* EXTRACT KEYWORDS */
+function extractKeywords(data, getter) {
+  const stopwords = new Set(['para','pra','que','com','como','uma','mas','mais','meu','minha','por','muito','ter','fazer','quero','ainda','cada','bem','dos','ela','ele','tudo','quer','tem','sem','são','sua','seu','pelo','pela','isso','esse','essa','esta','este','todo','toda','uma','uns','umas','nos','nas','não','sim','tenho','sei','sou','vou','vai','dei','das','dos','pode','sido','estou','acho']);
+  const words = {};
+  data.forEach(r => {
+    const text = (getter(r)||'').toLowerCase().replace(/[,.!?;:()"]/g,' ');
+    text.split(/\s+/).forEach(w => {
+      w = w.trim();
+      if (w.length > 3 && !stopwords.has(w)) {
+        words[w] = (words[w]||0) + 1;
+      }
+    });
+  });
+  return Object.entries(words).sort((a,b)=>b[1]-a[1]);
+}
+
+/* INSIGHTS EXECUTIVOS */
+function renderPesquisaInsights(data, total, byIdade, byProf, byRenda, byTrabalha, byPerfil, byConquista, byTempo, desafiosKW, motivacaoKW) {
+  const topIdade = Object.entries(byIdade).sort((a,b)=>b[1]-a[1]).slice(0,2);
+  const topProf  = Object.entries(byProf).sort((a,b)=>b[1]-a[1]).slice(0,2);
+  const topRenda = Object.entries(byRenda).sort((a,b)=>b[1]-a[1]).slice(0,2);
+  const topConq  = Object.entries(byConquista).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const topDesaf = desafiosKW.slice(0,5).map(([w])=>w);
+  const topMotiv = motivacaoKW.slice(0,5).map(([w])=>w);
+  const novos    = byTempo['Acabei de te conhecer.'] || 0;
+  const novosPct = ((novos/total)*100).toFixed(0);
+  const naoTrab  = byTrabalha['Não'] || 0;
+  const naoTrabPct = ((naoTrab/total)*100).toFixed(0);
+
+  const insights = [
+    {
+      icon: '👥', title: 'Perfil Demográfico',
+      text: 'Público <strong>predominantemente feminino</strong> (98.9%). As faixas etárias mais representadas são <strong>'+topIdade.map(([k,v])=>k+' ('+((v/total)*100).toFixed(0)+'%)').join('</strong> e <strong>')+'</strong>. A audiência é madura e com experiência de vida — ideal para comunicação que valorize conquista pessoal e nova fase profissional.'
+    },
+    {
+      icon: '💼', title: 'Situação Profissional',
+      text: 'As profissões dominantes são <strong>'+topProf.map(([k,v])=>k+' ('+v+')').join('</strong> e <strong>')+'</strong>. A faixa de renda mais comum é <strong>'+topRenda[0][0]+'</strong> ('+((topRenda[0][1]/total)*100).toFixed(0)+'%). Isso indica um público com <strong>poder de compra moderado</strong> mas buscando complementação de renda.'
+    },
+    {
+      icon: '🎯', title: 'Experiência & Intenção',
+      text: '<strong>'+naoTrabPct+'% não trabalham com decoração</strong> ainda — são iniciantes buscando aprender. O objetivo principal é <strong>'+topConq.map(([k,v])=>k+' ('+v+')').join('</strong>, <strong>')+'</strong>. A oferta deve destacar "começar do zero" e "renda extra" como benefícios principais.'
+    },
+    {
+      icon: '🔥', title: 'Principais Desafios',
+      text: 'As palavras-chave mais citadas como desafios são: <strong>'+topDesaf.join(', ')+'</strong>. O público tem dificuldade em vender, criar peças e precificar. Uma boa estratégia é oferecer módulos práticos sobre vendas e precificação na comunicação pré-lançamento.'
+    },
+    {
+      icon: '💡', title: 'Motivação & Engajamento',
+      text: '<strong>'+novosPct+'% acabaram de conhecer a marca</strong> — são leads frios que precisam de aquecimento rápido. As principais motivações para inscrição foram: <strong>'+topMotiv.join(', ')+'</strong>. O desejo de aprender é o principal gatilho.'
+    },
+    {
+      icon: '📊', title: 'Oportunidade de Conversão',
+      text: 'Com 84% sem faturamento em decoração e 75% sem experiência na área, há um <strong>mercado enorme de iniciantes</strong>. O ticket de R$997 pode parecer alto para quem ganha R$1.200-2.000, então use <strong>parcelamento</strong> e argumento de <strong>retorno sobre investimento</strong> como principais objeções a quebrar.'
+    }
+  ];
+
+  q('pqInsights').innerHTML = insights.map(ins =>
+    '<div class="insight-box">' +
+      '<div class="insight-title"><span class="insight-icon">'+ins.icon+'</span> '+ins.title+'</div>' +
+      '<div class="insight-text">'+ins.text+'</div>' +
+    '</div>'
+  ).join('');
+}
+
+/* TABELA PESQUISA */
+function renderPesquisaTable() {
+  const filtIdade = q('pqFiltIdade').value;
+  const filtProf  = q('pqFiltProf').value;
+  const filtDecor = q('pqFiltDecor').value;
+  const filtQ     = q('pqFiltQ').value.toLowerCase();
+
+  const filtered = D.pesquisa.filter(r => {
+    if (filtIdade && PQ.idade(r) !== filtIdade) return false;
+    if (filtProf  && PQ.profissao(r) !== filtProf) return false;
+    if (filtDecor && PQ.trabalha(r) !== filtDecor) return false;
+    if (filtQ) {
+      const all = Object.values(r).join(' ').toLowerCase();
+      if (!all.includes(filtQ)) return false;
+    }
+    return true;
+  });
+
+  q('tbPesquisa').innerHTML = filtered.slice(0,100).map(r => {
+    const date = PQ.date(r);
+    const dateShort = date ? (date.includes('/') ? date.split(' ')[0] : fd(date)) : '–';
+    return '<tr>' +
+      '<td class="tm">'+dateShort+'</td>' +
+      '<td>'+PQ.genero(r)+'</td>' +
+      '<td class="tm">'+PQ.idade(r)+'</td>' +
+      '<td>'+(PQ.trabalha(r)==='Sim'?'<span class="badge bg">Sim</span>':'<span class="badge br">Não</span>')+'</td>' +
+      '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+PQ.perfil(r)+'">'+(PQ.perfil(r).slice(0,35)||'–')+'</td>' +
+      '<td>'+PQ.profissao(r)+'</td>' +
+      '<td style="font-size:11px">'+PQ.renda(r)+'</td>' +
+      '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+PQ.conquistar(r)+'">'+PQ.conquistar(r)+'</td>' +
+      '<td style="font-size:11px">'+PQ.tempo(r).replace('.','')+'</td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Sem dados</td></tr>';
+}
+
+function exportPesquisaCSV() {
+  const h = ['Data','Gênero','Idade','Trabalha Decoração','Perfil','Profissão','Renda','Faturamento','Desafios','Conquistar','Tempo Acompanha','Motivação'];
+  const rows = D.pesquisa.map(r =>
+    [PQ.date(r),PQ.genero(r),PQ.idade(r),PQ.trabalha(r),PQ.perfil(r),PQ.profissao(r),PQ.renda(r),PQ.faturamento(r),PQ.desafios(r),PQ.conquistar(r),PQ.tempo(r),PQ.motivacao(r)]
+    .map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(',')
+  );
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+[h.join(','),...rows].join('\n')], {type:'text/csv;charset=utf-8'}));
+  a.download = 'pesquisa_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('CSV da pesquisa exportado!','success');
+}
+
+/* ─── KPIs ────────────────────────────────────── */
+function renderKPIs() {
+  const total  = D.leads.length;
+  const invest = D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
+  const leadsPagos = D.leads.filter(isPago);
+  const leadsOrg   = D.leads.filter(l=>!isPago(l));
+  const nPago = leadsPagos.length, nOrg = leadsOrg.length;
+  const pPago = total>0?((nPago/total)*100).toFixed(1):0;
+  const pOrg  = total>0?((nOrg/total)*100).toFixed(1):0;
+  const cplPago = nPago>0?invest/nPago:0;
+  const now=new Date();
+
+  q('vLeads').innerHTML=total.toLocaleString('pt-BR');q('lLeads').innerHTML='total no período';
+  q('vLeadsPago').innerHTML=nPago.toLocaleString('pt-BR');q('lLeadsPago').innerHTML=pPago+'% do total · utm_source=pago';
+  q('vLeadsOrg').innerHTML=nOrg.toLocaleString('pt-BR');q('lLeadsOrg').innerHTML=pOrg+'% do total · demais fontes';
+  q('vCPLpago').innerHTML=cplPago>0?'R$ '+cplPago.toFixed(2):'–';
+  q('lCPLpago').innerHTML='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ÷ '+nPago+' leads pagos';
+  q('vInvest').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  q('vHoje').textContent=D.leads.filter(l=>dd(L.date(l),now)>=0&&dd(L.date(l),now)<1).length;
+  q('v24').textContent=D.leads.filter(l=>dd(L.date(l),now)<1).length;
+  q('v14').textContent=D.leads.filter(l=>dd(L.date(l),now)<14).length;
+
+  q('sPago').textContent=nPago;q('sPagoPct').textContent=pPago+'% do total';
+  q('sOrg').textContent=nOrg;q('sOrgPct').textContent=pOrg+'% do total';
+  q('sPagoBar').style.width=pPago+'%';
+
+  [5,10,15].forEach(p=>{const v=Math.round(total*p/100),r=v*CFG.PRODUCT_PRICE;q('p'+p).textContent='R$ '+r.toLocaleString('pt-BR');q('pl'+p).textContent=v+' vendas';});
+
+  q('lTotal').textContent=total.toLocaleString('pt-BR');
+  q('lPago').textContent=nPago.toLocaleString('pt-BR');q('lPagoPct').textContent=pPago+'% do total (utm_source=pago)';
+  q('lOrg').textContent=nOrg.toLocaleString('pt-BR');q('lOrgPct').textContent=pOrg+'% do total';
+  const days=[...new Set(D.leads.map(l=>L.date(l)).filter(Boolean))];
+  q('lMedia').textContent=days.length>0?(total/days.length).toFixed(1):'–';
+
+  const totalImp=D.trafego.reduce((s,r)=>s+pf(TR.imp(r)),0);
+  const totalClk=D.trafego.reduce((s,r)=>s+pf(TR.click(r)),0);
+  const totalLP=D.trafego.reduce((s,r)=>s+pf(TR.lp(r)),0);
+  const totalLeadT=D.trafego.reduce((s,r)=>s+pf(TR.leads(r)),0);
+  const ctrArr=D.trafego.filter(r=>pf(TR.ctr(r))>0);
+  const ctrMed=ctrArr.reduce((s,r)=>s+pf(TR.ctr(r)),0)/(ctrArr.length||1);
+  const cpmArr=D.trafego.filter(r=>pf(TR.cpm(r))>0);
+  const cpmMed=cpmArr.reduce((s,r)=>s+pf(TR.cpm(r)),0)/(cpmArr.length||1);
+
+  q('tG').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  q('tImp').textContent=totalImp.toLocaleString('pt-BR');q('tClk').textContent=totalClk.toLocaleString('pt-BR');
+  q('tCTRlbl').textContent='CTR médio: '+ctrMed.toFixed(2)+'%';q('tLP').textContent=totalLP.toLocaleString('pt-BR');
+  q('tCTR').textContent=ctrMed.toFixed(2)+'%';q('tCPM').textContent='R$ '+cpmMed.toFixed(2);
+  q('tL').textContent=totalLeadT;q('tCPL2').textContent=cplPago>0?'R$ '+cplPago.toFixed(2):'–';
+  q('tCPLlbl').textContent='Total investido ÷ '+nPago+' leads pagos';
+  q('trafSub').textContent=D.trafego.length+' campanhas · R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' investidos';
+
+  q('fImp').textContent=totalImp.toLocaleString('pt-BR');q('fClicks').textContent=totalClk.toLocaleString('pt-BR');
+  q('fCTRlabel').textContent='CTR: '+ctrMed.toFixed(2)+'%';q('fLP').textContent=totalLP.toLocaleString('pt-BR');
+  q('fLPrate').textContent=totalClk>0?'Click→LP: '+(totalLP/totalClk*100).toFixed(1)+'%':'Click→LP: –';
+  q('fLeads').textContent=nPago;q('fConvRate').textContent=totalLP>0?'LP→Lead: '+(nPago/totalLP*100).toFixed(1)+'%':'LP→Lead: –';
+}
+
+/* ─── FUNIL ───────────────────────────────────── */
+function renderFunnel() {
+  const invest=D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
+  const totalImp=D.trafego.reduce((s,r)=>s+pf(TR.imp(r)),0);
+  const totalClk=D.trafego.reduce((s,r)=>s+pf(TR.click(r)),0);
+  const totalLP=D.trafego.reduce((s,r)=>s+pf(TR.lp(r)),0);
+  const nPago=D.leads.filter(isPago).length;
+  const connectRate=totalClk>0?(nPago/totalClk*100):0;
+  const cplReal=nPago>0?invest/nPago:0;
+
+  const steps=[
+    {cls:'s1',name:'Impressões',sub:'Total que viram o anúncio',val:totalImp,pct:100,color:'#4f6ef7'},
+    {cls:'s2',name:'Cliques no Link',sub:'CTR: '+(totalImp>0?(totalClk/totalImp*100).toFixed(2):0)+'%',val:totalClk,pct:totalImp>0?totalClk/totalImp*100:0,color:'#f0b429'},
+    {cls:'s3',name:'View Landing Page',sub:'Click→LP: '+(totalClk>0?(totalLP/totalClk*100).toFixed(1):0)+'%',val:totalLP,pct:totalImp>0?totalLP/totalImp*100:0,color:'#fb923c'},
+    {cls:'s4',name:'Leads Pagos',sub:'LP→Lead: '+(totalLP>0?(nPago/totalLP*100).toFixed(1):0)+'% | CPL: R$ '+cplReal.toFixed(2),val:nPago,pct:totalImp>0?nPago/totalImp*100:0,color:'#22c97a'},
+    {cls:'s5',name:'Connect Rate',sub:'Leads÷Cliques: '+connectRate.toFixed(2)+'%',val:connectRate.toFixed(2)+'%',pct:Math.min(connectRate,100),color:'#a78bfa',isRate:true},
+  ];
+
+  q('funnelSteps').innerHTML=steps.map(s=>{
+    const pctDisp=s.isRate?s.val:(s.pct>0.01?s.pct.toFixed(2)+'%':(s.val>0?'< 0.01%':'–'));
+    const valDisp=s.isRate?s.val:(typeof s.val==='number'?(s.val>999999?Math.round(s.val/1000)+'k':s.val.toLocaleString('pt-BR')):s.val);
+    return '<div class="funnel-step '+s.cls+'"><div class="fs-num">'+valDisp+'</div><div class="fs-label"><div class="fs-name">'+s.name+'</div><div class="fs-sub">'+s.sub+'</div><div class="fs-bar"><div class="fs-bar-fill" style="width:'+Math.min(s.pct,100)+'%;background:'+s.color+'"></div></div></div><div class="fs-pct" style="background:'+s.color+'22;color:'+s.color+'">'+pctDisp+'</div></div>';
+  }).join('');
+
+  const stepsChart=steps.filter(s=>!s.isRate);
+  mk('cFunnel',{type:'bar',data:{labels:stepsChart.map(s=>s.name),datasets:[{label:'Volume',data:stepsChart.map(s=>s.val),backgroundColor:stepsChart.map(s=>s.color+'bb'),borderRadius:6}]},options:{...BO,indexAxis:'y',plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{ticks:{color:'#9097b0',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+
+  q('tbFunnel').innerHTML=D.trafego.map(r=>{
+    const imp=pf(TR.imp(r)),clk=pf(TR.click(r)),lp=pf(TR.lp(r)),lds=pf(TR.leads(r)),g=pf(TR.gasto(r)),c=pf(TR.cpl(r));
+    return '<tr><td class="tb" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(TR.camp(r)||'–')+'</td><td class="tm">'+imp.toLocaleString('pt-BR')+'</td><td class="tm">'+clk.toLocaleString('pt-BR')+'</td><td class="tm '+(pf(TR.ctr(r))>3?'tg':'ty')+'">'+pf(TR.ctr(r)).toFixed(2)+'%</td><td class="tm">'+lp.toLocaleString('pt-BR')+'</td><td class="tm">'+(clk>0?(lp/clk*100).toFixed(1)+'%':'–')+'</td><td class="tb tm tg">'+(lds||'–')+'</td><td class="tm">'+(lp>0?(lds/lp*100).toFixed(1)+'%':'–')+'</td><td class="tm">R$ '+g.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tm" style="color:var(--accent)">'+(c>0?'R$ '+c.toFixed(2):'–')+'</td></tr>';
+  }).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+
+  const adsetMap={};
+  D.trafego.forEach(r=>{const k=TR.adset(r)||TR.camp(r)||'–';if(!adsetMap[k])adsetMap[k]={imp:0,clk:0,lp:0,leads:0,gasto:0};adsetMap[k].imp+=pf(TR.imp(r));adsetMap[k].clk+=pf(TR.click(r));adsetMap[k].lp+=pf(TR.lp(r));adsetMap[k].leads+=pf(TR.leads(r));adsetMap[k].gasto+=pf(TR.gasto(r));});
+  q('tbFunnelAdset').innerHTML=Object.entries(adsetMap).sort((a,b)=>b[1].leads-a[1].leads).map(([k,v])=>{
+    const cpl=v.leads>0?'R$ '+(v.gasto/v.leads).toFixed(2):'–';const lpconv=v.lp>0?(v.leads/v.lp*100).toFixed(1)+'%':'–';const ctr=v.imp>0?(v.clk/v.imp*100).toFixed(2)+'%':'–';
+    return '<tr><td class="tb">'+k+'</td><td class="tm">'+v.imp.toLocaleString('pt-BR')+'</td><td class="tm">'+v.clk.toLocaleString('pt-BR')+'</td><td class="tm">'+ctr+'</td><td class="tm">'+v.lp.toLocaleString('pt-BR')+'</td><td class="tb tm tg">'+(v.leads||'–')+'</td><td class="tm">'+lpconv+'</td><td class="tm">R$ '+v.gasto.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tm" style="color:var(--accent)">'+cpl+'</td></tr>';
+  }).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+}
+
+/* ─── CHARTS ──────────────────────────────────── */
+const CLRS=['#4f6ef7','#22c97a','#f0b429','#a78bfa','#f05454','#38bdf8','#fb923c','#e879f9','#34d399','#f472b6'];
+const BO={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.06)'}}}};
+function mk(id,cfg){if(CH[id]){CH[id].destroy();delete CH[id];}const el=document.getElementById(id);if(el)CH[id]=new Chart(el,cfg);}
+
+function renderCharts(){
+  const byDay=cnt(D.leads,l=>normDate(L.date(l)));
+  const bySrc=cnt(D.leads,l=>L.src(l)||'direto');
+  const byMed=cnt(D.leads,l=>L.medium(l)||'direto');
+  const byCamp=cnt(D.leads,l=>L.campaign(l)||'–');
+  const byContent=cnt(D.leads.filter(l=>L.content(l)),l=>L.content(l));
+  const byAdset={};
+  D.trafego.forEach(r=>{const k=TR.adset(r)||TR.camp(r)||'–';if(!byAdset[k])byAdset[k]=0;byAdset[k]+=pf(TR.leads(r));});
+
+  const days=Object.keys(byDay).sort();
+  let acc=0;const accData=days.map(d=>{acc+=byDay[d];return acc;});
+  const maxDay=days.reduce((a,b)=>byDay[b]>byDay[a]?b:a,days[0]||'');
+  if(maxDay)q('bestDay').textContent='🏆 Melhor dia: '+fd(maxDay)+' ('+byDay[maxDay]+' leads)';
+
+  const barLine=(labels,barData,accD)=>({type:'bar',data:{labels,datasets:[{type:'bar',label:'Leads/dia',data:barData,backgroundColor:'rgba(79,110,247,0.65)',borderRadius:4,yAxisID:'y'},{type:'line',label:'Acumulado',data:accD,borderColor:'#22c97a',backgroundColor:'rgba(34,201,122,0.06)',tension:0.4,fill:true,pointRadius:2,yAxisID:'y2',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.06)'},title:{display:true,text:'Leads/dia',color:'#5c6380',font:{size:10}}},y2:{position:'right',ticks:{color:'#22c97a',font:{family:'DM Sans',size:10}},grid:{display:false},title:{display:true,text:'Acumulado',color:'#22c97a',font:{size:10}}}}}});
+  const dayLabels=days.map(d=>fd(d));
+  ['cDay','cDay2'].forEach(id=>mk(id,barLine(dayLabels,days.map(d=>byDay[d]),accData)));
+
+  const dough=(labels,data)=>({type:'doughnut',data:{labels,datasets:[{data,backgroundColor:CLRS,borderWidth:2,borderColor:'#13161d'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#9097b0',font:{family:'DM Sans',size:11},padding:10}}}}});
+  const sk=Object.keys(bySrc).slice(0,8);
+  ['cSrc','cSrc2'].forEach(id=>mk(id,dough(sk,sk.map(k=>bySrc[k]))));
+
+  const horiz=(labels,data,color)=>({type:'bar',data:{labels,datasets:[{label:'Leads',data,backgroundColor:color,borderRadius:6}]},options:{...BO,indexAxis:'y',plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{ticks:{color:'#9097b0',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  const mk2=Object.keys(byMed);
+  ['cMedOv','cMed2'].forEach(id=>mk(id,horiz(mk2,mk2.map(k=>byMed[k]),'rgba(167,139,250,0.7)')));
+
+  const ck=Object.keys(byCamp).sort((a,b)=>byCamp[b]-byCamp[a]).slice(0,10);
+  mk('cCamp2',horiz(ck.map(k=>k.length>28?k.slice(0,28)+'…':k),ck.map(k=>byCamp[k]),'rgba(79,110,247,0.7)'));
+
+  const ak=Object.keys(byAdset).sort((a,b)=>byAdset[b]-byAdset[a]).slice(0,10);
+  mk('cAdset',horiz(ak.map(k=>k.length>28?k.slice(0,28)+'…':k),ak.map(k=>byAdset[k]),'rgba(34,201,122,0.7)'));
+
+  const cnk=Object.keys(byContent).sort((a,b)=>byContent[b]-byContent[a]).slice(0,10);
+  mk('cContent',horiz(cnk.map(k=>k.length>28?k.slice(0,28)+'…':k),cnk.map(k=>byContent[k]),'rgba(251,146,60,0.7)'));
+
+  const trafRows=D.trafego.filter(r=>pf(TR.cpl(r))>0);
+  mk('cCPL',{type:'bar',data:{labels:trafRows.map(r=>TR.camp(r).slice(0,18)+'…'),datasets:[{label:'CPL',data:trafRows.map(r=>pf(TR.cpl(r))),backgroundColor:CLRS,borderRadius:6}]},options:{...BO,plugins:{...BO.plugins,legend:{display:false}}}});
+
+  const adsetCPL={};
+  D.trafego.forEach(r=>{const k=TR.adset(r)||TR.camp(r)||'–';if(!adsetCPL[k])adsetCPL[k]={g:0,l:0};adsetCPL[k].g+=pf(TR.gasto(r));adsetCPL[k].l+=pf(TR.leads(r));});
+  const acpKeys=Object.keys(adsetCPL).filter(k=>adsetCPL[k].l>0).sort((a,b)=>(adsetCPL[a].g/adsetCPL[a].l)-(adsetCPL[b].g/adsetCPL[b].l)).slice(0,10);
+  mk('cCPLadset',horiz(acpKeys.map(k=>k.length>28?k.slice(0,28)+'…':k),acpKeys.map(k=>(adsetCPL[k].g/adsetCPL[k].l).toFixed(2)),'rgba(56,189,248,0.7)'));
+
+  const glKeys=Object.keys(adsetCPL).sort((a,b)=>adsetCPL[b].l-adsetCPL[a].l).slice(0,8);
+  mk('cGastoLeads',{type:'bar',data:{labels:glKeys.map(k=>k.length>20?k.slice(0,20)+'…':k),datasets:[{label:'Gasto (R$)',data:glKeys.map(k=>adsetCPL[k].g.toFixed(2)),backgroundColor:'rgba(240,180,41,0.6)',borderRadius:4,yAxisID:'y'},{label:'Leads',data:glKeys.map(k=>adsetCPL[k].l),backgroundColor:'rgba(79,110,247,0.6)',borderRadius:4,yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#f0b429',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y2:{position:'right',ticks:{color:'#4f6ef7',font:{family:'DM Sans',size:10}},grid:{display:false}}}}});
+
+  const gastoDay={};D.trafego.forEach(r=>{const d=TR.date(r);if(d){gastoDay[d]=(gastoDay[d]||0)+pf(TR.gasto(r));}});
+  const gd=Object.keys(gastoDay).sort();
+  mk('cGastoDay',{type:'bar',data:{labels:gd.map(d=>fd(d)),datasets:[{label:'Gasto R$',data:gd.map(d=>gastoDay[d].toFixed(2)),backgroundColor:'rgba(240,180,41,0.65)',borderRadius:4}]},options:{...BO,plugins:{...BO.plugins,legend:{display:false}}}});
+
+  const leadsPagoByDay={};D.leads.filter(isPago).forEach(l=>{const d=L.date(l);if(d)leadsPagoByDay[d]=(leadsPagoByDay[d]||0)+1;});
+  const cplDays=Object.keys(gastoDay).sort().filter(d=>leadsPagoByDay[d]>0);
+  mk('cCPLday',{type:'line',data:{labels:cplDays.map(d=>fd(d)),datasets:[{label:'CPL Diário (R$)',data:cplDays.map(d=>(gastoDay[d]/leadsPagoByDay[d]).toFixed(2)),borderColor:'#f05454',backgroundColor:'rgba(240,84,84,0.08)',tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:'#f05454',borderWidth:2}]},options:{...BO,plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{...BO.scales.y,title:{display:true,text:'R$ CPL',color:'#5c6380',font:{size:10}}}}}});
+
+  makeRank('rankCamp',byCamp,7);makeRank('rankAdset',byAdset,7);makeRank('rankContent',byContent,7);
+  makeRank('rankAdset2',byAdset,20);makeRank('rankContent2',byContent,20);
+}
+
+/* ─── RANKING ─────────────────────────────────── */
+function makeRank(id,data,max){
+  const top=Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,max);const maxV=top[0]?.[1]||1;const clrs=['gold','silver','bronze'];
+  q(id).innerHTML=top.map(([k,v],i)=>{const pct=((v/maxV)*100).toFixed(0);return '<div class="rank-item"><div class="rpos '+(clrs[i]||'rest')+'">'+(i+1)+'</div><div class="rname" title="'+k+'">'+(k.length>32?k.slice(0,32)+'…':k||'(vazio)')+'</div><div class="rbar"><div class="rbar-track"><div class="rbar-fill" style="width:'+pct+'%;background:var(--accent)"></div></div></div><div class="rval">'+(typeof v==='number'?v.toLocaleString('pt-BR'):v)+'</div></div>';}).join('')||'<div style="color:var(--text3);font-size:12px;padding:12px">Sem dados</div>';
+}
+
+/* ─── CRIATIVOS ───────────────────────────────── */
+function renderCreatives(){
+  const byContent=cnt(D.leads.filter(l=>L.content(l)),l=>L.content(l));const total=D.leads.length;const sorted=Object.entries(byContent).sort((a,b)=>b[1]-a[1]);
+  q('tbContent').innerHTML=sorted.map(([c,n],i)=>{const sub=D.leads.filter(l=>L.content(l)===c);const topSrc=Object.entries(cnt(sub,l=>L.src(l)||'–')).sort((a,b)=>b[1]-a[1])[0]?.[0]||'–';const topMed=Object.entries(cnt(sub,l=>L.medium(l)||'–')).sort((a,b)=>b[1]-a[1])[0]?.[0]||'–';const clrs=['gold','silver','bronze'];return '<tr><td><div class="rpos '+(clrs[i]||'rest')+'" style="display:inline-flex">'+(i+1)+'</div></td><td class="tb">'+c+'</td><td class="tb tm tg">'+n+'</td><td class="tm">'+((n/total)*100).toFixed(1)+'%</td><td><span class="ut">'+topSrc+'</span></td><td><span class="ut">'+topMed+'</span></td></tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+
+  const adsetMap={};D.trafego.forEach(r=>{const k=TR.adset(r)||TR.camp(r)||'–';if(!adsetMap[k])adsetMap[k]={imp:0,clk:0,lp:0,leads:0,gasto:0,ctr:[]};adsetMap[k].imp+=pf(TR.imp(r));adsetMap[k].clk+=pf(TR.click(r));adsetMap[k].lp+=pf(TR.lp(r));adsetMap[k].leads+=pf(TR.leads(r));adsetMap[k].gasto+=pf(TR.gasto(r));if(pf(TR.ctr(r))>0)adsetMap[k].ctr.push(pf(TR.ctr(r)));});
+  q('tbAdset').innerHTML=Object.entries(adsetMap).sort((a,b)=>b[1].leads-a[1].leads).map(([k,v],i)=>{const ctr=v.ctr.length>0?(v.ctr.reduce((s,x)=>s+x,0)/v.ctr.length).toFixed(2)+'%':'–';const cpl=v.leads>0?'R$ '+(v.gasto/v.leads).toFixed(2):'–';const clrs=['gold','silver','bronze'];return '<tr><td><div class="rpos '+(clrs[i]||'rest')+'" style="display:inline-flex">'+(i+1)+'</div></td><td class="tb">'+k+'</td><td class="tm">R$ '+v.gasto.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tm">'+v.imp.toLocaleString('pt-BR')+'</td><td class="tm">'+v.clk.toLocaleString('pt-BR')+'</td><td class="tm">'+ctr+'</td><td class="tb tm tg">'+(v.leads||'–')+'</td><td class="tm" style="color:var(--accent)">'+cpl+'</td></tr>';}).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+}
+
+/* ─── TRÁFEGO ─────────────────────────────────── */
+function renderTrafego(){
+  const invest=D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
+  const totalImp=D.trafego.reduce((s,r)=>s+pf(TR.imp(r)),0);
+  const totalClk=D.trafego.reduce((s,r)=>s+pf(TR.click(r)),0);
+  const totalLP=D.trafego.reduce((s,r)=>s+pf(TR.lp(r)),0);
+  const totalLeadT=D.trafego.reduce((s,r)=>s+pf(TR.leads(r)),0);
+  const nPago=D.leads.filter(isPago).length;
+  const cplAtual=nPago>0?invest/nPago:0;
+  const ctrMed=totalImp>0?(totalClk/totalImp*100):0;
+  const diasTraf=[...new Set(D.trafego.map(r=>TR.date(r)).filter(Boolean))].length;
+  const gastoDia=diasTraf>0?invest/diasTraf:0;
+
+  // KPIs
+  q('tG').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  q('tCPL2').textContent=cplAtual>0?'R$ '+cplAtual.toFixed(2):'–';
+  q('tCPLlbl').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ÷ '+nPago+' leads';
+  q('tL').textContent=nPago;
+  q('tImp').textContent=totalImp.toLocaleString('pt-BR');
+  q('tClk').textContent=totalClk.toLocaleString('pt-BR');
+  q('tCTRlbl').textContent='CTR: '+ctrMed.toFixed(2)+'%';
+  q('tLP').textContent=totalLP.toLocaleString('pt-BR');
+  q('tLPrate').textContent=totalClk>0?'Click→LP: '+(totalLP/totalClk*100).toFixed(1)+'%':'–';
+  q('tGastoDia').textContent='R$ '+gastoDia.toFixed(2);
+  q('trafSub').textContent=D.trafego.length+' linhas · R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' investidos · '+nPago+' leads pagos';
+
+  // CPL tendência (últimos 3 dias vs 3 anteriores)
+  const gastoDay={};const leadsDay={};
+  D.trafego.forEach(r=>{const d=TR.date(r);if(d){gastoDay[d]=(gastoDay[d]||0)+pf(TR.gasto(r));leadsDay[d]=(leadsDay[d]||0)+pf(TR.leads(r));}});
+  const leadsPagoByDay={};D.leads.filter(isPago).forEach(l=>{const d=L.date(l);if(d)leadsPagoByDay[d]=(leadsPagoByDay[d]||0)+1;});
+  const daysArr=Object.keys(gastoDay).sort();
+  const recent3=daysArr.slice(-3);const prev3=daysArr.slice(-6,-3);
+  const cplRecent=recent3.reduce((s,d)=>s+(gastoDay[d]||0),0)/(recent3.reduce((s,d)=>s+(leadsPagoByDay[d]||0),0)||1);
+  const cplPrev=prev3.reduce((s,d)=>s+(gastoDay[d]||0),0)/(prev3.reduce((s,d)=>s+(leadsPagoByDay[d]||0),0)||1);
+  const cplTrend=cplPrev>0?((cplRecent-cplPrev)/cplPrev*100):0;
+  if(cplTrend<0){q('tEficiencia').textContent='↓ '+Math.abs(cplTrend).toFixed(0)+'%';q('tEfSub').textContent='CPL caindo — boa eficiência';q('tEficiencia').style.color='var(--green)';}
+  else if(cplTrend>0){q('tEficiencia').textContent='↑ '+cplTrend.toFixed(0)+'%';q('tEfSub').textContent='CPL subindo — atenção';q('tEficiencia').style.color='var(--red)';}
+  else{q('tEficiencia').textContent='→ estável';q('tEfSub').textContent='CPL sem variação significativa';}
+
+  // ═══ AD SET AGRUPADO ═══
+  const adsetMap={};
+  D.trafego.forEach(r=>{
+    const k=TR.adset(r)||TR.camp(r)||'–';
+    if(!adsetMap[k])adsetMap[k]={imp:0,clk:0,lp:0,leads:0,gasto:0};
+    adsetMap[k].imp+=pf(TR.imp(r));adsetMap[k].clk+=pf(TR.click(r));
+    adsetMap[k].lp+=pf(TR.lp(r));adsetMap[k].leads+=pf(TR.leads(r));adsetMap[k].gasto+=pf(TR.gasto(r));
+  });
+
+  // ═══ RANKING AD SETS (por CPL) ═══
+  const adsetRank=Object.entries(adsetMap).filter(([_,v])=>v.leads>0).sort((a,b)=>(a[1].gasto/a[1].leads)-(b[1].gasto/b[1].leads));
+  const bestCPL=adsetRank[0]?adsetRank[0][1].gasto/adsetRank[0][1].leads:cplAtual;
+  const clrs=['gold','silver','bronze'];
+
+  q('tbAdsetRank').innerHTML=adsetRank.map(([k,v],i)=>{
+    const cpl=v.gasto/v.leads;const ctr=v.imp>0?(v.clk/v.imp*100).toFixed(2)+'%':'–';
+    const efRatio=bestCPL>0?(bestCPL/cpl*100).toFixed(0):100;
+    const efColor=efRatio>=80?'var(--green)':efRatio>=50?'var(--yellow)':'var(--red)';
+    const acao=efRatio>=80?'🟢 Escalar':'🟡 Otimizar';
+    if(i>=8)return '';
+    return '<tr><td><div class="rpos '+(clrs[i]||'rest')+'" style="display:inline-flex">'+(i+1)+'</div></td>'+
+      '<td class="tb" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+k+'">'+k+'</td>'+
+      '<td class="tb tm tg">'+v.leads+'</td>'+
+      '<td class="tm">R$ '+v.gasto.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td>'+
+      '<td class="tm" style="color:var(--accent);font-weight:700">R$ '+cpl.toFixed(2)+'</td>'+
+      '<td class="tm">'+ctr+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:4px"><div style="width:50px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(efRatio,100)+'%;background:'+efColor+';border-radius:3px"></div></div><span class="tm" style="color:'+efColor+'">'+efRatio+'%</span></div></td>'+
+      '<td><span class="badge '+(efRatio>=80?'bg':'by')+'">'+acao+'</span></td></tr>';
+  }).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+
+  // ═══ RANKING CAMPANHAS (por CPL) ═══
+  const campMap={};
+  D.trafego.forEach(r=>{
+    const k=TR.camp(r)||'–';
+    if(!campMap[k])campMap[k]={imp:0,clk:0,lp:0,leads:0,gasto:0};
+    campMap[k].imp+=pf(TR.imp(r));campMap[k].clk+=pf(TR.click(r));
+    campMap[k].lp+=pf(TR.lp(r));campMap[k].leads+=pf(TR.leads(r));campMap[k].gasto+=pf(TR.gasto(r));
+  });
+  const campRank=Object.entries(campMap).filter(([_,v])=>v.leads>0).sort((a,b)=>(a[1].gasto/a[1].leads)-(b[1].gasto/b[1].leads));
+
+  q('tbCampRank').innerHTML=campRank.map(([k,v],i)=>{
+    const cpl=v.gasto/v.leads;const ctr=v.imp>0?(v.clk/v.imp*100).toFixed(2)+'%':'–';
+    const efRatio=bestCPL>0?(bestCPL/cpl*100).toFixed(0):100;
+    const efColor=efRatio>=80?'var(--green)':efRatio>=50?'var(--yellow)':'var(--red)';
+    const acao=efRatio>=80?'🟢 Escalar':'🟡 Otimizar';
+    if(i>=8)return '';
+    return '<tr><td><div class="rpos '+(clrs[i]||'rest')+'" style="display:inline-flex">'+(i+1)+'</div></td>'+
+      '<td class="tb" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+k+'">'+(k.length>30?k.slice(0,30)+'…':k)+'</td>'+
+      '<td class="tb tm tg">'+v.leads+'</td>'+
+      '<td class="tm">R$ '+v.gasto.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td>'+
+      '<td class="tm" style="color:var(--accent);font-weight:700">R$ '+cpl.toFixed(2)+'</td>'+
+      '<td class="tm">'+ctr+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:4px"><div style="width:50px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(efRatio,100)+'%;background:'+efColor+';border-radius:3px"></div></div><span class="tm" style="color:'+efColor+'">'+efRatio+'%</span></div></td>'+
+      '<td><span class="badge '+(efRatio>=80?'bg':'by')+'">'+acao+'</span></td></tr>';
+  }).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+
+  // ═══ FUNIL DE EFICIÊNCIA POR CONJUNTO ═══
+  q('tbFunnelEfic').innerHTML=Object.entries(adsetMap).sort((a,b)=>b[1].leads-a[1].leads).map(([k,v])=>{
+    const ctr=v.imp>0?(v.clk/v.imp*100).toFixed(2)+'%':'–';
+    const clkLp=v.clk>0?(v.lp/v.clk*100).toFixed(1)+'%':'–';
+    const lpLead=v.lp>0?(v.leads/v.lp*100).toFixed(1)+'%':'–';
+    const cpl=v.leads>0?'R$ '+(v.gasto/v.leads).toFixed(2):'–';
+    // Identificar gargalo
+    const ctrVal=v.imp>0?(v.clk/v.imp*100):0;
+    const clkLpVal=v.clk>0?(v.lp/v.clk*100):0;
+    const lpLeadVal=v.lp>0?(v.leads/v.lp*100):0;
+    let gargalo='–';
+    if(ctrVal<1)gargalo='<span class="badge br">CTR baixo — criativo fraco</span>';
+    else if(clkLpVal<50)gargalo='<span class="badge bo">Click→LP baixo — LP lenta</span>';
+    else if(lpLeadVal<5)gargalo='<span class="badge by">LP→Lead baixo — oferta</span>';
+    else gargalo='<span class="badge bg">✓ Funil saudável</span>';
+    return '<tr><td class="tb" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+k+'</td>'+
+      '<td class="tm">'+v.imp.toLocaleString('pt-BR')+'</td><td class="tm">'+v.clk.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tm '+(ctrVal>2?'tg':'tr')+'">'+ctr+'</td>'+
+      '<td class="tm">'+v.lp.toLocaleString('pt-BR')+'</td><td class="tm">'+clkLp+'</td>'+
+      '<td class="tb tm tg">'+(v.leads||'–')+'</td><td class="tm">'+lpLead+'</td>'+
+      '<td class="tm" style="color:var(--accent)">'+cpl+'</td><td>'+gargalo+'</td></tr>';
+  }).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:20px">Sem dados</td></tr>';
+
+  // ═══ DIAGNÓSTICO & RECOMENDAÇÕES ═══
+  const recs=[];
+  // 1. CPL trend
+  if(cplTrend<-10)recs.push({icon:'🟢',title:'CPL em queda — momento de escalar',text:'O CPL caiu '+Math.abs(cplTrend).toFixed(0)+'% nos últimos dias. <strong>Aumente o orçamento diário</strong> para aproveitar a eficiência antes que sature.',pri:'alta'});
+  else if(cplTrend>15)recs.push({icon:'🔴',title:'CPL subindo — revisar criativos',text:'O CPL subiu '+cplTrend.toFixed(0)+'% recentemente. Isso indica <strong>fadiga de criativo</strong> ou saturação de público. Troque os criativos e teste novos públicos.',pri:'alta'});
+
+  // 2. Melhor vs pior ad set
+  if(adsetRank.length>=2){
+    const best=adsetRank[0],worst=adsetRank[adsetRank.length-1];
+    const bestCpl2=best[1].gasto/best[1].leads,worstCpl=worst[1].gasto/worst[1].leads;
+    if(worstCpl>bestCpl2*2)recs.push({icon:'💡',title:'Realocar budget do pior para o melhor conjunto',text:'<strong>"'+best[0]+'"</strong> tem CPL de R$ '+bestCpl2.toFixed(2)+' vs <strong>"'+worst[0]+'"</strong> com R$ '+worstCpl.toFixed(2)+'. Considere pausar o pior e realocar o budget para o melhor.',pri:'alta'});
+  }
+
+  // 3. LP conversion rate
+  const lpConvRate=totalLP>0?(nPago/totalLP*100):0;
+  if(lpConvRate<10)recs.push({icon:'🟡',title:'Taxa LP→Lead baixa ('+lpConvRate.toFixed(1)+'%)',text:'Apenas '+lpConvRate.toFixed(1)+'% das pessoas que chegam na página viram lead. Revise: <strong>headline, velocidade da página, formulário, prova social</strong>.',pri:'media'});
+
+  // 4. CTR
+  if(ctrMed<1.5)recs.push({icon:'🟡',title:'CTR abaixo do ideal ('+ctrMed.toFixed(2)+'%)',text:'O CTR está baixo. Teste: <strong>novos hooks nos primeiros 3 segundos, cores mais vibrantes, copy com urgência</strong>.',pri:'media'});
+
+  // 5. Gasto médio
+  if(gastoDia<200)recs.push({icon:'💡',title:'Orçamento diário baixo (R$ '+gastoDia.toFixed(0)+')',text:'Com orçamento baixo o Meta tem dificuldade de otimizar. Considere <strong>concentrar em menos conjuntos com mais budget</strong> (mínimo R$ 50/dia por adset).',pri:'media'});
+
+  // 6. Escalar recomendação
+  if(cplAtual>0&&cplAtual<10)recs.push({icon:'🚀',title:'CPL saudável (R$ '+cplAtual.toFixed(2)+') — momento de escalar',text:'Com CPL abaixo de R$ 10, <strong>aumente 20-30% do orçamento diário a cada 2-3 dias</strong>. Não duplique de uma vez — suba gradualmente para não resetar o aprendizado do pixel.',pri:'alta'});
+
+  if(!recs.length)recs.push({icon:'✅',title:'Tráfego estável',text:'Os indicadores estão dentro do esperado. Continue monitorando e ajuste conforme necessário.',pri:'ok'});
+
+  q('trafRecommendations').innerHTML=recs.map(r=>{
+    const borderColor=r.pri==='alta'?'var(--red)':r.pri==='media'?'var(--yellow)':'var(--green)';
+    return '<div class="insight-box" style="border-left:3px solid '+borderColor+'"><div class="insight-title"><span class="insight-icon">'+r.icon+'</span> '+r.title+'</div><div class="insight-text">'+r.text+'</div></div>';
+  }).join('');
+
+  // ═══ TABELA COMPLETA ═══
+  q('tbTraf').innerHTML=D.trafego.map(r=>{const leads=TR.leads(r),cpl=pf(TR.cpl(r));return '<tr><td class="tm">'+(TR.date(r)||'–')+'</td><td class="tb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(TR.camp(r)||'–')+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(TR.adset(r)||'–')+'</td><td class="tm">R$ '+pf(TR.gasto(r)).toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tm">'+Number(TR.imp(r)||0).toLocaleString('pt-BR')+'</td><td class="tm">'+Number(TR.click(r)||0).toLocaleString('pt-BR')+'</td><td class="tm">'+Number(TR.lp(r)||0).toLocaleString('pt-BR')+'</td><td class="tm '+(pf(TR.ctr(r))>3?'tg':'ty')+'">'+pf(TR.ctr(r)).toFixed(2)+'%</td><td class="tb tm tg">'+(leads||'–')+'</td><td class="tm" style="color:var(--accent)">'+(cpl>0?'R$ '+cpl.toFixed(2):'–')+'</td><td class="tm">'+(pf(TR.cpm(r))>0?'R$ '+pf(TR.cpm(r)).toFixed(2):'–')+'</td><td class="tm">'+(pf(TR.cpc(r))>0?'R$ '+pf(TR.cpc(r)).toFixed(2):'–')+'</td></tr>';}).join('')||'<tr><td colspan="12" style="text-align:center;color:var(--text3);padding:24px">Sem dados</td></tr>';
+}
+
+/* ─── CRUZAMENTO ──────────────────────────────── */
+function normTel(v){if(!v)return '';let d=String(v).replace(/\D/g,'');if(d.length===13&&d.startsWith('55'))d=d.slice(2);if(d.length===12&&d.startsWith('55'))d=d.slice(2);return d.length>=8?d.slice(-9):d;}
+
+function renderCross(){
+  const cliTelMap={},cliEmailMap={};
+  D.clientes.forEach(row=>{const tel=normTel(row['telefone_contato']||row['telefone']||row['phone']||'');if(tel)cliTelMap[tel]=row;const em=(row['email_contato']||row['email']||'').toLowerCase().trim();if(em)cliEmailMap[em]=row;});
+
+  function findCliente(lead){const tel=normTel(lead['tel']||lead['telefone']||L.phone(lead)||'');if(tel&&cliTelMap[tel])return cliTelMap[tel];const em=(lead['email']||L.email(lead)||'').toLowerCase().trim();if(em&&cliEmailMap[em])return cliEmailMap[em];return null;}
+
+  const ex=D.leads.map(l=>({l,cli:findCliente(l)})).filter(x=>x.cli!==null);
+  const total=D.leads.length;const xpct=total>0?((ex.length/total)*100).toFixed(1):0;
+  q('xPct').textContent=xpct+'%';
+
+  const tipoMap={aluna:[],alunacliente:[],cliente:[]};
+  ex.forEach(({l,cli})=>{const tipo=(cli['tipo']||'').toLowerCase().replace(/\s+/g,'');if(tipo.includes('cliente')&&tipo.includes('aluna'))tipoMap.alunacliente.push({l,cli});else if(tipo.includes('aluna'))tipoMap.aluna.push({l,cli});else if(tipo.includes('cliente'))tipoMap.cliente.push({l,cli});else tipoMap.aluna.push({l,cli});});
+
+  if(q('xAluna'))q('xAluna').textContent=tipoMap.aluna.length;
+  if(q('xAlunaCliente'))q('xAlunaCliente').textContent=tipoMap.alunacliente.length;
+  if(q('xCliente'))q('xCliente').textContent=tipoMap.cliente.length;
+
+  const resumoEl=q('crossResumo');
+  if(resumoEl)resumoEl.innerHTML='<span class="badge bp" style="margin-right:6px">★ Só Aluna: '+tipoMap.aluna.length+'</span><span class="badge bg" style="margin-right:6px">★ Aluna + Cliente: '+tipoMap.alunacliente.length+'</span><span class="badge by">★ Só Cliente: '+tipoMap.cliente.length+'</span>';
+
+  const badgeFor=tipo=>{if(tipo.includes('cliente')&&tipo.includes('aluna'))return '<span class="badge bg">★ Aluna + Cliente</span>';if(tipo.includes('aluna'))return '<span class="badge bp">★ Aluna</span>';if(tipo.includes('cliente'))return '<span class="badge by">★ Cliente</span>';return '<span class="badge bgr">–</span>';};
+
+  q('tbCross').innerHTML=ex.slice(0,200).map(({l,cli})=>{const curso=cli['nome_produto']||cli['curso']||'–';const tipo=(cli['tipo']||'').toLowerCase().replace(/\s+/g,'');return '<tr><td class="tb">'+(L.name(l)||'–')+'</td><td style="font-size:12px">'+(L.email(l)||'–')+'</td><td class="tm">'+fd(L.date(l))+'</td><td><span class="ut">'+(L.src(l)||'–')+'</span></td><td>'+curso+'</td><td>'+badgeFor(tipo)+'</td></tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">Nenhum match encontrado</td></tr>';
+}
+
+/* ─── TABLE + FILTERS ─────────────────────────── */
+function applyF(){
+  const df=q('fFrom').value,dt=q('fTo').value,src=q('fSrc').value,stt=q('fStt').value,qs=q('fQ').value.toLowerCase();
+  const cliSet=new Set(D.clientes.map(c=>CL.email(c).toLowerCase()).filter(Boolean));
+  FL=D.leads.filter(l=>{const d=L.date(l),e=L.email(l).toLowerCase();if(df&&d<df)return false;if(dt&&d>dt)return false;if(src&&L.src(l)!==src)return false;const ex=cliSet.has(e);if(stt==='ex'&&!ex)return false;if(stt==='novo'&&ex)return false;if(qs&&!L.name(l).toLowerCase().includes(qs)&&!e.includes(qs))return false;return true;});
+  pg=1;renderTable();
+}
+
+function renderTable(){
+  const cliSet=new Set(D.clientes.map(c=>CL.email(c).toLowerCase()).filter(Boolean));
+  const tot=FL.length,tp=Math.ceil(tot/PP),s=(pg-1)*PP;
+  q('tbLeads').innerHTML=FL.slice(s,s+PP).map(l=>{const ex=cliSet.has(L.email(l).toLowerCase());return '<tr '+(ex?'style="border-left:2px solid var(--purple)"':'')+'><td class="tm">'+fd(L.date(l))+'</td><td class="tb">'+(L.name(l)||'–')+'</td><td style="font-size:12px">'+(L.email(l)||'–')+'</td><td class="tm" style="font-size:11px">'+(L.phone(l)||'–')+'</td><td><span class="ut">'+(L.src(l)||'–')+'</span></td><td><span class="ut">'+(L.medium(l)||'–')+'</span></td><td><span class="ut">'+(L.campaign(l)||'–').slice(0,22)+'</span></td><td><span class="ut">'+(L.term(l)||'–').slice(0,22)+'</span></td><td><span class="ut">'+(L.content(l)||'–').slice(0,22)+'</span></td><td>'+(ex?'<span class="badge bp">★ Ex-Aluna</span>':'<span class="badge bgr">Novo</span>')+'</td></tr>';}).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:24px">Sem resultados.</td></tr>';
+  q('pinfo').textContent='Mostrando '+Math.min(s+1,tot)+'–'+Math.min(s+PP,tot)+' de '+tot;
+  renderPg(tp);
+}
+
+function renderPg(tp){const w=q('pbtns');w.innerHTML='';if(tp<=1)return;const add=(l,p,a,dis)=>{const b=document.createElement('div');b.className='pb'+(a?' active':'');b.textContent=l;if(!dis&&!a)b.onclick=()=>{pg=p;renderTable();};w.appendChild(b);};add('‹',pg-1,false,pg===1);let ps=[];for(let i=1;i<=tp;i++){if(i===1||i===tp||Math.abs(i-pg)<=1)ps.push(i);else if(ps[ps.length-1]!=='…')ps.push('…');}ps.forEach(p=>p==='…'?w.appendChild(Object.assign(document.createElement('div'),{className:'pb',textContent:'…',style:'cursor:default'})):add(p,p,p===pg));add('›',pg+1,false,pg===tp);}
+
+function populateSrc(){const s=[...new Set(D.leads.map(l=>L.src(l)).filter(Boolean))];q('fSrc').innerHTML='<option value="">Todas as origens</option>'+s.map(x=>'<option value="'+x+'">'+x+'</option>').join('');}
+function clearF(){['fFrom','fTo','fQ'].forEach(i=>q(i).value='');['fSrc','fStt'].forEach(i=>q(i).selectedIndex=0);applyF();}
+
+/* ─── CSV ─────────────────────────────────────── */
+function exportCSV(){
+  const h=['data','nome','email','telefone','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+  const rows=(FL.length?FL:D.leads).map(l=>[fd(L.date(l)),L.name(l),L.email(l),L.phone(l),L.src(l),L.medium(l),L.campaign(l),L.term(l),L.content(l)].map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(','));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+[h.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8'}));a.download='leads_'+new Date().toISOString().split('T')[0]+'.csv';a.click();toast('CSV exportado!','success');
+}
+
+/* ─── DEBUG ───────────────────────────────────── */
+let dblog='';function log(m){dblog+=m+'\n';console.log(m);}
+function showDebug(){const b=q('debugBox');b.style.display='block';b.textContent=dblog;}
+function toggleDebug(){const b=q('debugBox');b.style.display=b.style.display==='none'?'block':'none';b.textContent=dblog;}
+
+/* ─── UTILS ───────────────────────────────────── */
+const q=id=>document.getElementById(id);
+const pf=v=>parseFloat(String(v||0).replace(',','.'))||0;
+function normDate(s){if(!s)return '';s=String(s).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2){return m2[3]+'-'+String(m2[1]).padStart(2,'0')+'-'+String(m2[2]).padStart(2,'0');}const m3=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);if(m3)return m3[3]+'-'+m3[2]+'-'+m3[1];const d=new Date(s);if(!isNaN(d))return d.toISOString().split('T')[0];return '';}
+function toYMD(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');}
+const dd=(ds,now)=>{const nd=normDate(ds);if(!nd)return 9999;return(now-new Date(nd))/86400000;};
+const fd=s=>{const nd=normDate(s);if(!nd)return'–';const[y,m,d]=nd.split('-');return d+'/'+m+'/'+y;};
+const cnt=(arr,fn)=>arr.reduce((a,i)=>{const k=fn(i)||'–';a[k]=(a[k]||0)+1;return a;},{});
+function setL(on){q('rbtn').classList.toggle('loading',on);q('rico').classList.toggle('spin',on);}
+function toast(msg,type='success'){const t=q('toast');q('tmsg').textContent=msg;t.className='show '+type;t.querySelector('svg').innerHTML=type==='success'?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';setTimeout(()=>t.className=type,4000);}
+function showSec(s,el){document.querySelectorAll('.sec').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));q('sec-'+s).classList.add('active');el.classList.add('active');if(window.innerWidth<=768)closeSB();}
+function toggleSB(){q('sidebar').classList.toggle('open');q('overlay').classList.toggle('show');}
+function closeSB(){q('sidebar').classList.remove('open');q('overlay').classList.remove('show');}
+
+/* ─── UTM LINKS ───────────────────────────────── */
+const BASE_URL='https://rosedecor.com.br/dia-do-consumidor-vitalicio/';
+const UTM_GROUPS={
+  metaAds:{label:'Meta Ads',src:'pago',items:[{name:'🎯 Feed IG (dinâmico)',medium:'paid',campaign:'launch-mar26',content:'{{ad.name}}',term:'{{adset.name}}'},{name:'📱 Stories IG',medium:'stories',campaign:'launch-mar26',content:'{{ad.name}}',term:'{{adset.name}}'},{name:'▶️ Reels',medium:'reels',campaign:'launch-mar26',content:'{{ad.name}}',term:'{{adset.name}}'},{name:'💻 Feed FB',medium:'paid',campaign:'launch-mar26',content:'{{ad.name}}',term:'{{adset.name}}'}]},
+  organico:{label:'Orgânico',src:'organico',items:[{name:'📸 Bio IG',medium:'bio',campaign:'organico-mar26'},{name:'📱 Stories Manual',medium:'stories',campaign:'organico-mar26'},{name:'▶️ Reels Orgânico',medium:'reels',campaign:'organico-mar26'},{name:'💻 Feed FB',medium:'feed',campaign:'organico-mar26'},{name:'📺 YouTube',medium:'youtube',campaign:'organico-mar26'},{name:'🎵 TikTok',medium:'tiktok',campaign:'organico-mar26'}]},
+  whatsapp:{label:'WhatsApp',src:'pago',items:[{name:'💬 Grupo Clientes',medium:'whatsapp',campaign:'grupo-clientes-mar26'},{name:'💬 Grupo Leads',medium:'whatsapp',campaign:'grupo-leads-mar26'},{name:'💬 Grupo Seguidores',medium:'whatsapp',campaign:'grupo-seguidores-mar26'},{name:'📣 Broadcast',medium:'whatsapp',campaign:'broadcast-mar26'}]},
+  api:{label:'API Oficial',src:'api',items:[{name:'🤖 Base Alunos',medium:'api',campaign:'api-alunos-mar26'},{name:'🤖 Leads Antigos',medium:'api',campaign:'api-leads-mar26'},{name:'🤖 Clientes Loja',medium:'api',campaign:'api-loja-mar26'}]},
+  outros:{label:'Base & Outros',src:'pago',items:[{name:'🛍️ Clientes Loja',medium:'email',campaign:'base-loja-mar26'},{name:'🎓 Base Alunos',medium:'email',campaign:'base-alunos-mar26'},{name:'📋 Leads Antigos',medium:'email',campaign:'base-leads-mar26'},{name:'🔗 Outros',medium:'direto',campaign:'outros-mar26'}]}
+};
+
+function makeUTMLink(src,medium,campaign,content,term){let url=BASE_URL+'?utm_source='+encodeURIComponent(src)+'&utm_medium='+encodeURIComponent(medium)+'&utm_campaign='+encodeURIComponent(campaign);if(content)url+='&utm_content='+encodeURIComponent(content);if(term)url+='&utm_term='+encodeURIComponent(term);return url;}
+
+function renderUTMLinks(){
+  const now=new Date();const map={metaAds:'linksMetaAds',organico:'linksOrganico',whatsapp:'linksWhatsapp',api:'linksApi',outros:'linksOutros'};
+  Object.entries(UTM_GROUPS).forEach(([key,group])=>{const el=q(map[key]);if(!el)return;el.innerHTML=group.items.map(item=>{const url=makeUTMLink(group.src,item.medium,item.campaign,item.content||'',item.term||'');const leads=D.leads.filter(l=>L.campaign(l)===item.campaign).length;return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--text)">'+item.name+'</span>'+(leads>0?'<span class="badge bb">'+leads+' leads</span>':'')+'</div><div style="font-size:10px;font-family:\'DM Mono\',monospace;color:var(--text3);word-break:break-all;margin-bottom:6px">'+url+'</div><button class="btn btng" style="font-size:10px;padding:4px 10px" onclick="navigator.clipboard.writeText(\''+url.replace(/'/g,"\\'")+'\').then(()=>toast(\'Link copiado!\',\'success\'))">📋 Copiar</button></div>';}).join('');});
+
+  const srcGroups={'pago':{name:'📢 Pago',leads:[]},'organico':{name:'🌿 Orgânico',leads:[]},'api':{name:'🤖 API',leads:[]}};const outros2=[];
+  D.leads.forEach(l=>{const s=(L.src(l)||'').toLowerCase();if(srcGroups[s])srcGroups[s].leads.push(l);else outros2.push(l);});
+  const allGroups=[...Object.entries(srcGroups).map(([k,v])=>({name:v.name,leads:v.leads})),{name:'🔵 Outros',leads:outros2}];
+  const total=D.leads.length;
+  q('tbUtmPerf').innerHTML=allGroups.filter(g=>g.leads.length>0).map(g=>{const hoje_n=g.leads.filter(l=>dd(L.date(l),now)>=0&&dd(L.date(l),now)<1).length;const ult24=g.leads.filter(l=>dd(L.date(l),now)<1&&dd(L.date(l),now)>=0).length;const pct=total>0?((g.leads.length/total)*100).toFixed(1):0;const srcs=[...new Set(g.leads.map(l=>L.src(l)).filter(Boolean))].join(', ')||'–';return '<tr><td class="tb">'+g.name+'</td><td><span class="ut">'+srcs+'</span></td><td class="tb tm" style="color:var(--accent)">'+g.leads.length+'</td><td class="tm">'+pct+'%</td><td class="tm">'+hoje_n+'</td><td class="tm">'+ult24+'</td></tr>';}).join('');
+}
+
+function updateUTMLink(){const src=q('uSrc').value,med=q('uMed').value,camp=q('uCamp').value;if(!src||!med||!camp){q('utmPreview').textContent='← Preencha os 3 campos obrigatórios';return;}q('utmPreview').textContent=makeUTMLink(src,med,camp,q('uContent').value,q('uTerm').value);}
+function copyUTMLink(){const txt=q('utmPreview').textContent;if(txt.startsWith('←'))return;navigator.clipboard.writeText(txt).then(()=>toast('Link copiado!','success'));}
+
+/* ─── METAS ───────────────────────────────────── */
+function renderMetas(){
+  const total=D.leads.length;
+  const meta=parseInt(q('metaInput').value)||1500;
+  const now=new Date();
+  const fimStr=q('metaDateInput').value||CFG.DATA_FIM;
+  const fim=new Date(fimStr);fim.setHours(23,59,59);
+  const msRest=fim-now;const diasRest=Math.max(0,Math.ceil(msRest/86400000));
+  const datas=D.leads.map(l=>L.date(l)).filter(Boolean).sort();const inicio=datas[0]?new Date(datas[0]):now;
+  const diasDec=Math.max(1,Math.ceil((now-inicio)/86400000));
+  const faltam=Math.max(0,meta-total);const pct=Math.min(100,(total/meta)*100);
+  const necDia=diasRest>0?Math.ceil(faltam/diasRest):0;const mediaDia=diasDec>0?(total/diasDec).toFixed(1):0;
+  const projetado=Math.round(parseFloat(mediaDia)*(diasDec+diasRest));
+  const mInvest=D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
+  const mNPago=D.leads.filter(isPago).length;
+  const cplAtual=mNPago>0?mInvest/mNPago:0;
+
+  // KPIs
+  q('mCaptados').textContent=total.toLocaleString('pt-BR');
+  q('mFaltam').textContent=faltam.toLocaleString('pt-BR');
+  q('mDias').textContent=diasRest;
+  q('mNecDia').textContent=necDia;
+  q('mProgPct').textContent=pct.toFixed(1)+'%';
+  q('mProgBar').style.width=pct+'%';
+  q('mProgBar').style.background=pct>=100?'var(--green)':'linear-gradient(90deg,var(--accent),var(--green))';
+  q('mMedioLabel').textContent=Math.round(meta/2).toLocaleString('pt-BR');
+  q('mMetaLabel2').textContent=meta.toLocaleString('pt-BR');
+
+  // Projeção receita (meta vs atual vs ritmo)
+  [5,10,15].forEach(p=>{
+    const v=Math.round(meta*p/100),r=v*CFG.PRODUCT_PRICE;q('mp'+p).textContent='R$ '+r.toLocaleString('pt-BR');q('mpl'+p).textContent=v+' vendas ('+meta+' leads)';
+    const vr=Math.round(total*p/100),rr=vr*CFG.PRODUCT_PRICE;q('rp'+p).textContent='R$ '+rr.toLocaleString('pt-BR');q('rpl'+p).textContent=vr+' vendas';
+    const vp=Math.round(projetado*p/100),rp=vp*CFG.PRODUCT_PRICE;q('pp'+p).textContent='R$ '+rp.toLocaleString('pt-BR');q('ppl'+p).textContent=vp+' vendas ('+projetado+' leads)';
+  });
+
+  // ═══ CENÁRIOS DE ESCALA ═══
+  const cenarios=[
+    {label:'Meta Atual',leads:meta,color:'var(--accent)',icon:'🎯'},
+    {label:'Escala 2k',leads:2000,color:'var(--yellow)',icon:'🚀'},
+    {label:'Escala 2.5k',leads:2500,color:'var(--orange)',icon:'🔥'},
+    {label:'Escala 3k',leads:3000,color:'var(--red)',icon:'💥'}
+  ];
+
+  q('mCenarios').innerHTML=cenarios.map(c=>{
+    const f=Math.max(0,c.leads-total);
+    const investTotal=f*cplAtual;
+    const investDia=diasRest>0?investTotal/diasRest:0;
+    const leadsDia=diasRest>0?Math.ceil(f/diasRest):0;
+    const atingivel=projetado>=c.leads;
+    return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;border-top:3px solid '+c.color+'">'+
+      '<div style="font-size:12px;font-weight:700;color:'+c.color+';margin-bottom:8px">'+c.icon+' '+c.label+'</div>'+
+      '<div style="font-size:28px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--text)">'+c.leads.toLocaleString('pt-BR')+'</div>'+
+      '<div style="font-size:11px;color:var(--text3);margin-top:4px">Faltam: <strong style="color:var(--text)">'+f.toLocaleString('pt-BR')+'</strong> leads</div>'+
+      '<div style="font-size:11px;color:var(--text3)">Leads/dia: <strong style="color:var(--text)">'+leadsDia+'</strong></div>'+
+      '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">'+
+        '<div style="font-size:10px;color:var(--text3)">Investimento/dia:</div>'+
+        '<div style="font-size:18px;font-weight:700;font-family:\'DM Mono\',monospace;color:'+c.color+'">R$ '+investDia.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Total: R$ '+investTotal.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</div>'+
+      '</div>'+
+      '<div style="margin-top:6px"><span class="badge '+(atingivel?'bg':'br')+'" style="font-size:10px">'+(atingivel?'✓ Atingível no ritmo':'⚠ Precisa escalar')+'</span></div>'+
+    '</div>';
+  }).join('');
+
+  q('mCenariosBase').innerHTML='📊 CPL atual: <strong style="color:var(--text)">R$ '+cplAtual.toFixed(2)+'</strong> (R$ '+mInvest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ÷ '+mNPago+' leads pagos) · <strong style="color:var(--text)">'+diasRest+' dias restantes</strong> · Média atual: <strong style="color:var(--text)">'+mediaDia+' leads/dia</strong>';
+
+  // ═══ ROI POR CENÁRIO ═══
+  q('tbROI').innerHTML=cenarios.map(c=>{
+    const investTotal=Math.max(0,c.leads-total)*cplAtual+mInvest;
+    const v5=Math.round(c.leads*0.05),r5=v5*CFG.PRODUCT_PRICE,l5=r5-investTotal;
+    const v10=Math.round(c.leads*0.1),r10=v10*CFG.PRODUCT_PRICE,l10=r10-investTotal;
+    const roi10=investTotal>0?((l10/investTotal)*100).toFixed(0)+'%':'–';
+    return '<tr>'+
+      '<td class="tb" style="color:'+c.color+'">'+c.icon+' '+c.label+'</td>'+
+      '<td class="tm">'+c.leads.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tm">R$ '+investTotal.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td>'+
+      '<td class="tm">'+v5+'</td>'+
+      '<td class="tm">R$ '+r5.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tm" style="color:'+(l5>=0?'var(--green)':'var(--red)')+'">R$ '+l5.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tm">'+v10+'</td>'+
+      '<td class="tm">R$ '+r10.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tm" style="color:'+(l10>=0?'var(--green)':'var(--red)')+'">R$ '+l10.toLocaleString('pt-BR')+'</td>'+
+      '<td class="tb tm" style="color:'+(l10>=0?'var(--green)':'var(--red)')+'">'+roi10+'</td>'+
+    '</tr>';
+  }).join('');
+
+  // ═══ SIMULADOR — set defaults ═══
+  if(cplAtual>0){q('simCPL').value=Math.min(30,Math.round(cplAtual*2)/2);q('simCPLlabel').textContent='R$ '+cplAtual.toFixed(2);}
+  const gastoMedioDia=diasDec>0?mInvest/diasDec:500;
+  q('simInvestDia').value=Math.min(5000,Math.round(gastoMedioDia/50)*50);
+  q('simInvestLabel').textContent='R$ '+Number(q('simInvestDia').value).toLocaleString('pt-BR');
+  updateSim();
+
+  // ═══ GRÁFICO: Realizado vs Meta ═══
+  const byDay={};D.leads.forEach(l=>{const d=L.date(l);if(d)byDay[d]=(byDay[d]||0)+1;});
+  const diasOrd=Object.keys(byDay).sort();let acc2=0;const realAcc=diasOrd.map(d=>{acc2+=byDay[d];return acc2;});
+  const inicioStr=diasOrd[0]||toYMD(now);const totalDias2=Math.max(1,Math.ceil((fim-new Date(inicioStr))/86400000));
+  const metaAcc=diasOrd.map((_,i)=>Math.round(meta*(i+1)/totalDias2));
+  const mediaNum=parseFloat(mediaDia);const projAcc=diasOrd.map((_,i)=>Math.round(mediaNum*(i+1)));
+
+  mk('cMetas',{type:'line',data:{labels:diasOrd.map(d=>fd(d)),datasets:[
+    {label:'Realizado',data:realAcc,borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,0.08)',tension:0.3,fill:true,pointRadius:2,borderWidth:2},
+    {label:'Ritmo p/ Meta ('+meta+')',data:metaAcc,borderColor:'#f0b429',backgroundColor:'transparent',tension:0.3,borderDash:[6,3],pointRadius:0,borderWidth:2},
+    {label:'Projeção Atual',data:projAcc,borderColor:'#22c97a',backgroundColor:'transparent',tension:0.3,borderDash:[3,3],pointRadius:0,borderWidth:1.5}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.06)'},suggestedMax:meta}}}});
+
+  // ═══ GRÁFICO: Gasto Acumulado vs Orçamento por Cenário ═══
+  const gastoDay2={};D.trafego.forEach(r=>{const d=TR.date(r);if(d){gastoDay2[d]=(gastoDay2[d]||0)+pf(TR.gasto(r));}});
+  const gastoDays=Object.keys(gastoDay2).sort();
+  let gAcc=0;const gastoAcc=gastoDays.map(d=>{gAcc+=gastoDay2[d];return gAcc;});
+  const orcCenarios=cenarios.map(c=>{
+    const investTotalC=Math.max(0,c.leads-total)*cplAtual+mInvest;
+    return gastoDays.map((_,i)=>Math.round(investTotalC*(i+1)/Math.max(gastoDays.length,1)));
+  });
+
+  mk('cGastoVsMeta',{type:'line',data:{labels:gastoDays.map(d=>fd(d)),datasets:[
+    {label:'Gasto Real',data:gastoAcc,borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,0.1)',tension:0.3,fill:true,pointRadius:2,borderWidth:2.5},
+    ...cenarios.map((c,i)=>({label:'Orç. '+c.label,data:orcCenarios[i],borderColor:c.color==='var(--accent)'?'#4f6ef7aa':c.color==='var(--yellow)'?'#f0b429':c.color==='var(--orange)'?'#fb923c':'#f05454',backgroundColor:'transparent',tension:0.3,borderDash:[4,3],pointRadius:0,borderWidth:1.5}))
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:10}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10},callback:function(v){return'R$ '+(v/1000).toFixed(1)+'k';}},grid:{color:'rgba(255,255,255,0.06)'}}}}});
+}
+
+/* ═══ SIMULADOR INTERATIVO ═══ */
+function updateSim(){
+  const investDia=parseFloat(q('simInvestDia').value)||1000;
+  const cpl=parseFloat(q('simCPL').value)||7;
+  const conv=(parseFloat(q('simConv').value)||10)/100;
+  const now=new Date();const fimStr=q('metaDateInput')?q('metaDateInput').value:CFG.DATA_FIM;
+  const fim=new Date(fimStr);fim.setHours(23,59,59);
+  const diasRest=Math.max(1,Math.ceil((fim-now)/86400000));
+
+  q('simInvestLabel').textContent='R$ '+investDia.toLocaleString('pt-BR');
+  q('simCPLlabel').textContent='R$ '+cpl.toFixed(2).replace('.',',');
+  q('simConvLabel').textContent=(conv*100).toFixed(1)+'%';
+
+  const leadsDia=Math.round(investDia/cpl);
+  const leadsTotal=D.leads.length+leadsDia*diasRest;
+  const investTotal=investDia*diasRest;
+  const investTotalComExistente=investTotal+D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
+  const vendas=Math.round(leadsTotal*conv);
+  const receita=vendas*CFG.PRODUCT_PRICE;
+  const lucro=receita-investTotalComExistente;
+  const roi=investTotalComExistente>0?((lucro/investTotalComExistente)*100).toFixed(0):0;
+
+  const items=[
+    {label:'Leads/dia (pagos)',val:leadsDia.toLocaleString('pt-BR'),color:'var(--accent)',sub:'com CPL R$ '+cpl.toFixed(2)},
+    {label:'Total Leads Projetado',val:leadsTotal.toLocaleString('pt-BR'),color:'var(--cyan)',sub:'atuais + novos'},
+    {label:'Investimento Total',val:'R$ '+investTotalComExistente.toLocaleString('pt-BR',{minimumFractionDigits:2}),color:'var(--yellow)',sub:diasRest+'d × R$ '+investDia.toLocaleString('pt-BR')},
+    {label:'Vendas ('+Math.round(conv*100)+'%)',val:vendas.toLocaleString('pt-BR'),color:'var(--green)',sub:'de '+leadsTotal.toLocaleString('pt-BR')+' leads'},
+    {label:'Lucro Líquido',val:'R$ '+lucro.toLocaleString('pt-BR'),color:lucro>=0?'var(--green)':'var(--red)',sub:'ROI: '+roi+'%'}
+  ];
+
+  q('simResults').innerHTML=items.map(it=>
+    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center">'+
+      '<div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">'+it.label+'</div>'+
+      '<div style="font-size:20px;font-weight:700;font-family:\'DM Mono\',monospace;color:'+it.color+'">'+it.val+'</div>'+
+      '<div style="font-size:10px;color:var(--text3);margin-top:2px">'+it.sub+'</div>'+
+    '</div>'
+  ).join('');
+}
+
+/* ─── INIT ────────────────────────────────────── */
+q('lname').textContent=CFG.LAUNCH_NAME;
+q('htitle').textContent=CFG.LAUNCH_NAME;
+loadData();
+
+const AUTO_INTERVAL=5*60*1000;
+setInterval(()=>{loadData();console.log('🔄 Auto-refresh: '+new Date().toLocaleTimeString('pt-BR'));},AUTO_INTERVAL);
+let countdown=AUTO_INTERVAL/1000;
+setInterval(()=>{countdown--;if(countdown<=0)countdown=AUTO_INTERVAL/1000;const min=Math.floor(countdown/60);const sec=String(countdown%60).padStart(2,'0');const el=q('autoLabel');if(el)el.textContent='↻ '+min+':'+sec;},1000);
+</script>
+</body>
+</html>

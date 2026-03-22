@@ -1248,10 +1248,9 @@ function renderKPIs() {
 
   q('tG').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2});
   q('tImp').textContent=totalImp.toLocaleString('pt-BR');q('tClk').textContent=totalClk.toLocaleString('pt-BR');
-  q('tCTRlbl').textContent='CTR médio: '+ctrMed.toFixed(2)+'%';q('tLP').textContent=totalLP.toLocaleString('pt-BR');
-  q('tCTR').textContent=ctrMed.toFixed(2)+'%';q('tCPM').textContent='R$ '+cpmMed.toFixed(2);
-  q('tL').textContent=totalLeadT;q('tCPL2').textContent=cplPago>0?'R$ '+cplPago.toFixed(2):'–';
-  q('tCPLlbl').textContent='Total investido ÷ '+nPago+' leads pagos';
+  q('tCTRlbl').textContent='CTR: '+ctrMed.toFixed(2)+'%';q('tLP').textContent=totalLP.toLocaleString('pt-BR');
+  q('tL').textContent=nPago;q('tCPL2').textContent=cplPago>0?'R$ '+cplPago.toFixed(2):'–';
+  q('tCPLlbl').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ÷ '+nPago+' leads pagos';
   q('trafSub').textContent=D.trafego.length+' campanhas · R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' investidos';
 
   q('fImp').textContent=totalImp.toLocaleString('pt-BR');q('fClicks').textContent=totalClk.toLocaleString('pt-BR');

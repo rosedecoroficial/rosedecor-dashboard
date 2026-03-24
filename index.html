@@ -872,7 +872,7 @@ const CFG = {
   DATA_FIM: '2026-03-31',
 };
 
-let D = { leads:[], clientes:[], trafego:[], pesquisa:[] };
+let D = { leads:[], clientes:[], trafego:[], pesquisa:[], api_disparos:[] };
 let FL = [], pg = 1;
 const PP = 20;
 let CH = {};
@@ -962,7 +962,8 @@ async function loadData() {
     D.clientes = json.clientes || [];
     D.trafego  = json.trafego  || [];
     D.pesquisa = json.pesquisa || [];
-    log('✅ leads: '+D.leads.length+' | pesquisa: '+D.pesquisa.length);
+    D.api_disparos = json.api_disparos || [];
+    log('✅ leads: '+D.leads.length+' | pesquisa: '+D.pesquisa.length+' | api_disparos: '+D.api_disparos.length);
     if(D.leads[0])    log('   cols leads: '+Object.keys(D.leads[0]).join(', '));
     if(D.trafego[0])  log('   cols tráfego: '+Object.keys(D.trafego[0]).join(', '));
     if(D.pesquisa[0]) log('   cols pesquisa: '+Object.keys(D.pesquisa[0]).join(', '));
@@ -985,7 +986,7 @@ function renderAll() {
   q('nbPesq').textContent= D.pesquisa.length;
   q('osub').textContent  = D.leads.length+' leads · '+D.trafego.length+' campanhas · '+D.clientes.length+' clientes · '+D.pesquisa.length+' pesquisas';
   q('hsub').textContent  = D.leads.length+' leads captados';
-  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); renderLeadApi(); renderCPLoverview(); updateSimFat(); populateSrc(); applyF();
+  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); loadApiDisparosFromSheet(); renderLeadApi(); renderCPLoverview(); updateSimFat(); populateSrc(); applyF();
 }
 
 /* ═══════════════════════════════════════════
@@ -1931,6 +1932,28 @@ const API_SEGMENTOS = {
   antigos:    { label:'Leads Antigos',      utmTerm:'lead-antigos',     colorHex:'#38bdf8' },
 };
 const apiDisparos = { alunos:0, clientes:0, blackfriday:0, antigos:0 };
+
+function loadApiDisparosFromSheet() {
+  // Read from api_disparos sheet: expects columns "segmento" and "disparos"
+  if (!D.api_disparos || !D.api_disparos.length) return;
+  const segMap = {
+    'alunos':'alunos', 'base de alunos':'alunos', 'api-alunos-mar26':'alunos',
+    'clientes':'clientes', 'clientes da loja':'clientes', 'clientesloja':'clientes',
+    'blackfriday':'blackfriday', 'leads black friday':'blackfriday', 'lead-blackfriday':'blackfriday', 'black friday':'blackfriday',
+    'antigos':'antigos', 'leads antigos':'antigos', 'lead-antigos':'antigos'
+  };
+  D.api_disparos.forEach(row => {
+    const seg = (gv(row,'segmento','segment','nome','name','base','utm_term')||'').toLowerCase().trim();
+    const disp = parseInt(gv(row,'disparos','disparo','envios','quantidade','qty','total'))||0;
+    const mapped = segMap[seg];
+    if (mapped && disp > 0) {
+      apiDisparos[mapped] = disp;
+      const input = document.querySelector('.api-disparos[data-seg="'+mapped+'"]');
+      if (input) input.value = disp;
+    }
+  });
+  log('📡 api_disparos carregados: '+JSON.stringify(apiDisparos));
+}
 
 function getApiLeads() {
   return D.leads.filter(l => {

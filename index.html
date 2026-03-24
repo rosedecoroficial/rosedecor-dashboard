@@ -237,6 +237,13 @@ select.fi{cursor:pointer;min-width:130px}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
     UTMs & Links
   </div>
+
+  <div class="ns">API</div>
+  <div class="ni" onclick="showSec('leadapi',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    Lead API Oficial <span class="nbadge" id="nbApi" style="background:var(--green)">–</span>
+  </div>
+
   <div class="ni" onclick="showSec('metas',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
     Metas & Projeção
@@ -753,6 +760,45 @@ select.fi{cursor:pointer;min-width:130px}
   </div>
 </section>
 
+
+<!-- LEAD API OFICIAL -->
+<section id="sec-leadapi" class="sec">
+  <div class="stitle">📡 Lead API Oficial — Controle de Disparos & CPL</div>
+  <div class="ssub" id="apiSub">Rastreamento de leads captados via API Oficial do WhatsApp (ManyChat) por segmento de base</div>
+
+  <div class="g g4 mb">
+    <div class="card" style="border-top:3px solid var(--green)"><div class="ch"><span class="ct">Total Leads API</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv" id="apiTotalLeads" style="color:var(--green)">0</div><div class="cl">captados via src=pago-api-oficial-manychat</div></div>
+    <div class="card" style="border-top:3px solid var(--yellow)"><div class="ch"><span class="ct">Total Disparos</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div></div><div class="cv sm" id="apiTotalDisparos">0</div><div class="cl">mensagens utility enviadas</div></div>
+    <div class="card" style="border-top:3px solid var(--red)"><div class="ch"><span class="ct">Custo Total</span><div class="ci r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="cv sm" id="apiTotalCusto" style="color:var(--red)">R$ 0,00</div><div class="cl">disparos × R$ 0,0642</div></div>
+    <div class="card" style="border-top:3px solid var(--accent)"><div class="ch"><span class="ct">CPL API Oficial</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div></div><div class="cv" id="apiCPL" style="color:var(--accent)">–</div><div class="cl" id="apiCPLsub">custo total ÷ leads captados</div></div>
+  </div>
+
+  <div class="card mb" style="border-color:var(--green);border-width:2px;padding:14px 20px"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:8px"><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div><div style="font-size:12px;font-weight:700;color:var(--green)">CUSTO POR MENSAGEM UTILITY</div><div style="font-size:11px;color:var(--text3)">WhatsApp Business API — valor fixo por disparo</div></div></div><div style="margin-left:auto;font-size:28px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">R$ 0,0642</div></div></div>
+
+  <div class="g g2 mb">
+    <div class="card" style="border-left:4px solid var(--purple)"><div class="ch"><div><span class="ct" style="color:var(--purple)">🎓 Base de Alunos</span><div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace">utm_term=api-alunos-mar26</div></div><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px"><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">DISPAROS</div><input type="number" class="fi api-disparos" data-seg="alunos" placeholder="0" min="0" step="100" style="width:100%;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;color:var(--purple);border-color:var(--purple)" oninput="calcApiSegmento('alunos')"></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">CUSTO</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--yellow)" id="apiCusto-alunos">R$ 0,00</div></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">LEADS CAPTADOS</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="apiLeads-alunos">0</div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;color:var(--text3)">CPL deste segmento:</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="apiCPL-alunos">–</div></div><div class="bar-track" style="margin-top:8px"><div class="bar-fill" id="apiBar-alunos" style="background:var(--purple);width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>Taxa conversão:</span><span id="apiTaxa-alunos">0%</span></div></div>
+
+    <div class="card" style="border-left:4px solid var(--yellow)"><div class="ch"><div><span class="ct" style="color:var(--yellow)">🛍️ Clientes da Loja</span><div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace">utm_term=clientesloja</div></div><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px"><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">DISPAROS</div><input type="number" class="fi api-disparos" data-seg="clientes" placeholder="0" min="0" step="100" style="width:100%;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;color:var(--yellow);border-color:var(--yellow)" oninput="calcApiSegmento('clientes')"></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">CUSTO</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--yellow)" id="apiCusto-clientes">R$ 0,00</div></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">LEADS CAPTADOS</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="apiLeads-clientes">0</div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;color:var(--text3)">CPL deste segmento:</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="apiCPL-clientes">–</div></div><div class="bar-track" style="margin-top:8px"><div class="bar-fill" id="apiBar-clientes" style="background:var(--yellow);width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>Taxa conversão:</span><span id="apiTaxa-clientes">0%</span></div></div>
+
+    <div class="card" style="border-left:4px solid var(--orange)"><div class="ch"><div><span class="ct" style="color:var(--orange)">🏷️ Leads Black Friday</span><div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace">utm_term=lead-blackfriday</div></div><div class="ci o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px"><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">DISPAROS</div><input type="number" class="fi api-disparos" data-seg="blackfriday" placeholder="0" min="0" step="100" style="width:100%;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;color:var(--orange);border-color:var(--orange)" oninput="calcApiSegmento('blackfriday')"></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">CUSTO</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--yellow)" id="apiCusto-blackfriday">R$ 0,00</div></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">LEADS CAPTADOS</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="apiLeads-blackfriday">0</div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;color:var(--text3)">CPL deste segmento:</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="apiCPL-blackfriday">–</div></div><div class="bar-track" style="margin-top:8px"><div class="bar-fill" id="apiBar-blackfriday" style="background:var(--orange);width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>Taxa conversão:</span><span id="apiTaxa-blackfriday">0%</span></div></div>
+
+    <div class="card" style="border-left:4px solid var(--cyan)"><div class="ch"><div><span class="ct" style="color:var(--cyan)">📂 Leads Antigos</span><div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace">utm_term=lead-antigos</div></div><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px"><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">DISPAROS</div><input type="number" class="fi api-disparos" data-seg="antigos" placeholder="0" min="0" step="100" style="width:100%;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;text-align:center;color:var(--cyan);border-color:var(--cyan)" oninput="calcApiSegmento('antigos')"></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">CUSTO</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--yellow)" id="apiCusto-antigos">R$ 0,00</div></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px">LEADS CAPTADOS</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="apiLeads-antigos">0</div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:11px;color:var(--text3)">CPL deste segmento:</div><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="apiCPL-antigos">–</div></div><div class="bar-track" style="margin-top:8px"><div class="bar-fill" id="apiBar-antigos" style="background:var(--cyan);width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>Taxa conversão:</span><span id="apiTaxa-antigos">0%</span></div></div>
+  </div>
+
+  <div class="cc mb"><div class="cch"><div><div class="cct">📊 Resumo Comparativo por Segmento</div><div class="ccs">Disparos, custo, leads e CPL — lado a lado</div></div></div><div class="tw"><table><thead><tr><th>Segmento</th><th>UTM Term</th><th>Disparos</th><th>Custo (R$)</th><th>Leads</th><th>Taxa Conv.</th><th>CPL (R$)</th><th>Performance</th></tr></thead><tbody id="tbApiResumo"></tbody><tfoot id="tfApiResumo" style="font-weight:700;border-top:2px solid var(--border2)"></tfoot></table></div></div>
+
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">Leads por Segmento API</div><div class="ccs">Distribuição de leads captados via API Oficial</div></div></div><div class="chart-box"><canvas id="cApiLeads"></canvas></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">CPL por Segmento</div><div class="ccs">Custo por lead — menor = melhor</div></div></div><div class="chart-box"><canvas id="cApiCPL"></canvas></div></div>
+  </div>
+
+  <div class="cc mb"><div class="cch"><div><div class="cct">📈 Leads API por Dia</div><div class="ccs">Evolução diária da captação via API Oficial</div></div></div><div class="chart-box tall"><canvas id="cApiDay"></canvas></div></div>
+
+  <div class="cc mb"><div class="cch"><div><div class="cct">⚡ Comparativo: API Oficial vs Tráfego Pago (Meta Ads)</div><div class="ccs">Qual canal entrega o menor CPL?</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px"><div style="background:var(--bg3);border:1px solid var(--green);border-radius:10px;padding:20px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">📡 API OFICIAL</div><div style="font-size:32px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)" id="apiVsCPLapi">–</div><div style="font-size:11px;color:var(--text3);margin-top:4px" id="apiVsLeadsApi">– leads</div></div><div style="background:var(--bg3);border:1px solid var(--accent);border-radius:10px;padding:20px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">📢 META ADS (PAGO)</div><div style="font-size:32px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)" id="apiVsCPLpago">–</div><div style="font-size:11px;color:var(--text3);margin-top:4px" id="apiVsLeadsPago">– leads</div></div></div><div style="text-align:center;margin-top:12px;padding:10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)"><span style="font-size:13px;font-weight:700" id="apiVsVeredicto">–</span></div></div>
+
+  <div class="cc"><div class="cch"><div><div class="cct">📋 Leads Captados via API Oficial</div><div class="ccs">Todos os leads com src=pago-api-oficial-manychat</div></div></div><div class="tw" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Segmento</th><th>UTM Term</th><th>UTM Campaign</th></tr></thead><tbody id="tbApiLeads"></tbody></table></div></div>
+</section>
+
 <!-- CRUZAMENTO -->
 <section id="sec-cross" class="sec">
   <div class="stitle">Cruzamento Lead × Cliente</div><div class="ssub">Leads que já são ex-alunas / clientes anteriores</div>
@@ -911,7 +957,7 @@ function renderAll() {
   q('nbPesq').textContent= D.pesquisa.length;
   q('osub').textContent  = D.leads.length+' leads · '+D.trafego.length+' campanhas · '+D.clientes.length+' clientes · '+D.pesquisa.length+' pesquisas';
   q('hsub').textContent  = D.leads.length+' leads captados';
-  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); populateSrc(); applyF();
+  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); renderLeadApi(); populateSrc(); applyF();
 }
 
 /* ═══════════════════════════════════════════
@@ -1791,6 +1837,88 @@ function updateSim(){
     '</div>'
   ).join('');
 }
+
+
+/* ═══ LEAD API OFICIAL ═══ */
+const API_CUSTO_UTILITY = 0.0642;
+const API_SEGMENTOS = {
+  alunos:     { label:'Base de Alunos',    utmTerm:'api-alunos-mar26',  colorHex:'#a78bfa' },
+  clientes:   { label:'Clientes da Loja',  utmTerm:'clientesloja',      colorHex:'#f0b429' },
+  blackfriday:{ label:'Leads Black Friday', utmTerm:'lead-blackfriday', colorHex:'#fb923c' },
+  antigos:    { label:'Leads Antigos',      utmTerm:'lead-antigos',     colorHex:'#38bdf8' },
+};
+const apiDisparos = { alunos:0, clientes:0, blackfriday:0, antigos:0 };
+
+function getApiLeads() {
+  return D.leads.filter(l => {
+    const src = (L.src(l)||'').toLowerCase();
+    const allF = Object.values(l).join(' ').toLowerCase();
+    return src === 'apioficial' || allF.includes('pago-api-oficial-manychat');
+  });
+}
+function getApiLeadsByTerm(utmTerm) {
+  return D.leads.filter(l => {
+    const src = (L.src(l)||'').toLowerCase();
+    const term = (L.term(l)||'').toLowerCase();
+    const camp = (L.campaign(l)||'').toLowerCase();
+    const allF = Object.values(l).join(' ').toLowerCase();
+    const isApi = src === 'apioficial' || allF.includes('pago-api-oficial-manychat');
+    if (!isApi) return false;
+    return term === utmTerm.toLowerCase() || camp.includes(utmTerm.toLowerCase());
+  });
+}
+function calcApiSegmento(seg) {
+  const input = document.querySelector('.api-disparos[data-seg="'+seg+'"]');
+  apiDisparos[seg] = parseInt(input.value) || 0;
+  renderLeadApi();
+}
+function renderLeadApi() {
+  const allApiLeads = getApiLeads();
+  let totalDisp = 0, totalCusto = 0, totalLeads = allApiLeads.length;
+  const segData = {};
+  Object.entries(API_SEGMENTOS).forEach(([key, seg]) => {
+    const disp = apiDisparos[key]; const custo = disp * API_CUSTO_UTILITY;
+    const leads = getApiLeadsByTerm(seg.utmTerm); const nLeads = leads.length;
+    const cpl = nLeads > 0 ? custo / nLeads : 0;
+    const taxa = disp > 0 ? ((nLeads / disp) * 100) : 0;
+    totalDisp += disp; totalCusto += custo;
+    segData[key] = { disp, custo, leads: nLeads, cpl, taxa };
+    q('apiCusto-'+key).textContent = 'R$ '+custo.toLocaleString('pt-BR',{minimumFractionDigits:2});
+    q('apiLeads-'+key).textContent = nLeads;
+    q('apiCPL-'+key).textContent = nLeads > 0 ? 'R$ '+cpl.toFixed(2) : '\u2013';
+    q('apiBar-'+key).style.width = Math.min(taxa, 100)+'%';
+    q('apiTaxa-'+key).textContent = taxa.toFixed(1)+'%';
+  });
+  const gCPL = totalLeads > 0 ? totalCusto / totalLeads : 0;
+  q('apiTotalLeads').textContent = totalLeads;
+  q('apiTotalDisparos').textContent = totalDisp.toLocaleString('pt-BR');
+  q('apiTotalCusto').textContent = 'R$ '+totalCusto.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  q('apiCPL').textContent = totalLeads > 0 ? 'R$ '+gCPL.toFixed(2) : '\u2013';
+  q('apiCPLsub').textContent = 'R$ '+totalCusto.toLocaleString('pt-BR',{minimumFractionDigits:2})+' \u00f7 '+totalLeads+' leads';
+  q('nbApi').textContent = totalLeads;
+  q('apiSub').textContent = totalLeads+' leads \u00b7 '+totalDisp.toLocaleString('pt-BR')+' disparos \u00b7 R$ '+totalCusto.toLocaleString('pt-BR',{minimumFractionDigits:2})+' investidos';
+  const clrs = {alunos:'bp',clientes:'by',blackfriday:'bo',antigos:'bc'};
+  q('tbApiResumo').innerHTML = Object.entries(API_SEGMENTOS).map(([key, seg]) => {
+    const d = segData[key];
+    const pb = d.cpl > 0 && d.cpl < 1 ? '<span class="badge bg">Excelente</span>' : d.cpl > 0 && d.cpl < 3 ? '<span class="badge bb">Bom</span>' : d.cpl > 0 && d.cpl < 5 ? '<span class="badge by">Regular</span>' : d.cpl >= 5 ? '<span class="badge br">Alto</span>' : '<span class="badge bgr">\u2013</span>';
+    return '<tr><td class="tb"><span class="badge '+(clrs[key]||'bgr')+'">'+seg.label+'</span></td><td class="tm">'+seg.utmTerm+'</td><td class="tm">'+d.disp.toLocaleString('pt-BR')+'</td><td class="tm">R$ '+d.custo.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tb tm tg">'+d.leads+'</td><td class="tm">'+(d.disp>0?d.taxa.toFixed(1)+'%':'\u2013')+'</td><td class="tm" style="color:var(--accent);font-weight:700">'+(d.leads>0?'R$ '+d.cpl.toFixed(2):'\u2013')+'</td><td>'+pb+'</td></tr>';
+  }).join('');
+  q('tfApiResumo').innerHTML = '<tr style="background:var(--bg3)"><td class="tb" colspan="2">TOTAL GERAL</td><td class="tb tm">'+totalDisp.toLocaleString('pt-BR')+'</td><td class="tb tm">R$ '+totalCusto.toLocaleString('pt-BR',{minimumFractionDigits:2})+'</td><td class="tb tm tg" style="font-size:15px">'+totalLeads+'</td><td class="tb tm">'+(totalDisp>0?((totalLeads/totalDisp)*100).toFixed(1)+'%':'\u2013')+'</td><td class="tb tm" style="color:var(--accent);font-size:15px">'+(totalLeads>0?'R$ '+gCPL.toFixed(2):'\u2013')+'</td><td></td></tr>';
+  const sK = Object.keys(API_SEGMENTOS), sL = sK.map(k=>API_SEGMENTOS[k].label), sC = sK.map(k=>API_SEGMENTOS[k].colorHex);
+  mk('cApiLeads',{type:'doughnut',data:{labels:sL,datasets:[{data:sK.map(k=>segData[k].leads),backgroundColor:sC.map(c=>c+'cc'),borderWidth:2,borderColor:'#13161d'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#9097b0',font:{family:'DM Sans',size:11},padding:10}}}}});
+  mk('cApiCPL',{type:'bar',data:{labels:sL.map(l=>l.slice(0,20)),datasets:[{label:'CPL (R$)',data:sK.map(k=>segData[k].cpl>0?segData[k].cpl:0),backgroundColor:sC.map(c=>c+'bb'),borderRadius:6}]},options:{...BO,plugins:{...BO.plugins,legend:{display:false}},scales:{...BO.scales,y:{...BO.scales.y,title:{display:true,text:'R$ CPL',color:'#5c6380',font:{size:10}}}}}});
+  const apiByDay=cnt(allApiLeads,l=>normDate(L.date(l)));delete apiByDay[''];delete apiByDay['\u2013'];
+  const aD=Object.keys(apiByDay).sort();let aA=0;const aAD=aD.map(d=>{aA+=apiByDay[d];return aA;});
+  mk('cApiDay',{type:'bar',data:{labels:aD.map(d=>fd(d)),datasets:[{type:'bar',label:'Leads/dia',data:aD.map(d=>apiByDay[d]),backgroundColor:'rgba(34,201,122,0.65)',borderRadius:4,yAxisID:'y'},{type:'line',label:'Acumulado',data:aAD,borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,0.06)',tension:0.4,fill:true,pointRadius:2,yAxisID:'y2',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.06)'}},y2:{position:'right',ticks:{color:'#4f6ef7',font:{family:'DM Sans',size:10}},grid:{display:false}}}}});
+  const iM=D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);const lM=D.leads.filter(l=>(L.src(l)||'').toLowerCase()==='pago').length;const cM=lM>0?iM/lM:0;
+  q('apiVsCPLapi').textContent=totalLeads>0?'R$ '+gCPL.toFixed(2):'\u2013';
+  q('apiVsLeadsApi').textContent=totalLeads+' leads \u00b7 R$ '+totalCusto.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  q('apiVsCPLpago').textContent=cM>0?'R$ '+cM.toFixed(2):'\u2013';
+  q('apiVsLeadsPago').textContent=lM+' leads \u00b7 R$ '+iM.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  if(totalLeads>0&&cM>0){if(gCPL<cM){const d=((1-gCPL/cM)*100).toFixed(0);q('apiVsVeredicto').innerHTML='<span style="color:var(--green)">\u2705 API Oficial \u00e9 '+d+'% mais barata que Meta Ads!</span>';}else if(gCPL>cM){const d=((gCPL/cM-1)*100).toFixed(0);q('apiVsVeredicto').innerHTML='<span style="color:var(--red)">\u26a0\ufe0f Meta Ads est\u00e1 '+d+'% mais barato que API Oficial</span>';}else{q('apiVsVeredicto').innerHTML='<span style="color:var(--yellow)">\u2192 CPL similar nos dois canais</span>';}}else{q('apiVsVeredicto').innerHTML='<span style="color:var(--text3)">Informe os disparos para ver o comparativo</span>';}
+  q('tbApiLeads').innerHTML=allApiLeads.slice(0,200).map(l=>{const t=(L.term(l)||'').toLowerCase();let sL2='\u2013';Object.entries(API_SEGMENTOS).forEach(([k,s])=>{if(t===s.utmTerm.toLowerCase()||(L.campaign(l)||'').toLowerCase().includes(s.utmTerm.toLowerCase()))sL2=s.label;});return '<tr><td class="tm">'+fd(L.date(l))+'</td><td class="tb">'+(L.name(l)||'\u2013')+'</td><td style="font-size:12px">'+(L.email(l)||'\u2013')+'</td><td>'+sL2+'</td><td><span class="ut">'+(L.term(l)||'\u2013')+'</span></td><td><span class="ut">'+(L.campaign(l)||'\u2013')+'</span></td></tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">Nenhum lead via API Oficial encontrado</td></tr>';
+}
+
 
 /* ─── INIT ────────────────────────────────────── */
 q('lname').textContent=CFG.LAUNCH_NAME;

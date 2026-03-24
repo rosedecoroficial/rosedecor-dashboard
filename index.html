@@ -1868,13 +1868,15 @@ function updateSim(){
 
 /* ═══ CPL OVERVIEW CHART ═══ */
 function renderCPLoverview() {
-  const gastoDay={};D.trafego.forEach(r=>{const d=TR.date(r);if(d){gastoDay[d]=(gastoDay[d]||0)+pf(TR.gasto(r));}});
+  const gastoDay={};const leadsTrafegoDay={};
+  D.trafego.forEach(r=>{const d=normDate(TR.date(r));if(d){gastoDay[d]=(gastoDay[d]||0)+pf(TR.gasto(r));leadsTrafegoDay[d]=(leadsTrafegoDay[d]||0)+pf(TR.leads(r));}});
   const leadsPagoByDay={};D.leads.filter(isPago).forEach(l=>{const d=L.date(l);if(d)leadsPagoByDay[d]=(leadsPagoByDay[d]||0)+1;});
-  const cplDays=Object.keys(gastoDay).sort().filter(d=>leadsPagoByDay[d]>0);
+  const allDays=Object.keys(gastoDay).sort();
+  const cplDays=allDays.filter(d=>{const lds=leadsPagoByDay[d]||leadsTrafegoDay[d]||0;return lds>0&&gastoDay[d]>0;});
   if(!cplDays.length)return;
-  const cplData=cplDays.map(d=>(gastoDay[d]/leadsPagoByDay[d]).toFixed(2));
+  const cplData=cplDays.map(d=>{const lds=leadsPagoByDay[d]||leadsTrafegoDay[d]||1;return(gastoDay[d]/lds).toFixed(2);});
   let accGasto=0,accLeads=0;
-  const cplAccData=cplDays.map(d=>{accGasto+=gastoDay[d]||0;accLeads+=leadsPagoByDay[d]||0;return accLeads>0?(accGasto/accLeads).toFixed(2):0;});
+  const cplAccData=cplDays.map(d=>{accGasto+=gastoDay[d]||0;accLeads+=(leadsPagoByDay[d]||leadsTrafegoDay[d]||0);return accLeads>0?(accGasto/accLeads).toFixed(2):0;});
   const invest=D.trafego.reduce((s,r)=>s+pf(TR.gasto(r)),0);
   const nPago=D.leads.filter(isPago).length;
   const cplReal=nPago>0?invest/nPago:0;

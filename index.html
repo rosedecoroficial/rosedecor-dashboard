@@ -197,6 +197,43 @@ select.fi{cursor:pointer;min-width:130px}
   .upd{display:none}.filt{flex-direction:column}
   .survey-bar-label{min-width:120px;max-width:140px;font-size:11px}
 }
+
+/* CHANNEL CLASSIFICATION */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.ch-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;transition:all .2s}
+.ch-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.ch-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ch-card .ch-icon{font-size:20px;margin-bottom:8px}
+.ch-card .ch-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.ch-card .ch-val{font-size:28px;font-weight:700;font-family:'DM Mono',monospace}
+.ch-card .ch-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.ch-card .ch-bar{height:4px;background:var(--bg4);border-radius:2px;margin-top:10px;overflow:hidden}
+.ch-card .ch-bar-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.ch-card .ch-details{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.ch-card .ch-tag{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--bg4);color:var(--text3);font-family:'DM Mono',monospace}
+
+.ch-group-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;cursor:pointer;transition:all .15s}
+.ch-group-header:hover{border-color:var(--border2)}
+.ch-group-header .ch-g-icon{font-size:18px}
+.ch-group-header .ch-g-name{font-size:14px;font-weight:700;flex:1}
+.ch-group-header .ch-g-count{font-size:20px;font-weight:700;font-family:'DM Mono',monospace}
+.ch-group-header .ch-g-pct{font-size:12px;font-weight:600;padding:3px 8px;border-radius:20px;margin-left:8px}
+
+.sankey-wrap{position:relative;padding:20px}
+.sankey-flow{display:flex;align-items:stretch;gap:0;min-height:300px}
+.sankey-col{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.sankey-col.left{width:120px;flex-shrink:0}
+.sankey-col.mid{flex:1;padding:0 20px}
+.sankey-col.right{width:180px;flex-shrink:0}
+.sankey-node{padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .2s}
+.sankey-node:hover{transform:scale(1.03);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.sankey-node .sn-val{font-family:'DM Mono',monospace;font-weight:700;margin-left:auto}
+
+/* EVOLUTION STACKED */
+.legend-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -236,6 +273,12 @@ select.fi{cursor:pointer;min-width:130px}
   <div class="ni" onclick="showSec('utms',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
     UTMs & Links
+  </div>
+
+  
+  <div class="ni" onclick="showSec('origens',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.36-5.36l-4.24 4.24m-2.24-2.24L4.64 6.64m12.72 12.72l-4.24-4.24m-2.24 2.24l-4.24 4.24"/></svg>
+    Origem dos Leads <span class="nbadge" id="nbOrigens" style="background:var(--green)">–</span>
   </div>
 
   <div class="ns">API</div>
@@ -789,6 +832,69 @@ select.fi{cursor:pointer;min-width:130px}
 </section>
 
 
+
+<!-- ══════════════════════════════════════════
+  📡 ORIGEM DOS LEADS — CLASSIFICAÇÃO INTELIGENTE
+══════════════════════════════════════════ -->
+<section id="sec-origens" class="sec">
+  <div class="stitle">📡 Origem dos Leads — Classificação Inteligente</div>
+  <div class="ssub" id="origemSub">Análise real de cada canal · Vai além das UTMs brutas</div>
+
+  <!-- KPIs POR GRUPO -->
+  <div id="origemGroups" class="mb"></div>
+
+  <!-- CARDS POR CANAL INDIVIDUAL -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">🔍 Detalhamento por Canal</div><div class="ccs">Cada canal identificado com leads, % do total e UTMs associadas</div></div></div>
+    <div class="ch-grid" id="origemCards"></div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">📊 Distribuição por Grupo de Canal</div><div class="ccs">Pago vs Orgânico vs API vs WhatsApp vs Base</div></div></div>
+      <div class="chart-box tall"><canvas id="cOrigemGroup"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🎯 Distribuição por Canal Individual</div><div class="ccs">Todos os canais identificados</div></div></div>
+      <div class="chart-box tall"><canvas id="cOrigemCanal"></canvas></div>
+    </div>
+  </div>
+
+  <!-- EVOLUÇÃO POR GRUPO AO LONGO DO TEMPO -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">📈 Evolução por Grupo de Canal ao Longo do Tempo</div><div class="ccs">Stacked area — como cada grupo contribui por dia</div></div></div>
+    <div class="chart-box xtall"><canvas id="cOrigemEvo"></canvas></div>
+  </div>
+
+  <!-- HEATMAP: CANAL × DIA -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">🗓️ Leads por Canal × Dia</div><div class="ccs">Onde cada canal performou mais — identifique padrões</div></div></div>
+    <div class="tw" style="max-height:500px;overflow-y:auto">
+      <table><thead><tr><th>Canal</th><th id="origemHeatDays"></th></tr></thead>
+      <tbody id="tbOrigemHeat"></tbody></table>
+    </div>
+  </div>
+
+  <!-- TABELA DETALHADA -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">📋 Mapeamento Completo de Canais</div><div class="ccs">Cada canal com suas UTMs associadas, leads, e análise</div></div></div>
+    <div class="tw">
+      <table><thead><tr>
+        <th>#</th><th>Canal</th><th>Grupo</th><th>Leads</th><th>% Total</th><th>Hoje</th><th>Últ. 24h</th><th>UTMs (source → medium)</th><th>Tendência</th>
+      </tr></thead>
+      <tbody id="tbOrigemDetail"></tbody></table>
+    </div>
+  </div>
+
+  <!-- INSIGHTS DE ORIGEM -->
+  <div class="cc">
+    <div class="cch"><div><div class="cct">🧠 Diagnóstico de Canais</div><div class="ccs">Análise automática — oportunidades e alertas por canal</div></div></div>
+    <div id="origemInsights"></div>
+  </div>
+</section>
+
+
 <!-- LEAD API OFICIAL -->
 <section id="sec-leadapi" class="sec">
   <div class="stitle">📡 Lead API Oficial — Controle de Disparos & CPL</div>
@@ -986,7 +1092,7 @@ function renderAll() {
   q('nbPesq').textContent= D.pesquisa.length;
   q('osub').textContent  = D.leads.length+' leads · '+D.trafego.length+' campanhas · '+D.clientes.length+' clientes · '+D.pesquisa.length+' pesquisas';
   q('hsub').textContent  = D.leads.length+' leads captados';
-  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); loadApiDisparosFromSheet(); renderLeadApi(); renderCPLoverview(); updateSimFat(); populateSrc(); applyF();
+  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); loadApiDisparosFromSheet(); renderLeadApi(); renderCPLoverview(); renderOrigens(); updateSimFat(); populateSrc(); applyF();
 }
 
 /* ═══════════════════════════════════════════
@@ -2023,6 +2129,331 @@ function renderLeadApi() {
   q('apiVsLeadsPago').textContent=lM+' leads \u00b7 R$ '+iM.toLocaleString('pt-BR',{minimumFractionDigits:2});
   if(totalLeads>0&&cM>0){if(gCPL<cM){const d=((1-gCPL/cM)*100).toFixed(0);q('apiVsVeredicto').innerHTML='<span style="color:var(--green)">\u2705 API Oficial \u00e9 '+d+'% mais barata que Meta Ads!</span>';}else if(gCPL>cM){const d=((gCPL/cM-1)*100).toFixed(0);q('apiVsVeredicto').innerHTML='<span style="color:var(--red)">\u26a0\ufe0f Meta Ads est\u00e1 '+d+'% mais barato que API Oficial</span>';}else{q('apiVsVeredicto').innerHTML='<span style="color:var(--yellow)">\u2192 CPL similar nos dois canais</span>';}}else{q('apiVsVeredicto').innerHTML='<span style="color:var(--text3)">Informe os disparos para ver o comparativo</span>';}
   q('tbApiLeads').innerHTML=allApiLeads.slice(0,200).map(l=>{const t=(L.term(l)||'').toLowerCase();let sL2='\u2013';Object.entries(API_SEGMENTOS).forEach(([k,s])=>{if(t===s.utmTerm.toLowerCase()||(L.campaign(l)||'').toLowerCase().includes(s.utmTerm.toLowerCase()))sL2=s.label;});return '<tr><td class="tm">'+fd(L.date(l))+'</td><td class="tb">'+(L.name(l)||'\u2013')+'</td><td style="font-size:12px">'+(L.email(l)||'\u2013')+'</td><td>'+sL2+'</td><td><span class="ut">'+(L.term(l)||'\u2013')+'</span></td><td><span class="ut">'+(L.campaign(l)||'\u2013')+'</span></td></tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">Nenhum lead via API Oficial encontrado</td></tr>';
+}
+
+
+
+/* ═══════════════════════════════════════════
+   📡 CLASSIFICAÇÃO INTELIGENTE DE CANAL
+   Vai além de isPago() — identifica canal REAL
+═══════════════════════════════════════════ */
+
+const CHANNEL_DEFS = [
+  // Ordem importa: mais específico primeiro
+  { id:'meta-ads-stories',    group:'PAGO',          name:'Meta Ads — Stories',       icon:'📱', color:'#f0b429', match: l => _isPago(l) && _medMatch(l,'stories') },
+  { id:'meta-ads-reels',      group:'PAGO',          name:'Meta Ads — Reels',         icon:'▶️', color:'#fb923c', match: l => _isPago(l) && _medMatch(l,'reels') },
+  { id:'meta-ads-feed-ig',    group:'PAGO',          name:'Meta Ads — Feed IG',       icon:'📸', color:'#e879f9', match: l => _isPago(l) && (_medMatch(l,'instagram_feed') || _medMatch(l,'ig_feed')) },
+  { id:'meta-ads-feed-fb',    group:'PAGO',          name:'Meta Ads — Feed FB',       icon:'💻', color:'#38bdf8', match: l => _isPago(l) && (_medMatch(l,'facebook') || _medMatch(l,'fb_feed') || _medMatch(l,'facebook_profile')) },
+  { id:'meta-ads-instream',   group:'PAGO',          name:'Meta Ads — Instream Video',icon:'🎬', color:'#a78bfa', match: l => _isPago(l) && _medMatch(l,'instream') },
+  { id:'meta-ads-other',      group:'PAGO',          name:'Meta Ads — Outros',        icon:'📢', color:'#4f6ef7', match: l => _isPago(l) },
+
+  { id:'api-alunos',          group:'API OFICIAL',   name:'API — Base Alunos',        icon:'🎓', color:'#a78bfa', match: l => _isApi(l) && _termMatch(l,'alunos') },
+  { id:'api-clientes',        group:'API OFICIAL',   name:'API — Clientes Loja',      icon:'🛍️', color:'#f0b429', match: l => _isApi(l) && _termMatch(l,'cliente') },
+  { id:'api-blackfriday',     group:'API OFICIAL',   name:'API — Leads Black Friday', icon:'🏷️', color:'#fb923c', match: l => _isApi(l) && _termMatch(l,'blackfriday') },
+  { id:'api-antigos',         group:'API OFICIAL',   name:'API — Leads Antigos',      icon:'📂', color:'#38bdf8', match: l => _isApi(l) && _termMatch(l,'antigo') },
+  { id:'api-other',           group:'API OFICIAL',   name:'API — Outros',             icon:'📡', color:'#22c97a', match: l => _isApi(l) },
+
+  { id:'manychat',            group:'MANYCHAT',      name:'ManyChat (automação)',      icon:'🤖', color:'#22c97a', match: l => _srcMatch(l,'manychat') || _medMatch(l,'manychat') || _medMatch(l,'api-manychat') },
+
+  { id:'whatsapp-grupo',      group:'WHATSAPP',      name:'WhatsApp — Grupos',        icon:'💬', color:'#25D366', match: l => _medMatch(l,'whatsapp') && (_campMatch(l,'grupo') || _campMatch(l,'group')) },
+  { id:'whatsapp-broadcast',  group:'WHATSAPP',      name:'WhatsApp — Broadcast',     icon:'📣', color:'#128C7E', match: l => _medMatch(l,'whatsapp') && _campMatch(l,'broadcast') },
+  { id:'whatsapp-other',      group:'WHATSAPP',      name:'WhatsApp — Outros',        icon:'💬', color:'#25D366', match: l => _medMatch(l,'whatsapp') || _srcMatch(l,'whatsapp') || _medMatch(l,'grupo-whatsapp') || _srcMatch(l,'grupo-whatsapp')},
+
+  { id:'ig-organico-stories', group:'ORGÂNICO SOCIAL', name:'IG Orgânico — Stories',  icon:'📱', color:'#E4405F', match: l => _isOrganico(l) && _medMatch(l,'stories') },
+  { id:'ig-organico-reels',   group:'ORGÂNICO SOCIAL', name:'IG Orgânico — Reels',    icon:'▶️', color:'#C13584', match: l => _isOrganico(l) && _medMatch(l,'reels') },
+  { id:'ig-organico-bio',     group:'ORGÂNICO SOCIAL', name:'IG Orgânico — Bio',      icon:'🔗', color:'#F56040', match: l => _isOrganico(l) && _medMatch(l,'bio') },
+  { id:'ig-organico-feed',    group:'ORGÂNICO SOCIAL', name:'IG Orgânico — Feed',     icon:'📸', color:'#E4405F', match: l => _isOrganico(l) && (_medMatch(l,'instagram_feed') || _medMatch(l,'ig_feed') || _medMatch(l,'feed')) && _srcMatch(l,'instagram') },
+  { id:'ig-organico-other',   group:'ORGÂNICO SOCIAL', name:'Instagram Orgânico',     icon:'📸', color:'#E4405F', match: l => _isOrganico(l) && (_srcMatch(l,'instagram') || _srcMatch(l,'ig')) },
+  { id:'fb-organico',         group:'ORGÂNICO SOCIAL', name:'Facebook Orgânico',      icon:'💻', color:'#1877F2', match: l => _isOrganico(l) && (_srcMatch(l,'facebook') || _srcMatch(l,'fb')) },
+  { id:'youtube',             group:'ORGÂNICO SOCIAL', name:'YouTube',                icon:'📺', color:'#FF0000', match: l => _medMatch(l,'youtube') || _srcMatch(l,'youtube') },
+  { id:'tiktok',              group:'ORGÂNICO SOCIAL', name:'TikTok',                 icon:'🎵', color:'#010101', match: l => _medMatch(l,'tiktok') || _srcMatch(l,'tiktok') },
+  { id:'organico-other',      group:'ORGÂNICO SOCIAL', name:'Orgânico — Outros',      icon:'🌿', color:'#22c97a', match: l => _isOrganico(l) },
+
+  { id:'live',                group:'LIVES',          name:'Lives',                    icon:'🔴', color:'#f05454', match: l => _medMatch(l,'live') || _srcMatch(l,'live') },
+
+  { id:'email-base',          group:'BASE/CRM',       name:'Email / Base',            icon:'📧', color:'#9097b0', match: l => _medMatch(l,'email') || _campMatch(l,'base-') },
+  { id:'area-membros',        group:'BASE/CRM',       name:'Área de Membros',         icon:'🏠', color:'#a78bfa', match: l => _medMatch(l,'areadememb') || _medMatch(l,'membros') },
+
+  { id:'site-direto',         group:'DIRETO',         name:'Site / Direto',            icon:'🌐', color:'#5c6380', match: l => _srcMatch(l,'site') || _srcMatch(l,'direto') || _srcMatch(l,'direct') },
+  { id:'desconhecido',        group:'DIRETO',         name:'Sem UTM / Desconhecido',   icon:'❓', color:'#353b50', match: l => true }, // fallback
+];
+
+const GROUP_META = {
+  'PAGO':            { icon:'📢', color:'#4f6ef7', label:'Tráfego Pago (Meta Ads)' },
+  'API OFICIAL':     { icon:'📡', color:'#22c97a', label:'API Oficial (WhatsApp)' },
+  'MANYCHAT':        { icon:'🤖', color:'#22c97a', label:'ManyChat (Automação)' },
+  'WHATSAPP':        { icon:'💬', color:'#25D366', label:'WhatsApp (Manual)' },
+  'ORGÂNICO SOCIAL': { icon:'🌿', color:'#E4405F', label:'Orgânico Social' },
+  'LIVES':           { icon:'🔴', color:'#f05454', label:'Lives' },
+  'BASE/CRM':        { icon:'📧', color:'#9097b0', label:'Base / CRM / Email' },
+  'DIRETO':          { icon:'🌐', color:'#5c6380', label:'Direto / Sem UTM' },
+};
+
+// Helpers para matching
+function _norm(v) { return (v||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function _srcMatch(l, kw)  { return _norm(L.src(l)).includes(kw.toLowerCase()); }
+function _medMatch(l, kw)  { return _norm(L.medium(l)).includes(kw.toLowerCase()); }
+function _campMatch(l, kw) { return _norm(L.campaign(l)).includes(kw.toLowerCase()); }
+function _termMatch(l, kw) { return _norm(L.term(l)).includes(kw.toLowerCase()); }
+function _isPago(l)   { const s=_norm(L.src(l)),m=_norm(L.medium(l)); return s==='pago'||m==='paid'||m==='cpc'||m==='cpm'||(s==='meta'&&m!=='')||(s==='instagram'&&(m.includes('feed')||m.includes('stories')||m.includes('reels'))&&!_isOrganico(l)); }
+function _isOrganico(l){ const s=_norm(L.src(l)); return s==='organico'||s==='orgânico'||s==='organic'; }
+function _isApi(l)    { const s=_norm(L.src(l)),all=Object.values(l).join(' ').toLowerCase(); return s==='apioficial'||s==='api'||all.includes('pago-api-oficial-manychat')||all.includes('api-oficial'); }
+
+function classifyChannel(lead) {
+  for (const ch of CHANNEL_DEFS) {
+    if (ch.match(lead)) return ch;
+  }
+  return CHANNEL_DEFS[CHANNEL_DEFS.length - 1]; // fallback
+}
+
+/* ═══════════════════════════════════════════
+   📡 RENDER ORIGENS — SEÇÃO COMPLETA
+═══════════════════════════════════════════ */
+function renderOrigens() {
+  const total = D.leads.length;
+  if (!total) return;
+  const now = new Date();
+
+  // Classify all leads
+  const classified = D.leads.map(l => ({ lead: l, channel: classifyChannel(l) }));
+
+  // Count by channel
+  const byChannel = {};
+  classified.forEach(({ lead, channel }) => {
+    if (!byChannel[channel.id]) byChannel[channel.id] = { def: channel, leads: [], today: 0, last24: 0 };
+    byChannel[channel.id].leads.push(lead);
+    const d = dd(L.date(lead), now);
+    if (d >= 0 && d < 1) byChannel[channel.id].today++;
+    if (d < 1) byChannel[channel.id].last24++;
+  });
+
+  // Count by group
+  const byGroup = {};
+  classified.forEach(({ lead, channel }) => {
+    if (!byGroup[channel.group]) byGroup[channel.group] = { leads: [], today: 0, last24: 0 };
+    byGroup[channel.group].leads.push(lead);
+    const d = dd(L.date(lead), now);
+    if (d >= 0 && d < 1) byGroup[channel.group].today++;
+    if (d < 1) byGroup[channel.group].last24++;
+  });
+
+  q('origemSub').textContent = total + ' leads classificados em ' + Object.keys(byChannel).filter(k=>byChannel[k].leads.length>0).length + ' canais e ' + Object.keys(byGroup).filter(k=>byGroup[k].leads.length>0).length + ' grupos';
+  q('nbOrigens').textContent = Object.keys(byChannel).filter(k=>byChannel[k].leads.length>0).length;
+
+  // ═══ GROUPS KPI CARDS ═══
+  const groupOrder = ['PAGO','ORGÂNICO SOCIAL','API OFICIAL','MANYCHAT','WHATSAPP','LIVES','BASE/CRM','DIRETO'];
+  q('origemGroups').innerHTML = groupOrder.filter(g => byGroup[g] && byGroup[g].leads.length > 0).map(g => {
+    const gd = byGroup[g];
+    const meta = GROUP_META[g] || { icon:'❓', color:'#5c6380', label: g };
+    const pct = ((gd.leads.length / total) * 100).toFixed(1);
+    const channels = Object.values(byChannel).filter(c => c.def.group === g && c.leads.length > 0);
+    const channelTags = channels.map(c => '<span class="ch-tag">' + c.def.icon + ' ' + c.def.name.replace(g+' — ','').replace(g+' ','').slice(0,20) + ': ' + c.leads.length + '</span>').join('');
+
+    return '<div class="ch-group-header" style="border-left:4px solid '+meta.color+'">' +
+      '<div class="ch-g-icon">'+meta.icon+'</div>' +
+      '<div style="flex:1"><div class="ch-g-name">'+meta.label+'</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+channelTags+'</div></div>' +
+      '<div class="ch-g-count" style="color:'+meta.color+'">'+gd.leads.length+'</div>' +
+      '<div class="ch-g-pct" style="background:'+meta.color+'22;color:'+meta.color+'">'+pct+'%</div>' +
+    '</div>';
+  }).join('');
+
+  // ═══ INDIVIDUAL CHANNEL CARDS ═══
+  const sortedChannels = Object.values(byChannel).filter(c => c.leads.length > 0).sort((a, b) => b.leads.length - a.leads.length);
+  const maxLeads = sortedChannels[0]?.leads.length || 1;
+
+  q('origemCards').innerHTML = sortedChannels.map(c => {
+    const pct = ((c.leads.length / total) * 100).toFixed(1);
+    const barW = ((c.leads.length / maxLeads) * 100).toFixed(0);
+    const utms = [...new Set(c.leads.map(l => L.src(l) + '→' + L.medium(l)).filter(v => v !== '→'))].slice(0, 3);
+    const campaigns = [...new Set(c.leads.map(l => L.campaign(l)).filter(Boolean))].slice(0, 2);
+    const gmeta = GROUP_META[c.def.group] || {};
+
+    return '<div class="ch-card" style="border-top-color:'+c.def.color+'">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+c.def.color+'"></div>' +
+      '<div class="ch-icon">'+c.def.icon+'</div>' +
+      '<div class="ch-name" style="color:'+c.def.color+'">'+c.def.name+'</div>' +
+      '<div class="ch-val">'+c.leads.length+'</div>' +
+      '<div class="ch-sub">'+pct+'% do total' + (c.today > 0 ? ' · <strong style="color:var(--green)">+'+c.today+' hoje</strong>' : '') + '</div>' +
+      '<div class="ch-bar"><div class="ch-bar-fill" style="width:'+barW+'%;background:'+c.def.color+'"></div></div>' +
+      '<div class="ch-details">' +
+        '<span class="ch-tag" style="background:'+c.def.color+'18;color:'+c.def.color+'">'+c.def.group+'</span>' +
+        utms.map(u => '<span class="ch-tag">'+u+'</span>').join('') +
+        campaigns.map(camp => '<span class="ch-tag" title="'+camp+'">📋 '+camp.slice(0,15)+'</span>').join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // ═══ CHARTS ═══
+
+  // Doughnut por grupo
+  const gKeys = groupOrder.filter(g => byGroup[g] && byGroup[g].leads.length > 0);
+  const gColors = gKeys.map(g => (GROUP_META[g]||{}).color || '#5c6380');
+  mk('cOrigemGroup', {
+    type: 'doughnut',
+    data: {
+      labels: gKeys.map(g => (GROUP_META[g]||{}).label || g),
+      datasets: [{ data: gKeys.map(g => byGroup[g].leads.length), backgroundColor: gColors.map(c => c + 'cc'), borderWidth: 2, borderColor: '#13161d' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'right', labels: { color: '#9097b0', font: { family: 'DM Sans', size: 10 }, padding: 8 } } } }
+  });
+
+  // Bar horizontal por canal individual
+  const topChannels = sortedChannels.slice(0, 12);
+  mk('cOrigemCanal', {
+    type: 'bar',
+    data: {
+      labels: topChannels.map(c => c.def.icon + ' ' + c.def.name.slice(0, 22)),
+      datasets: [{ label: 'Leads', data: topChannels.map(c => c.leads.length), backgroundColor: topChannels.map(c => c.def.color + 'bb'), borderRadius: 6 }]
+    },
+    options: { ...BO, indexAxis: 'y', plugins: { ...BO.plugins, legend: { display: false } }, scales: { ...BO.scales, y: { ticks: { color: '#9097b0', font: { family: 'DM Sans', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
+  });
+
+  // ═══ STACKED AREA: EVOLUÇÃO POR GRUPO ═══
+  const allDays = [...new Set(D.leads.map(l => normDate(L.date(l))).filter(Boolean))].sort();
+  const groupDayData = {};
+  gKeys.forEach(g => { groupDayData[g] = {}; allDays.forEach(d => groupDayData[g][d] = 0); });
+  classified.forEach(({ lead, channel }) => {
+    const d = normDate(L.date(lead));
+    if (d && groupDayData[channel.group]) groupDayData[channel.group][d] = (groupDayData[channel.group][d] || 0) + 1;
+  });
+
+  mk('cOrigemEvo', {
+    type: 'bar',
+    data: {
+      labels: allDays.map(d => fd(d)),
+      datasets: gKeys.map((g, i) => ({
+        label: (GROUP_META[g]||{}).label || g,
+        data: allDays.map(d => groupDayData[g][d] || 0),
+        backgroundColor: (gColors[i] || '#5c6380') + '99',
+        borderRadius: 2,
+        stack: 'stack0'
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#9097b0', font: { family: 'DM Sans', size: 10 }, padding: 8, usePointStyle: true, pointStyle: 'rectRounded' } } },
+      scales: {
+        x: { stacked: true, ticks: { color: '#5c6380', font: { family: 'DM Sans', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { stacked: true, ticks: { color: '#5c6380', font: { family: 'DM Sans', size: 10 } }, grid: { color: 'rgba(255,255,255,0.06)' } }
+      }
+    }
+  });
+
+  // ═══ HEATMAP TABLE ═══
+  const last7 = allDays.slice(-7);
+  q('origemHeatDays').innerHTML = last7.map(d => '<th class="tm" style="text-align:center;min-width:60px">'+fd(d).slice(0,5)+'</th>').join('') + '<th class="tm" style="text-align:center">Total</th>';
+
+  const heatMax = sortedChannels.reduce((mx, c) => {
+    last7.forEach(d => {
+      const n = c.leads.filter(l => normDate(L.date(l)) === d).length;
+      if (n > mx) mx = n;
+    });
+    return mx;
+  }, 1);
+
+  q('tbOrigemHeat').innerHTML = sortedChannels.slice(0, 15).map(c => {
+    const cells = last7.map(d => {
+      const n = c.leads.filter(l => normDate(L.date(l)) === d).length;
+      const intensity = n > 0 ? Math.max(0.15, n / heatMax) : 0;
+      const bg = n > 0 ? c.def.color + Math.round(intensity * 255).toString(16).padStart(2, '0') : 'transparent';
+      return '<td class="tm" style="text-align:center;background:'+bg+';color:'+(intensity>0.5?'#fff':'var(--text2)')+'">'+( n > 0 ? n : '·')+'</td>';
+    }).join('');
+    const totalC = c.leads.length;
+    return '<tr><td class="tb" style="white-space:nowrap">'+c.def.icon+' '+c.def.name.slice(0,25)+'</td>'+cells+'<td class="tb tm" style="text-align:center;color:'+c.def.color+'">'+totalC+'</td></tr>';
+  }).join('');
+
+  // ═══ DETAILED TABLE ═══
+  q('tbOrigemDetail').innerHTML = sortedChannels.map((c, i) => {
+    const pct = ((c.leads.length / total) * 100).toFixed(1);
+    const utms = [...new Set(c.leads.map(l => L.src(l) + ' → ' + L.medium(l)).filter(v => v !== ' → '))].slice(0, 3).join(' | ');
+    // Trend: last 3 days vs prev 3 days
+    const days3 = allDays.slice(-3);
+    const prev3 = allDays.slice(-6, -3);
+    const recent = c.leads.filter(l => days3.includes(normDate(L.date(l)))).length;
+    const prev = c.leads.filter(l => prev3.includes(normDate(L.date(l)))).length;
+    const trend = prev > 0 ? ((recent - prev) / prev * 100) : (recent > 0 ? 100 : 0);
+    const trendBadge = trend > 10 ? '<span class="badge bg">↑ '+Math.round(trend)+'%</span>' : trend < -10 ? '<span class="badge br">↓ '+Math.abs(Math.round(trend))+'%</span>' : '<span class="badge bgr">→ estável</span>';
+    const gmeta = GROUP_META[c.def.group] || {};
+    const groupBadge = '<span class="badge" style="background:'+((gmeta.color||'#5c6380'))+'22;color:'+(gmeta.color||'#5c6380')+'">'+c.def.group+'</span>';
+    const clrs = ['gold','silver','bronze'];
+
+    return '<tr><td><div class="rpos '+(clrs[i]||'rest')+'" style="display:inline-flex">'+(i+1)+'</div></td>' +
+      '<td class="tb" style="white-space:nowrap">'+c.def.icon+' '+c.def.name+'</td>' +
+      '<td>'+groupBadge+'</td>' +
+      '<td class="tb tm" style="color:'+c.def.color+';font-size:15px">'+c.leads.length+'</td>' +
+      '<td class="tm">'+pct+'%</td>' +
+      '<td class="tm">'+(c.today||'–')+'</td>' +
+      '<td class="tm">'+(c.last24||'–')+'</td>' +
+      '<td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+utms+'">'+utms+'</td>' +
+      '<td>'+trendBadge+'</td></tr>';
+  }).join('');
+
+  // ═══ INSIGHTS ═══
+  const insights = [];
+
+  // 1. Maior canal
+  if (sortedChannels[0]) {
+    const top = sortedChannels[0];
+    insights.push({
+      icon: '🏆', title: 'Canal Líder: ' + top.def.name,
+      text: '<strong>' + top.def.name + '</strong> é responsável por <strong>' + ((top.leads.length/total)*100).toFixed(1) + '%</strong> dos leads (' + top.leads.length + '). ' +
+        (top.def.group === 'PAGO' ? 'Este é um canal pago — monitore o CPL para garantir eficiência.' : 'Este é um canal orgânico/gratuito — excelente para margem!')
+    });
+  }
+
+  // 2. Orgânico vs Pago
+  const pagoTotal = byGroup['PAGO'] ? byGroup['PAGO'].leads.length : 0;
+  const orgTotal = (byGroup['ORGÂNICO SOCIAL']?.leads.length || 0) + (byGroup['MANYCHAT']?.leads.length || 0) + (byGroup['WHATSAPP']?.leads.length || 0) + (byGroup['LIVES']?.leads.length || 0);
+  const apiTotal = byGroup['API OFICIAL']?.leads.length || 0;
+  const gratuitoTotal = orgTotal + apiTotal + (byGroup['BASE/CRM']?.leads.length || 0);
+
+  if (gratuitoTotal > 0 && pagoTotal > 0) {
+    const ratio = (gratuitoTotal / pagoTotal).toFixed(1);
+    insights.push({
+      icon: '⚖️', title: 'Proporção Gratuito vs Pago: ' + ratio + ':1',
+      text: 'Para cada lead pago, você tem <strong>' + ratio + ' leads de canais gratuitos/baixo custo</strong>. ' +
+        (parseFloat(ratio) > 1 ? 'Ótimo equilíbrio — seus canais orgânicos e de base estão fortes!' : 'Os canais pagos dominam — considere investir mais em orgânico e automações para reduzir dependência.')
+    });
+  }
+
+  // 3. Canais sem dados de hoje
+  const canaisParados = sortedChannels.filter(c => c.today === 0 && c.leads.length > 5);
+  if (canaisParados.length > 0) {
+    insights.push({
+      icon: '⚠️', title: canaisParados.length + ' canais sem leads hoje',
+      text: 'Os canais <strong>' + canaisParados.slice(0,3).map(c => c.def.name).join(', ') + '</strong> não captaram leads hoje. Verifique se os links/UTMs estão ativos e se houve publicações recentes nesses canais.'
+    });
+  }
+
+  // 4. Canal com maior crescimento
+  const growing = sortedChannels.filter(c => {
+    const days3 = allDays.slice(-3);
+    const prev3 = allDays.slice(-6, -3);
+    const recent = c.leads.filter(l => days3.includes(normDate(L.date(l)))).length;
+    const prev = c.leads.filter(l => prev3.includes(normDate(L.date(l)))).length;
+    return prev > 0 && recent > prev * 1.3;
+  }).sort((a, b) => b.leads.length - a.leads.length);
+
+  if (growing.length > 0) {
+    insights.push({
+      icon: '🚀', title: 'Canal em Crescimento: ' + growing[0].def.name,
+      text: '<strong>' + growing[0].def.name + '</strong> está com tendência de alta nos últimos dias. Considere aumentar a frequência de publicações/disparos neste canal.'
+    });
+  }
+
+  // 5. Sem UTM / Desconhecido
+  const semUtm = byChannel['desconhecido']?.leads.length || 0;
+  if (semUtm > 10) {
+    insights.push({
+      icon: '🔍', title: semUtm + ' leads sem UTM identificável (' + ((semUtm/total)*100).toFixed(1) + '%)',
+      text: 'Esses leads chegaram sem parâmetros UTM — provavelmente via link direto, compartilhamento manual ou falha no tracking. <strong>Revise os links em todos os pontos de contato</strong> para garantir que todas as UTMs estão configuradas.'
+    });
+  }
+
+  q('origemInsights').innerHTML = insights.map(ins =>
+    '<div class="insight-box" style="border-left:3px solid '+(ins.icon==='⚠️'?'var(--yellow)':ins.icon==='🔍'?'var(--red)':'var(--green)')+'"><div class="insight-title"><span class="insight-icon">'+ins.icon+'</span> '+ins.title+'</div><div class="insight-text">'+ins.text+'</div></div>'
+  ).join('') || '<div class="insight-box"><div class="insight-title">✅ Canais saudáveis</div><div class="insight-text">Todos os canais estão performando dentro do esperado.</div></div>';
 }
 
 

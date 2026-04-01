@@ -354,38 +354,108 @@ select.fi{cursor:pointer;min-width:130px}
   <div id="debugBox"></div>
   <div class="stitle">Visão Geral do Lançamento</div>
   <div class="ssub" id="osub">–</div>
+
+  <!-- ROW 1: LEADS + VENDAS HERO KPIs -->
   <div class="g g4 mb">
-    <div class="card"><div class="ch"><span class="ct">Total de Leads</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv" id="vLeads"><span class="sk skv"></span></div><div class="cl" id="lLeads"><span class="sk skt"></span></div></div>
-    <div class="card"><div class="ch"><span class="ct">Leads Pagos</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="vLeadsPago" style="color:var(--accent)"><span class="sk skv"></span></div><div class="cl" id="lLeadsPago"><span class="sk skt"></span></div></div>
-    <div class="card"><div class="ch"><span class="ct">Leads Orgânicos</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="cv sm" id="vLeadsOrg" style="color:var(--green)"><span class="sk skv"></span></div><div class="cl" id="lLeadsOrg"><span class="sk skt"></span></div></div>
-    <div class="card"><div class="ch"><span class="ct">CPL Pago Real</span><div class="ci r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="cv sm" id="vCPLpago"><span class="sk skv"></span></div><div class="cl" id="lCPLpago"><span class="sk skt"></span></div></div>
+    <div class="card" style="border-top:3px solid var(--accent)"><div class="ch"><span class="ct">Total de Leads</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="cv" id="vLeads"><span class="sk skv"></span></div><div class="cl" id="lLeads"><span class="sk skt"></span></div></div>
+    <div class="card" style="border-top:3px solid var(--green)"><div class="ch"><span class="ct">Vendas Aprovadas</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="cv" id="ovVendas" style="color:var(--green)"><span class="sk skv"></span></div><div class="cl" id="ovVendasSub">–</div></div>
+    <div class="card" style="border-top:3px solid var(--yellow)"><div class="ch"><span class="ct">Faturamento</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="cv sm" id="ovFat" style="color:var(--yellow)"><span class="sk skv"></span></div><div class="cl" id="ovFatSub">–</div></div>
+    <div class="card" style="border-top:3px solid var(--purple)"><div class="ch"><span class="ct">Conversão Lead→Venda</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div></div><div class="cv" id="ovConv" style="color:var(--purple)"><span class="sk skv"></span></div><div class="cl" id="ovConvSub">–</div></div>
   </div>
+
+  <!-- ROW 2: TRÁFEGO + EFICIÊNCIA -->
   <div class="g g4 mb">
     <div class="card"><div class="ch"><span class="ct">Total Investido</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div><div class="cv sm" id="vInvest">–</div><div class="cl">em mídia paga</div></div>
-    <div class="card"><div class="ch"><span class="ct">Hoje</span><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="cv sm" id="vHoje">–</div><div class="cl">leads captados</div></div>
-    <div class="card"><div class="ch"><span class="ct">Últimas 24h</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div><div class="cv sm" id="v24">–</div><div class="cl">leads captados</div></div>
-    <div class="card"><div class="ch"><span class="ct">Últimos 14 dias</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div><div class="cv sm" id="v14">–</div><div class="cl">leads captados</div></div>
+    <div class="card"><div class="ch"><span class="ct">CPL Pago Real</span><div class="ci r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="cv sm" id="vCPLpago"><span class="sk skv"></span></div><div class="cl" id="lCPLpago"><span class="sk skt"></span></div></div>
+    <div class="card"><div class="ch"><span class="ct">CPA Real</span><div class="ci o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div><div class="cv sm" id="ovCPA" style="color:var(--orange)">–</div><div class="cl" id="ovCPAsub">custo por aquisição (venda)</div></div>
+    <div class="card"><div class="ch"><span class="ct">ROAS</span><div class="ci c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 17"/><polyline points="17 6 23 6 23 12"/></svg></div></div><div class="cv sm" id="ovROAS" style="color:var(--cyan)">–</div><div class="cl" id="ovROASsub">retorno sobre investimento em ads</div></div>
   </div>
+
+  <!-- ROW 3: FUNIL VISUAL + META -->
   <div class="g g2 mb">
-    <div class="card"><div class="ch"><span class="ct">Distribuição: Pago vs Orgânico</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div></div>
-      <div class="split-wrap"><div class="split-item"><div class="split-lbl" style="color:var(--accent)">📢 Pago</div><div class="split-val" id="sPago" style="color:var(--accent)">–</div><div class="split-sub" id="sPagoPct">–%</div></div><div class="split-item"><div class="split-lbl" style="color:var(--green)">🌿 Orgânico</div><div class="split-val" id="sOrg" style="color:var(--green)">–</div><div class="split-sub" id="sOrgPct">–%</div></div></div>
-      <div class="bar-track"><div class="bar-fill" id="sPagoBar" style="background:var(--accent);width:50%"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px"><span>◀ Pago</span><span>Orgânico ▶</span></div>
+    <div class="card">
+      <div class="ch"><span class="ct">Funil do Lançamento</span></div>
+      <div class="funnel-wrap" id="ovFunnel"></div>
     </div>
-    <div class="card"><div class="ch"><div><div class="ct">Projeção de Receita</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Produto a R$997 — baseado no total de leads</div></div></div>
-      <div class="pg"><div class="pi"><div class="pp">5%</div><div class="pv" id="p5">–</div><div class="pl" id="pl5">–</div></div><div class="pi"><div class="pp">10%</div><div class="pv" id="p10">–</div><div class="pl" id="pl10">–</div></div><div class="pi"><div class="pp">15%</div><div class="pv" id="p15">–</div><div class="pl" id="pl15">–</div></div></div>
+    <div class="card">
+      <div class="ch"><div><div class="ct">Meta de Vendas</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Acompanhe o progresso em tempo real</div></div>
+        <div style="display:flex;align-items:center;gap:6px"><label style="font-size:10px;color:var(--text3)">R$</label><input class="fi" type="number" id="ovMetaInput" value="100000" style="width:100px" onchange="renderOverviewSales()"></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="bar-track" style="height:28px;border-radius:14px">
+          <div class="bar-fill" id="ovMetaBar" style="background:linear-gradient(90deg,var(--green),var(--cyan));height:100%;border-radius:14px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;min-width:40px;transition:width 1s">
+            <span id="ovMetaPct" style="font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)">0%</span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:6px"><span id="ovMetaAtual">R$ 0</span><span id="ovMetaTarget">Meta: R$ 100.000</span></div>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.5px">Faltam</div>
+        <div id="ovMetaFalta" style="font-size:28px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)">–</div>
+      </div>
+      <div class="split-wrap" style="margin-top:12px">
+        <div class="split-item"><div class="split-lbl" style="color:var(--green)">💰 Receita Líquida</div><div class="split-val" id="ovLiquido" style="color:var(--green);font-size:18px">–</div></div>
+        <div class="split-item"><div class="split-lbl" style="color:var(--yellow)">💳 Ticket Médio</div><div class="split-val" id="ovTicket" style="color:var(--yellow);font-size:18px">–</div></div>
+      </div>
     </div>
   </div>
-  <div class="cc mb"><div class="cch"><div><div class="cct">Leads por Dia</div><div class="ccs">Barras = volume diário | Linha verde = acumulado</div></div><span id="bestDay" style="font-size:11px;color:var(--text3)"></span></div><div class="chart-box tall"><canvas id="cDay"></canvas></div></div>
-  <div class="cc mb"><div class="cch"><div><div class="cct">📉 Evolução do CPL Diário</div><div class="ccs">Custo por lead ao longo dos dias — linha vermelha = CPL diário | pontilhada = CPL médio acumulado</div></div></div><div class="chart-box tall"><canvas id="cCPLoverview"></canvas></div></div>
+
+  <!-- ROW 4: RASTREABILIDADE DE COMPRADORES -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">🔍 Rastreabilidade: Compradores × Leads</div><div class="ccs">Cruzamento automático por email, telefone e nome — identifica de onde vieram os compradores</div></div></div>
+    <div class="g g4 mb" style="margin-top:12px">
+      <div class="card" style="border:1px solid var(--green)"><div class="ch"><span class="ct">Rastreados</span></div><div class="cv sm" id="ovTrackOk" style="color:var(--green)">–</div><div class="cl" id="ovTrackOkPct">encontrados na base de leads</div></div>
+      <div class="card" style="border:1px solid var(--red)"><div class="ch"><span class="ct">Não Rastreados</span></div><div class="cv sm" id="ovTrackMiss" style="color:var(--red)">–</div><div class="cl" id="ovTrackMissPct">sem match na base de leads</div></div>
+      <div class="card" style="border:1px solid var(--accent)"><div class="ch"><span class="ct">% Rastreabilidade</span></div><div class="cv" id="ovTrackPct" style="color:var(--accent)">–</div><div class="cl">quanto maior, melhor o tracking</div></div>
+      <div class="card" style="border:1px solid var(--purple)"><div class="ch"><span class="ct">Match por</span></div><div class="cv sm" id="ovTrackMethod" style="color:var(--purple);font-size:14px">–</div><div class="cl">método de identificação</div></div>
+    </div>
+    <!-- Top origens dos compradores -->
+    <div class="g g2" style="margin-top:8px">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">📊 Origem dos Compradores (UTM dos leads)</div>
+        <div class="rank-list" id="ovBuyerOrigins" style="max-height:280px;overflow-y:auto"></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">🏆 Conversão por Canal (leads→vendas)</div>
+        <div class="tw">
+          <table><thead><tr><th>Canal</th><th>Leads</th><th>Vendas</th><th>Conv%</th><th>Faturamento</th></tr></thead>
+          <tbody id="ovChannelConv"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 5: GRÁFICOS -->
+  <div class="g g2 mb">
+    <div class="cc"><div class="cch"><div><div class="cct">📈 Leads vs Vendas por Dia</div><div class="ccs">Evolução comparada — leads captados × vendas aprovadas</div></div></div><div class="chart-box tall"><canvas id="cDay"></canvas></div></div>
+    <div class="cc"><div class="cch"><div><div class="cct">📉 Evolução do CPL Diário</div><div class="ccs">CPL diário (linha) vs CPL médio acumulado (pontilhada)</div></div></div><div class="chart-box tall"><canvas id="cCPLoverview"></canvas></div></div>
+  </div>
+
+  <!-- ROW 6: VENDAS RECENTES + RANKINGS -->
+  <div class="g g2 mb">
+    <div class="cc">
+      <div class="cch"><div><div class="cct">🕐 Últimas Vendas</div><div class="ccs">Vendas mais recentes em tempo real</div></div></div>
+      <div class="tw"><table><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Valor</th><th>Origem</th></tr></thead><tbody id="ovRecentSales"></tbody></table></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">📦 Vendas por Produto</div><div class="ccs">Distribuição por produto</div></div></div>
+      <div class="chart-box"><canvas id="cOvProdutos"></canvas></div>
+    </div>
+  </div>
+
   <div class="g g3 mb">
     <div class="cc"><div class="cch"><div><div class="cct">🏆 Top Campanhas</div><div class="ccs">utm_campaign</div></div></div><div class="rank-list" id="rankCamp"></div></div>
     <div class="cc"><div class="cch"><div><div class="cct">📦 Top Conjuntos</div><div class="ccs">Ad Set Name (tráfego)</div></div></div><div class="rank-list" id="rankAdset"></div></div>
     <div class="cc"><div class="cch"><div><div class="cct">🎨 Top Criativos</div><div class="ccs">utm_content</div></div></div><div class="rank-list" id="rankContent"></div></div>
   </div>
+
   <div class="g g2 mb">
+    <div class="card"><div class="ch"><span class="ct">Distribuição: Pago vs Orgânico</span></div>
+      <div class="split-wrap"><div class="split-item"><div class="split-lbl" style="color:var(--accent)">📢 Pago</div><div class="split-val" id="sPago" style="color:var(--accent)">–</div><div class="split-sub" id="sPagoPct">–%</div></div><div class="split-item"><div class="split-lbl" style="color:var(--green)">🌿 Orgânico</div><div class="split-val" id="sOrg" style="color:var(--green)">–</div><div class="split-sub" id="sOrgPct">–%</div></div></div>
+      <div class="bar-track"><div class="bar-fill" id="sPagoBar" style="background:var(--accent);width:50%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px"><span>◀ Pago</span><span>Orgânico ▶</span></div>
+    </div>
     <div class="cc"><div class="cch"><div><div class="cct">Por Origem (utm_source)</div></div></div><div class="chart-box"><canvas id="cSrc"></canvas></div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Por Medium (utm_medium)</div></div></div><div class="chart-box"><canvas id="cMedOv"></canvas></div></div>
   </div>
 </section>
 
@@ -1269,7 +1339,7 @@ function renderAll() {
   q('osub').textContent  = D.leads.length+' leads · '+D.trafego.length+' campanhas · '+D.clientes.length+' clientes · '+D.pesquisa.length+' pesquisas · '+D.vendas.length+' vendas';
   q('hsub').textContent  = D.leads.length+' leads · '+D.vendas.filter(v=>(gv(v,'status')||'').toLowerCase()==='paid').length+' vendas';
   q('nbVendas').textContent = D.vendas.filter(v=>(gv(v,'status')||'').toLowerCase()==='paid').length;
-  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); loadApiDisparosFromSheet(); renderLeadApi(); renderCPLoverview(); renderOrigens(); updateSimFat(); populateSrc(); applyF(); renderVendas();
+  renderKPIs(); renderCharts(); renderFunnel(); renderCreatives(); renderTrafego(); renderCross(); renderUTMLinks(); renderMetas(); renderPesquisa(); loadApiDisparosFromSheet(); renderLeadApi(); renderCPLoverview(); renderOrigens(); updateSimFat(); populateSrc(); applyF(); renderVendas(); renderOverviewSales();
 }
 
 /* ═══════════════════════════════════════════
@@ -1574,20 +1644,20 @@ function renderKPIs() {
   const now=new Date();
 
   q('vLeads').innerHTML=total.toLocaleString('pt-BR');q('lLeads').innerHTML='total no período';
-  q('vLeadsPago').innerHTML=nPago.toLocaleString('pt-BR');q('lLeadsPago').innerHTML=pPago+'% do total · utm_source=pago';
-  q('vLeadsOrg').innerHTML=nOrg.toLocaleString('pt-BR');q('lLeadsOrg').innerHTML=pOrg+'% do total · demais fontes';
+  if(q('vLeadsPago'))q('vLeadsPago').innerHTML=nPago.toLocaleString('pt-BR');if(q('lLeadsPago'))q('lLeadsPago').innerHTML=pPago+'% do total · utm_source=pago';
+  if(q('vLeadsOrg'))q('vLeadsOrg').innerHTML=nOrg.toLocaleString('pt-BR');if(q('lLeadsOrg'))q('lLeadsOrg').innerHTML=pOrg+'% do total · demais fontes';
   q('vCPLpago').innerHTML=cplPago>0?'R$ '+cplPago.toFixed(2):'–';
   q('lCPLpago').innerHTML='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ÷ '+nPago+' leads pagos';
   q('vInvest').textContent='R$ '+invest.toLocaleString('pt-BR',{minimumFractionDigits:2});
-  q('vHoje').textContent=D.leads.filter(l=>dd(L.date(l),now)>=0&&dd(L.date(l),now)<1).length;
-  q('v24').textContent=D.leads.filter(l=>dd(L.date(l),now)<1).length;
-  q('v14').textContent=D.leads.filter(l=>dd(L.date(l),now)<14).length;
+  if(q('vHoje'))q('vHoje').textContent=D.leads.filter(l=>dd(L.date(l),now)>=0&&dd(L.date(l),now)<1).length;
+  if(q('v24'))q('v24').textContent=D.leads.filter(l=>dd(L.date(l),now)<1).length;
+  if(q('v14'))q('v14').textContent=D.leads.filter(l=>dd(L.date(l),now)<14).length;
 
   q('sPago').textContent=nPago;q('sPagoPct').textContent=pPago+'% do total';
   q('sOrg').textContent=nOrg;q('sOrgPct').textContent=pOrg+'% do total';
   q('sPagoBar').style.width=pPago+'%';
 
-  [5,10,15].forEach(p=>{const v=Math.round(total*p/100),r=v*CFG.PRODUCT_PRICE;q('p'+p).textContent='R$ '+r.toLocaleString('pt-BR');q('pl'+p).textContent=v+' vendas';});
+  [5,10,15].forEach(p=>{const v=Math.round(total*p/100),r=v*CFG.PRODUCT_PRICE;if(q('p'+p))q('p'+p).textContent='R$ '+r.toLocaleString('pt-BR');if(q('pl'+p))q('pl'+p).textContent=v+' vendas';});
 
   q('lTotal').textContent=total.toLocaleString('pt-BR');
   q('lPago').textContent=nPago.toLocaleString('pt-BR');q('lPagoPct').textContent=pPago+'% do total (utm_source=pago)';
@@ -1674,7 +1744,7 @@ function renderCharts(){
   const days=Object.keys(byDay).sort();
   let acc=0;const accData=days.map(d=>{acc+=byDay[d];return acc;});
   const maxDay=days.reduce((a,b)=>byDay[b]>byDay[a]?b:a,days[0]||'');
-  if(maxDay)q('bestDay').textContent='🏆 Melhor dia: '+fd(maxDay)+' ('+byDay[maxDay]+' leads)';
+  if(maxDay&&q('bestDay'))q('bestDay').textContent='🏆 Melhor dia: '+fd(maxDay)+' ('+byDay[maxDay]+' leads)';
 
   const barLine=(labels,barData,accD)=>({type:'bar',data:{labels,datasets:[{type:'bar',label:'Leads/dia',data:barData,backgroundColor:'rgba(79,110,247,0.65)',borderRadius:4,yAxisID:'y'},{type:'line',label:'Acumulado',data:accD,borderColor:'#22c97a',backgroundColor:'rgba(34,201,122,0.06)',tension:0.4,fill:true,pointRadius:2,yAxisID:'y2',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9097b0',font:{family:'DM Sans',size:11}}}},scales:{x:{ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#5c6380',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.06)'},title:{display:true,text:'Leads/dia',color:'#5c6380',font:{size:10}}},y2:{position:'right',ticks:{color:'#22c97a',font:{family:'DM Sans',size:10}},grid:{display:false},title:{display:true,text:'Acumulado',color:'#22c97a',font:{size:10}}}}}});
   const dayLabels=days.map(d=>fd(d));
@@ -2633,6 +2703,211 @@ function renderOrigens() {
   ).join('') || '<div class="insight-box"><div class="insight-title">✅ Canais saudáveis</div><div class="insight-text">Todos os canais estão performando dentro do esperado.</div></div>';
 }
 
+
+/* ═══════════════════════════════════════════════════
+   🎯 OVERVIEW — VENDAS + CRUZAMENTO COMPRADORES
+═══════════════════════════════════════════════════ */
+
+function normalizeStr(s) {
+  return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+}
+function normalizePhone(p) {
+  return String(p||'').replace(/[^\d]/g,'').slice(-9); // últimos 9 dígitos
+}
+function normalizeEmail(e) {
+  return String(e||'').trim().toLowerCase();
+}
+
+function crossMatchBuyers() {
+  const vendas = D.vendas.filter(v => (VD.status(v)||'').toLowerCase() === 'paid');
+  const leads = D.leads;
+  if (!vendas.length || !leads.length) return { matched:[], unmatched:[], byMethod:{}, buyerLeads:[] };
+
+  // Build lead index
+  const emailIdx = {}, phoneIdx = {}, nameIdx = {};
+  leads.forEach((l, i) => {
+    const em = normalizeEmail(L.email(l));
+    const ph = normalizePhone(L.phone(l));
+    const nm = normalizeStr(L.name(l));
+    if (em && em.includes('@')) { if(!emailIdx[em]) emailIdx[em]=[]; emailIdx[em].push(i); }
+    if (ph && ph.length >= 8) { if(!phoneIdx[ph]) phoneIdx[ph]=[]; phoneIdx[ph].push(i); }
+    if (nm && nm.length > 4) { if(!nameIdx[nm]) nameIdx[nm]=[]; nameIdx[nm].push(i); }
+  });
+
+  const matched = [], unmatched = [];
+  const byMethod = {email:0, telefone:0, nome:0};
+  const buyerLeads = [];
+
+  vendas.forEach(v => {
+    const vEmail = normalizeEmail(VD.email(v));
+    const vPhone = normalizePhone(VD.phone(v));
+    const vName = normalizeStr(VD.cliente(v));
+    let matchIdx = -1, method = '';
+
+    // Priority: email > phone > name
+    if (vEmail && emailIdx[vEmail]) {
+      matchIdx = emailIdx[vEmail][0]; method = 'email';
+    } else if (vPhone && vPhone.length >= 8 && phoneIdx[vPhone]) {
+      matchIdx = phoneIdx[vPhone][0]; method = 'telefone';
+    } else if (vName && vName.length > 4 && nameIdx[vName]) {
+      matchIdx = nameIdx[vName][0]; method = 'nome';
+    }
+
+    if (matchIdx >= 0) {
+      matched.push({ venda: v, lead: leads[matchIdx], method });
+      byMethod[method]++;
+      buyerLeads.push({ venda: v, lead: leads[matchIdx], method });
+    } else {
+      unmatched.push(v);
+    }
+  });
+
+  return { matched, unmatched, byMethod, buyerLeads };
+}
+
+function renderOverviewSales() {
+  const vendas = D.vendas || [];
+  const paid = vendas.filter(v => (VD.status(v)||'').toLowerCase() === 'paid');
+  const totalLeads = D.leads.length;
+
+  // Calc faturamento
+  let fatTotal = 0, sellerTotal = 0;
+  paid.forEach(v => {
+    fatTotal += parseVendaCents(v, VD.totalCents);
+    sellerTotal += parseVendaCents(v, VD.sellerCents);
+  });
+  const fatReal = centsToReal(fatTotal);
+  const sellerReal = centsToReal(sellerTotal);
+  const ticketMedio = paid.length > 0 ? fatReal / paid.length : 0;
+  const convRate = totalLeads > 0 ? (paid.length / totalLeads * 100) : 0;
+
+  // Investimento total (tráfego)
+  let investTotal = 0;
+  D.trafego.forEach(r => { investTotal += parseFloat(String(TR.gasto(r)||'0').replace(',','.')) || 0; });
+  const cpa = paid.length > 0 && investTotal > 0 ? investTotal / paid.length : 0;
+  const roas = investTotal > 0 ? fatReal / investTotal : 0;
+
+  // KPIs
+  q('ovVendas').textContent = paid.length;
+  q('ovVendasSub').textContent = 'de ' + vendas.length + ' faturas totais';
+  q('ovFat').textContent = fmtReal(fatReal);
+  q('ovFatSub').textContent = 'líquido: ' + fmtReal(sellerReal);
+  q('ovConv').textContent = convRate.toFixed(2) + '%';
+  q('ovConvSub').textContent = paid.length + ' vendas / ' + totalLeads + ' leads';
+  q('ovCPA').textContent = cpa > 0 ? fmtReal(cpa) : '–';
+  q('ovCPAsub').textContent = cpa > 0 ? 'investimento ÷ ' + paid.length + ' vendas' : 'sem dados de tráfego';
+  q('ovROAS').textContent = roas > 0 ? roas.toFixed(2) + 'x' : '–';
+  q('ovROASsub').textContent = roas > 0 ? 'cada R$1 investido retorna R$' + roas.toFixed(2) : 'sem dados de tráfego';
+  q('ovTicket').textContent = fmtReal(ticketMedio);
+  q('ovLiquido').textContent = fmtReal(sellerReal);
+
+  // Meta
+  const meta = parseFloat(q('ovMetaInput').value) || 100000;
+  const pctMeta = Math.min(100, (fatReal / meta) * 100);
+  q('ovMetaBar').style.width = Math.max(3, pctMeta) + '%';
+  q('ovMetaPct').textContent = pctMeta.toFixed(1) + '%';
+  q('ovMetaAtual').textContent = fmtReal(fatReal);
+  q('ovMetaTarget').textContent = 'Meta: ' + fmtReal(meta);
+  q('ovMetaFalta').textContent = fatReal >= meta ? '✓ Meta Batida!' : fmtReal(meta - fatReal);
+  q('ovMetaFalta').style.color = fatReal >= meta ? 'var(--green)' : 'var(--accent)';
+
+  // Funil visual
+  const impressions = D.trafego.reduce((s,r) => s + (parseFloat(TR.imp(r))||0), 0);
+  const clicks = D.trafego.reduce((s,r) => s + (parseFloat(TR.click(r))||0), 0);
+  const steps = [
+    {name:'Impressões', val:impressions, color:'var(--cyan)', cls:'s1'},
+    {name:'Cliques', val:clicks, color:'var(--accent)', cls:'s2'},
+    {name:'Leads Captados', val:totalLeads, color:'var(--yellow)', cls:'s3'},
+    {name:'Vendas Aprovadas', val:paid.length, color:'var(--green)', cls:'s4'},
+  ];
+  const maxFunnel = Math.max(...steps.map(s=>s.val), 1);
+  q('ovFunnel').innerHTML = steps.map((s,i) => {
+    const pct = ((s.val/maxFunnel)*100).toFixed(0);
+    const convPrev = i > 0 && steps[i-1].val > 0 ? ((s.val/steps[i-1].val)*100).toFixed(2)+'%' : '–';
+    return '<div class="funnel-step '+s.cls+'"><div class="fs-num">'+s.val.toLocaleString('pt-BR')+'</div><div class="fs-label"><div class="fs-name">'+s.name+'</div><div class="fs-sub">'+(i>0?'Conv: '+convPrev:'topo do funil')+'</div><div class="fs-bar"><div class="fs-bar-fill" style="width:'+pct+'%;background:'+s.color+'"></div></div></div><div class="fs-pct" style="background:'+s.color+'22;color:'+s.color+'">'+pct+'%</div></div>';
+  }).join('');
+
+  // Cross-match compradores × leads
+  const cross = crossMatchBuyers();
+  const totalPaid = paid.length;
+  const trackPct = totalPaid > 0 ? (cross.matched.length / totalPaid * 100) : 0;
+
+  q('ovTrackOk').textContent = cross.matched.length;
+  q('ovTrackOkPct').textContent = 'encontrados na base de leads';
+  q('ovTrackMiss').textContent = cross.unmatched.length;
+  q('ovTrackMissPct').textContent = 'sem match na base';
+  q('ovTrackPct').textContent = trackPct.toFixed(1) + '%';
+  q('ovTrackMethod').innerHTML = Object.entries(cross.byMethod).filter(([_,v])=>v>0).map(([k,v])=>'<span class="badge bb" style="margin:2px">'+k+': '+v+'</span>').join(' ') || '–';
+
+  // Buyer origins from matched leads
+  const originMap = {};
+  cross.buyerLeads.forEach(bl => {
+    const src = L.src(bl.lead) || '(sem UTM)';
+    const medium = L.medium(bl.lead) || '';
+    const key = src + (medium ? ' / ' + medium : '');
+    if (!originMap[key]) originMap[key] = {count:0, fatCents:0, src:src};
+    originMap[key].count++;
+    originMap[key].fatCents += parseVendaCents(bl.venda, VD.totalCents);
+  });
+  const originArr = Object.entries(originMap).sort((a,b) => b[1].count - a[1].count);
+  const originColors = ['var(--accent)','var(--green)','var(--yellow)','var(--purple)','var(--orange)','var(--cyan)','var(--red)'];
+
+  q('ovBuyerOrigins').innerHTML = originArr.slice(0,8).map(([name, data], i) => {
+    const pctB = totalPaid > 0 ? ((data.count/cross.matched.length)*100).toFixed(0) : 0;
+    const clr = originColors[i % originColors.length];
+    return '<div class="rank-item"><div class="rpos '+(i<3?['gold','silver','bronze'][i]:'rest')+'">'+(i+1)+'</div><div class="rname">'+name+'</div><div class="rval" style="color:'+clr+'">'+data.count+'</div><div class="rbar"><div class="rbar-track"><div class="rbar-fill" style="width:'+pctB+'%;background:'+clr+'"></div></div></div></div>';
+  }).join('') || '<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center">Nenhum match encontrado</div>';
+
+  // Channel conversion table
+  const channelLeads = {};
+  D.leads.forEach(l => {
+    const src = L.src(l) || '(sem UTM)';
+    channelLeads[src] = (channelLeads[src]||0) + 1;
+  });
+  const channelSales = {};
+  cross.buyerLeads.forEach(bl => {
+    const src = L.src(bl.lead) || '(sem UTM)';
+    if (!channelSales[src]) channelSales[src] = {count:0, fatCents:0};
+    channelSales[src].count++;
+    channelSales[src].fatCents += parseVendaCents(bl.venda, VD.totalCents);
+  });
+  const allChannels = [...new Set([...Object.keys(channelLeads), ...Object.keys(channelSales)])].sort((a,b) => {
+    return (channelSales[b]?.count||0) - (channelSales[a]?.count||0);
+  });
+
+  q('ovChannelConv').innerHTML = allChannels.slice(0,10).map(ch => {
+    const leads = channelLeads[ch] || 0;
+    const sales = channelSales[ch]?.count || 0;
+    const fat = channelSales[ch]?.fatCents || 0;
+    const conv = leads > 0 ? ((sales/leads)*100).toFixed(2) : '0.00';
+    return '<tr><td class="tb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+ch+'</td><td class="tm">'+leads+'</td><td class="tm tg">'+sales+'</td><td class="tm" style="color:'+(parseFloat(conv)>2?'var(--green)':'var(--text2)')+'">'+conv+'%</td><td class="tm">'+fmtReal(centsToReal(fat))+'</td></tr>';
+  }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3)">–</td></tr>';
+
+  // Recent sales table
+  const recentPaid = paid.slice().sort((a,b) => new Date(VD.date(b)||0) - new Date(VD.date(a)||0)).slice(0,8);
+  q('ovRecentSales').innerHTML = recentPaid.map(v => {
+    const total = parseVendaCents(v, VD.totalCents);
+    // Find origin from matched
+    const match = cross.buyerLeads.find(bl => VD.invoiceId(bl.venda) === VD.invoiceId(v) || VD.email(bl.venda) === VD.email(v));
+    const origem = match ? (L.src(match.lead)||'(direto)') : (VD.utmSource(v)||'–');
+    return '<tr><td class="tm" style="font-size:11px">'+(VD.date(v)?fd(normDate(VD.date(v))):'–')+'</td><td class="tb" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.cliente(v)||'–')+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+(VD.produto(v)||'–')+'</td><td class="tb tm tg">'+fmtReal(centsToReal(total))+'</td><td style="font-size:11px">'+origem+'</td></tr>';
+  }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3)">Nenhuma venda</td></tr>';
+
+  // Produtos doughnut
+  const prodMap = {};
+  paid.forEach(v => { const p = VD.produto(v)||'(sem nome)'; prodMap[p] = (prodMap[p]||0)+1; });
+  if (CH.ovProd) CH.ovProd.destroy();
+  const cpd = q('cOvProdutos');
+  if (cpd && Object.keys(prodMap).length > 0) {
+    const pKeys = Object.keys(prodMap).sort((a,b)=>prodMap[b]-prodMap[a]);
+    const pColors = ['#22c97a','#4f6ef7','#f0b429','#a78bfa','#fb923c','#f05454'];
+    CH.ovProd = new Chart(cpd, {
+      type:'doughnut',
+      data:{labels:pKeys, datasets:[{data:pKeys.map(k=>prodMap[k]), backgroundColor:pColors.slice(0,pKeys.length), borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#9097b0',font:{size:11},padding:10}}},cutout:'60%'}
+    });
+  }
+}
 
 /* ═══════════════════════════════════════════════════
    💰 RENDER VENDAS — SEÇÃO COMPLETA

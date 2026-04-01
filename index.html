@@ -1146,7 +1146,7 @@ select.fi{cursor:pointer;min-width:130px}
    CONFIG
 ===================================================== */
 const CFG = {
-  WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbyr1djNUUl8hUfgkVzIVnGQzgszZ3F4xifPKwsJiOe1ynOZKf_KbO3XWBZFNX49strelg/exec',
+  WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwX9CnHEVTdddSpSdvKLprqfqIbXpSXehfOW1ouEgUtBpfk8qJukmyOolaZpWma1pwnEw/exec',
   LAUNCH_NAME: 'Lançamento — 2025',
   PRODUCT_PRICE: 997,
   META_LEADS: 5000,
@@ -2672,8 +2672,8 @@ function parseVendaCents(row, field) {
   if (!raw) return 0;
   const n = parseFloat(String(raw).replace(/[^\d.,\-]/g,'').replace(',','.'));
   if (isNaN(n)) return 0;
-  // Se parece estar em centavos (>10000 para R$100), retorna direto; senão converte
-  return Math.abs(n) > 9999 ? n : n * 100;
+  // Valores vêm em centavos da planilha (ex: 99700 = R$997,00)
+  return Math.round(n);
 }
 
 function centsToReal(c) { return (c / 100); }

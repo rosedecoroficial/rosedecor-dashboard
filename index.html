@@ -425,6 +425,17 @@ select.fi{cursor:pointer;min-width:130px}
     </div>
   </div>
 
+  <!-- ROW 4b: ALUNOS/CLIENTES vs NOVOS COMPRADORES -->
+  <div class="cc mb">
+    <div class="cch"><div><div class="cct">👥 Compradores: Alunos Existentes vs Novos</div><div class="ccs">Cruzamento com a base de clientes/alunos (aba "dados") — por email, telefone e nome</div></div></div>
+    <div class="g g4 mb" style="margin-top:12px">
+      <div class="card" style="border:1px solid var(--purple)"><div class="ch"><span class="ct">Já Eram Alunos/Clientes</span></div><div class="cv sm" id="ovCliMatch" style="color:var(--purple)">–</div><div class="cl" id="ovCliMatchPct">–</div></div>
+      <div class="card" style="border:1px solid var(--cyan)"><div class="ch"><span class="ct">Compradores Novos</span></div><div class="cv sm" id="ovNewBuyers" style="color:var(--cyan)">–</div><div class="cl" id="ovNewBuyersPct">–</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;margin-top:8px">📚 De qual curso/produto vieram os alunos existentes</div>
+    <div class="rank-list" id="ovCliCursos" style="max-height:240px;overflow-y:auto"></div>
+  </div>
+
   <!-- ROW 5: GRÁFICOS -->
   <div class="g g2 mb">
     <div class="cc"><div class="cch"><div><div class="cct">📈 Leads vs Vendas por Dia</div><div class="ccs">Evolução comparada — leads captados × vendas aprovadas</div></div></div><div class="chart-box tall"><canvas id="cDay"></canvas></div></div>
@@ -2712,18 +2723,35 @@ function normalizeStr(s) {
   return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
 }
 function normalizePhone(p) {
-  return String(p||'').replace(/[^\d]/g,'').slice(-9); // últimos 9 dígitos
+  return String(p||'').replace(/[^\d]/g,'').slice(-9);
 }
 function normalizeEmail(e) {
   return String(e||'').trim().toLowerCase();
 }
 
+function utcToBRT(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const brt = new Date(d.getTime() - 3 * 60 * 60 * 1000);
+    return brt.toISOString().replace('T',' ').slice(0,19);
+  } catch(e) { return dateStr; }
+}
+
+function normVendaDate(dateStr) {
+  if (!dateStr) return '';
+  const s = String(dateStr).trim();
+  if (s.includes('T') || s.endsWith('Z')) return normDate(utcToBRT(s));
+  return normDate(s);
+}
+
 function crossMatchBuyers() {
   const vendas = D.vendas.filter(v => (VD.status(v)||'').toLowerCase() === 'paid');
   const leads = D.leads;
-  if (!vendas.length || !leads.length) return { matched:[], unmatched:[], byMethod:{}, buyerLeads:[] };
+  const clientes = D.clientes;
+  if (!vendas.length) return { matched:[], unmatched:[], byMethod:{}, buyerLeads:[], clienteMatch:[], newBuyers:[] };
 
-  // Build lead index
   const emailIdx = {}, phoneIdx = {}, nameIdx = {};
   leads.forEach((l, i) => {
     const em = normalizeEmail(L.email(l));
@@ -2734,35 +2762,56 @@ function crossMatchBuyers() {
     if (nm && nm.length > 4) { if(!nameIdx[nm]) nameIdx[nm]=[]; nameIdx[nm].push(i); }
   });
 
-  const matched = [], unmatched = [];
-  const byMethod = {email:0, telefone:0, nome:0};
-  const buyerLeads = [];
+  const cliEmailIdx = {}, cliPhoneIdx = {}, cliNameIdx = {};
+  clientes.forEach((c, i) => {
+    const em = normalizeEmail(CL.email(c));
+    const ph = normalizePhone(gv(c,'telefone_contato','telefone','phone','tel','celular'));
+    const nm = normalizeStr(CL.nome(c));
+    if (em && em.includes('@')) { if(!cliEmailIdx[em]) cliEmailIdx[em]=[]; cliEmailIdx[em].push(i); }
+    if (ph && ph.length >= 8) { if(!cliPhoneIdx[ph]) cliPhoneIdx[ph]=[]; cliPhoneIdx[ph].push(i); }
+    if (nm && nm.length > 4) { if(!cliNameIdx[nm]) cliNameIdx[nm]=[]; cliNameIdx[nm].push(i); }
+  });
+
+  const matched=[], unmatched=[], byMethod={email:0,telefone:0,nome:0}, buyerLeads=[], clienteMatch=[], newBuyers=[];
 
   vendas.forEach(v => {
     const vEmail = normalizeEmail(VD.email(v));
     const vPhone = normalizePhone(VD.phone(v));
     const vName = normalizeStr(VD.cliente(v));
-    let matchIdx = -1, method = '';
+    let leadIdx = -1, method = '';
 
-    // Priority: email > phone > name
-    if (vEmail && emailIdx[vEmail]) {
-      matchIdx = emailIdx[vEmail][0]; method = 'email';
-    } else if (vPhone && vPhone.length >= 8 && phoneIdx[vPhone]) {
-      matchIdx = phoneIdx[vPhone][0]; method = 'telefone';
-    } else if (vName && vName.length > 4 && nameIdx[vName]) {
-      matchIdx = nameIdx[vName][0]; method = 'nome';
-    }
+    if (vEmail && emailIdx[vEmail]) { leadIdx = emailIdx[vEmail][0]; method = 'email'; }
+    else if (vPhone && vPhone.length >= 8 && phoneIdx[vPhone]) { leadIdx = phoneIdx[vPhone][0]; method = 'telefone'; }
+    else if (vName && vName.length > 4 && nameIdx[vName]) { leadIdx = nameIdx[vName][0]; method = 'nome'; }
 
-    if (matchIdx >= 0) {
-      matched.push({ venda: v, lead: leads[matchIdx], method });
+    if (leadIdx >= 0) {
+      matched.push({ venda: v, lead: leads[leadIdx], method });
       byMethod[method]++;
-      buyerLeads.push({ venda: v, lead: leads[matchIdx], method });
-    } else {
-      unmatched.push(v);
+      buyerLeads.push({ venda: v, lead: leads[leadIdx], method });
+    } else { unmatched.push(v); }
+
+    let cliIdx = -1, cliMethod = '';
+    if (vEmail && cliEmailIdx[vEmail]) { cliIdx = cliEmailIdx[vEmail][0]; cliMethod = 'email'; }
+    else if (vPhone && vPhone.length >= 8 && cliPhoneIdx[vPhone]) { cliIdx = cliPhoneIdx[vPhone][0]; cliMethod = 'telefone'; }
+    else if (vName && vName.length > 4 && cliNameIdx[vName]) { cliIdx = cliNameIdx[vName][0]; cliMethod = 'nome'; }
+    if (cliIdx < 0 && vEmail && vEmail.includes('@')) {
+      const lp = vEmail.split('@')[0];
+      if (lp.length >= 5) {
+        for (const [em, idxs] of Object.entries(cliEmailIdx)) {
+          if (em.includes(lp) || lp.includes(em.split('@')[0])) { cliIdx = idxs[0]; cliMethod = 'email_parcial'; break; }
+        }
+      }
     }
+
+    if (cliIdx >= 0) {
+      const cli = clientes[cliIdx];
+      const cliCurso = CL.curso(cli) || gv(cli,'nome_produto','produto','curso') || '–';
+      const cliTipo = CL.tipo(cli) || gv(cli,'tipo_aluna','tipo','type') || '–';
+      clienteMatch.push({ venda: v, cliente: cli, method: cliMethod, curso: cliCurso, tipo: cliTipo });
+    } else { newBuyers.push(v); }
   });
 
-  return { matched, unmatched, byMethod, buyerLeads };
+  return { matched, unmatched, byMethod, buyerLeads, clienteMatch, newBuyers };
 }
 
 function renderOverviewSales() {
@@ -2770,48 +2819,40 @@ function renderOverviewSales() {
   const paid = vendas.filter(v => (VD.status(v)||'').toLowerCase() === 'paid');
   const totalLeads = D.leads.length;
 
-  // Calc faturamento
   let fatTotal = 0, sellerTotal = 0;
-  paid.forEach(v => {
-    fatTotal += parseVendaCents(v, VD.totalCents);
-    sellerTotal += parseVendaCents(v, VD.sellerCents);
-  });
+  paid.forEach(v => { fatTotal += parseVendaCents(v, VD.totalCents); sellerTotal += parseVendaCents(v, VD.sellerCents); });
   const fatReal = centsToReal(fatTotal);
   const sellerReal = centsToReal(sellerTotal);
-  const ticketMedio = paid.length > 0 ? fatReal / paid.length : 0;
+  const ticketMedioLiq = paid.length > 0 ? sellerReal / paid.length : 0;
   const convRate = totalLeads > 0 ? (paid.length / totalLeads * 100) : 0;
 
-  // Investimento total (tráfego)
   let investTotal = 0;
   D.trafego.forEach(r => { investTotal += parseFloat(String(TR.gasto(r)||'0').replace(',','.')) || 0; });
   const cpa = paid.length > 0 && investTotal > 0 ? investTotal / paid.length : 0;
-  const roas = investTotal > 0 ? fatReal / investTotal : 0;
+  const roas = investTotal > 0 ? sellerReal / investTotal : 0;
 
-  // KPIs
   q('ovVendas').textContent = paid.length;
   q('ovVendasSub').textContent = 'de ' + vendas.length + ' faturas totais';
-  q('ovFat').textContent = fmtReal(fatReal);
-  q('ovFatSub').textContent = 'líquido: ' + fmtReal(sellerReal);
+  q('ovFat').textContent = fmtReal(sellerReal);
+  q('ovFatSub').textContent = 'bruto: ' + fmtReal(fatReal);
   q('ovConv').textContent = convRate.toFixed(2) + '%';
   q('ovConvSub').textContent = paid.length + ' vendas / ' + totalLeads + ' leads';
   q('ovCPA').textContent = cpa > 0 ? fmtReal(cpa) : '–';
   q('ovCPAsub').textContent = cpa > 0 ? 'investimento ÷ ' + paid.length + ' vendas' : 'sem dados de tráfego';
   q('ovROAS').textContent = roas > 0 ? roas.toFixed(2) + 'x' : '–';
-  q('ovROASsub').textContent = roas > 0 ? 'cada R$1 investido retorna R$' + roas.toFixed(2) : 'sem dados de tráfego';
-  q('ovTicket').textContent = fmtReal(ticketMedio);
+  q('ovROASsub').textContent = roas > 0 ? 'cada R$1 retorna R$' + roas.toFixed(2) + ' líquido' : 'sem dados';
+  q('ovTicket').textContent = fmtReal(ticketMedioLiq);
   q('ovLiquido').textContent = fmtReal(sellerReal);
 
-  // Meta
   const meta = parseFloat(q('ovMetaInput').value) || 100000;
-  const pctMeta = Math.min(100, (fatReal / meta) * 100);
+  const pctMeta = Math.min(100, (sellerReal / meta) * 100);
   q('ovMetaBar').style.width = Math.max(3, pctMeta) + '%';
   q('ovMetaPct').textContent = pctMeta.toFixed(1) + '%';
-  q('ovMetaAtual').textContent = fmtReal(fatReal);
+  q('ovMetaAtual').textContent = fmtReal(sellerReal);
   q('ovMetaTarget').textContent = 'Meta: ' + fmtReal(meta);
-  q('ovMetaFalta').textContent = fatReal >= meta ? '✓ Meta Batida!' : fmtReal(meta - fatReal);
-  q('ovMetaFalta').style.color = fatReal >= meta ? 'var(--green)' : 'var(--accent)';
+  q('ovMetaFalta').textContent = sellerReal >= meta ? '✓ Meta Batida!' : fmtReal(meta - sellerReal);
+  q('ovMetaFalta').style.color = sellerReal >= meta ? 'var(--green)' : 'var(--accent)';
 
-  // Funil visual
   const impressions = D.trafego.reduce((s,r) => s + (parseFloat(TR.imp(r))||0), 0);
   const clicks = D.trafego.reduce((s,r) => s + (parseFloat(TR.click(r))||0), 0);
   const steps = [
@@ -2820,80 +2861,72 @@ function renderOverviewSales() {
     {name:'Leads Captados', val:totalLeads, color:'var(--yellow)', cls:'s3'},
     {name:'Vendas Aprovadas', val:paid.length, color:'var(--green)', cls:'s4'},
   ];
-  const maxFunnel = Math.max(...steps.map(s=>s.val), 1);
+  const maxF = Math.max(...steps.map(s=>s.val), 1);
   q('ovFunnel').innerHTML = steps.map((s,i) => {
-    const pct = ((s.val/maxFunnel)*100).toFixed(0);
-    const convPrev = i > 0 && steps[i-1].val > 0 ? ((s.val/steps[i-1].val)*100).toFixed(2)+'%' : '–';
-    return '<div class="funnel-step '+s.cls+'"><div class="fs-num">'+s.val.toLocaleString('pt-BR')+'</div><div class="fs-label"><div class="fs-name">'+s.name+'</div><div class="fs-sub">'+(i>0?'Conv: '+convPrev:'topo do funil')+'</div><div class="fs-bar"><div class="fs-bar-fill" style="width:'+pct+'%;background:'+s.color+'"></div></div></div><div class="fs-pct" style="background:'+s.color+'22;color:'+s.color+'">'+pct+'%</div></div>';
+    const pct = ((s.val/maxF)*100).toFixed(0);
+    const cp = i > 0 && steps[i-1].val > 0 ? ((s.val/steps[i-1].val)*100).toFixed(2)+'%' : '–';
+    return '<div class="funnel-step '+s.cls+'"><div class="fs-num">'+s.val.toLocaleString('pt-BR')+'</div><div class="fs-label"><div class="fs-name">'+s.name+'</div><div class="fs-sub">'+(i>0?'Conv: '+cp:'topo do funil')+'</div><div class="fs-bar"><div class="fs-bar-fill" style="width:'+pct+'%;background:'+s.color+'"></div></div></div><div class="fs-pct" style="background:'+s.color+'22;color:'+s.color+'">'+pct+'%</div></div>';
   }).join('');
 
-  // Cross-match compradores × leads
   const cross = crossMatchBuyers();
   const totalPaid = paid.length;
   const trackPct = totalPaid > 0 ? (cross.matched.length / totalPaid * 100) : 0;
-
   q('ovTrackOk').textContent = cross.matched.length;
   q('ovTrackOkPct').textContent = 'encontrados na base de leads';
   q('ovTrackMiss').textContent = cross.unmatched.length;
-  q('ovTrackMissPct').textContent = 'sem match na base';
+  q('ovTrackMissPct').textContent = 'sem match na base de leads';
   q('ovTrackPct').textContent = trackPct.toFixed(1) + '%';
   q('ovTrackMethod').innerHTML = Object.entries(cross.byMethod).filter(([_,v])=>v>0).map(([k,v])=>'<span class="badge bb" style="margin:2px">'+k+': '+v+'</span>').join(' ') || '–';
 
-  // Buyer origins from matched leads
+  const cliMatchPct = totalPaid > 0 ? (cross.clienteMatch.length / totalPaid * 100) : 0;
+  q('ovCliMatch').textContent = cross.clienteMatch.length;
+  q('ovCliMatchPct').textContent = cliMatchPct.toFixed(1) + '% já eram alunos/clientes';
+  q('ovNewBuyers').textContent = cross.newBuyers.length;
+  q('ovNewBuyersPct').textContent = totalPaid > 0 ? (100 - cliMatchPct).toFixed(1) + '% completamente novos' : '–';
+
+  const cursoMap = {};
+  cross.clienteMatch.forEach(cm => { const c = cm.curso || '(sem curso)'; cursoMap[c] = (cursoMap[c]||0) + 1; });
+  const cursoArr = Object.entries(cursoMap).sort((a,b) => b[1]-a[1]);
+  q('ovCliCursos').innerHTML = cursoArr.map(([curso, count]) => {
+    const pct = cross.clienteMatch.length > 0 ? ((count/cross.clienteMatch.length)*100).toFixed(0) : 0;
+    return '<div class="rank-item"><div class="rname" style="font-size:11px" title="'+curso+'">'+curso.slice(0,40)+(curso.length>40?'…':'')+'</div><div class="rval" style="color:var(--purple)">'+count+'</div><div style="font-size:10px;color:var(--text3);min-width:35px;text-align:right">'+pct+'%</div></div>';
+  }).join('') || '<div style="padding:8px;font-size:11px;color:var(--text3);text-align:center">Nenhum match com base de clientes</div>';
+
   const originMap = {};
   cross.buyerLeads.forEach(bl => {
     const src = L.src(bl.lead) || '(sem UTM)';
     const medium = L.medium(bl.lead) || '';
     const key = src + (medium ? ' / ' + medium : '');
-    if (!originMap[key]) originMap[key] = {count:0, fatCents:0, src:src};
+    if (!originMap[key]) originMap[key] = {count:0, fatCents:0};
     originMap[key].count++;
-    originMap[key].fatCents += parseVendaCents(bl.venda, VD.totalCents);
+    originMap[key].fatCents += parseVendaCents(bl.venda, VD.sellerCents);
   });
   const originArr = Object.entries(originMap).sort((a,b) => b[1].count - a[1].count);
-  const originColors = ['var(--accent)','var(--green)','var(--yellow)','var(--purple)','var(--orange)','var(--cyan)','var(--red)'];
-
+  const oc = ['var(--accent)','var(--green)','var(--yellow)','var(--purple)','var(--orange)','var(--cyan)','var(--red)'];
   q('ovBuyerOrigins').innerHTML = originArr.slice(0,8).map(([name, data], i) => {
-    const pctB = totalPaid > 0 ? ((data.count/cross.matched.length)*100).toFixed(0) : 0;
-    const clr = originColors[i % originColors.length];
-    return '<div class="rank-item"><div class="rpos '+(i<3?['gold','silver','bronze'][i]:'rest')+'">'+(i+1)+'</div><div class="rname">'+name+'</div><div class="rval" style="color:'+clr+'">'+data.count+'</div><div class="rbar"><div class="rbar-track"><div class="rbar-fill" style="width:'+pctB+'%;background:'+clr+'"></div></div></div></div>';
+    const pctB = cross.matched.length > 0 ? ((data.count/cross.matched.length)*100).toFixed(0) : 0;
+    return '<div class="rank-item"><div class="rpos '+(i<3?['gold','silver','bronze'][i]:'rest')+'">'+(i+1)+'</div><div class="rname">'+name+'</div><div class="rval" style="color:'+oc[i%oc.length]+'">'+data.count+'</div><div class="rbar"><div class="rbar-track"><div class="rbar-fill" style="width:'+pctB+'%;background:'+oc[i%oc.length]+'"></div></div></div></div>';
   }).join('') || '<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center">Nenhum match encontrado</div>';
 
-  // Channel conversion table
-  const channelLeads = {};
-  D.leads.forEach(l => {
-    const src = L.src(l) || '(sem UTM)';
-    channelLeads[src] = (channelLeads[src]||0) + 1;
-  });
-  const channelSales = {};
-  cross.buyerLeads.forEach(bl => {
-    const src = L.src(bl.lead) || '(sem UTM)';
-    if (!channelSales[src]) channelSales[src] = {count:0, fatCents:0};
-    channelSales[src].count++;
-    channelSales[src].fatCents += parseVendaCents(bl.venda, VD.totalCents);
-  });
-  const allChannels = [...new Set([...Object.keys(channelLeads), ...Object.keys(channelSales)])].sort((a,b) => {
-    return (channelSales[b]?.count||0) - (channelSales[a]?.count||0);
-  });
-
-  q('ovChannelConv').innerHTML = allChannels.slice(0,10).map(ch => {
-    const leads = channelLeads[ch] || 0;
-    const sales = channelSales[ch]?.count || 0;
-    const fat = channelSales[ch]?.fatCents || 0;
-    const conv = leads > 0 ? ((sales/leads)*100).toFixed(2) : '0.00';
-    return '<tr><td class="tb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+ch+'</td><td class="tm">'+leads+'</td><td class="tm tg">'+sales+'</td><td class="tm" style="color:'+(parseFloat(conv)>2?'var(--green)':'var(--text2)')+'">'+conv+'%</td><td class="tm">'+fmtReal(centsToReal(fat))+'</td></tr>';
+  const chLeads = {};
+  D.leads.forEach(l => { const s = L.src(l)||'(sem UTM)'; chLeads[s]=(chLeads[s]||0)+1; });
+  const chSales = {};
+  cross.buyerLeads.forEach(bl => { const s = L.src(bl.lead)||'(sem UTM)'; if(!chSales[s])chSales[s]={count:0,fatCents:0}; chSales[s].count++; chSales[s].fatCents += parseVendaCents(bl.venda, VD.sellerCents); });
+  const allCh = [...new Set([...Object.keys(chLeads),...Object.keys(chSales)])].sort((a,b)=>(chSales[b]?.count||0)-(chSales[a]?.count||0));
+  q('ovChannelConv').innerHTML = allCh.slice(0,10).map(ch => {
+    const l=chLeads[ch]||0, s=chSales[ch]?.count||0, f=chSales[ch]?.fatCents||0, cv=l>0?((s/l)*100).toFixed(2):'0.00';
+    return '<tr><td class="tb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+ch+'</td><td class="tm">'+l+'</td><td class="tm tg">'+s+'</td><td class="tm" style="color:'+(parseFloat(cv)>2?'var(--green)':'var(--text2)')+'">'+cv+'%</td><td class="tm">'+fmtReal(centsToReal(f))+'</td></tr>';
   }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3)">–</td></tr>';
 
-  // Recent sales table
   const recentPaid = paid.slice().sort((a,b) => new Date(VD.date(b)||0) - new Date(VD.date(a)||0)).slice(0,8);
   q('ovRecentSales').innerHTML = recentPaid.map(v => {
-    const total = parseVendaCents(v, VD.totalCents);
-    // Find origin from matched
-    const match = cross.buyerLeads.find(bl => VD.invoiceId(bl.venda) === VD.invoiceId(v) || VD.email(bl.venda) === VD.email(v));
+    const seller = parseVendaCents(v, VD.sellerCents);
+    const match = cross.buyerLeads.find(bl => VD.email(bl.venda) === VD.email(v));
     const origem = match ? (L.src(match.lead)||'(direto)') : (VD.utmSource(v)||'–');
-    return '<tr><td class="tm" style="font-size:11px">'+(VD.date(v)?fd(normDate(VD.date(v))):'–')+'</td><td class="tb" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.cliente(v)||'–')+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+(VD.produto(v)||'–')+'</td><td class="tb tm tg">'+fmtReal(centsToReal(total))+'</td><td style="font-size:11px">'+origem+'</td></tr>';
+    const ds = normVendaDate(VD.date(v));
+    return '<tr><td class="tm" style="font-size:11px">'+(ds?fd(ds):'–')+'</td><td class="tb" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.cliente(v)||'–')+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+(VD.produto(v)||'–')+'</td><td class="tb tm tg">'+fmtReal(centsToReal(seller))+'</td><td style="font-size:11px">'+origem+'</td></tr>';
   }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3)">Nenhuma venda</td></tr>';
 
-  // Produtos doughnut
   const prodMap = {};
   paid.forEach(v => { const p = VD.produto(v)||'(sem nome)'; prodMap[p] = (prodMap[p]||0)+1; });
   if (CH.ovProd) CH.ovProd.destroy();
@@ -2968,7 +3001,7 @@ function getFilteredVendas() {
     const now = new Date();
     const todayStr = now.toISOString().slice(0,10);
     if (period === 'today') {
-      v = v.filter(r => normDate(VD.date(r)) === todayStr);
+      v = v.filter(r => normVendaDate(VD.date(r)) === todayStr);
     } else if (period === '7d') {
       const d7 = new Date(now); d7.setDate(d7.getDate()-7);
       v = v.filter(r => { const d = new Date(VD.date(r)); return d >= d7; });
@@ -3025,7 +3058,7 @@ function renderVendas() {
 
   // Vendas hoje
   const todayStr = new Date().toISOString().slice(0,10);
-  const paidToday = paid.filter(r => normDate(VD.date(r)) === todayStr);
+  const paidToday = paid.filter(r => normVendaDate(VD.date(r)) === todayStr);
   let fatHoje = 0;
   paidToday.forEach(r => { fatHoje += parseVendaCents(r, VD.totalCents); });
 
@@ -3069,7 +3102,7 @@ function renderVendas() {
   // ═══ CHART: Vendas por dia ═══
   const dayMap = {};
   paid.forEach(r => {
-    const d = normDate(VD.date(r));
+    const d = normVendaDate(VD.date(r));
     if (!d) return;
     if (!dayMap[d]) dayMap[d] = {count:0, fat:0};
     dayMap[d].count++;
@@ -3199,7 +3232,7 @@ function renderVendas() {
     const method = VD.payMethod(r)||'–';
     const mLabel = methodLabels[method] || method;
     return '<tr>' +
-      '<td class="tm">'+(VD.date(r)?fd(normDate(VD.date(r))):'–')+'</td>' +
+      '<td class="tm">'+(VD.date(r)?fd(normVendaDate(VD.date(r))):'–')+'</td>' +
       '<td class="tb" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.cliente(r)||'–')+'</td>' +
       '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.email(r)||'–')+'</td>' +
       '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.produto(r)||'–')+'</td>' +

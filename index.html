@@ -1310,6 +1310,32 @@ const isPago = l => {
   return false;
 };
 
+/* DEDUPLICAÇÃO DE VENDAS — remove duplicatas por invoice_id, mantém versão mais recente */
+function deduplicateVendas(vendas) {
+  if (!vendas || !vendas.length) return [];
+  const statusPriority = {chargeback:7,refunded:6,disputed:5,paid:4,overdue:3,unpaid:2,draft:1};
+  const map = {};
+  vendas.forEach(v => {
+    const id = gv(v,'invoice_id','invoiceid','fatura_id');
+    if (!id) return; // skip rows without invoice_id
+    const status = (gv(v,'status','invoice_status')||'').toLowerCase();
+    const version = parseInt(gv(v,'version'))||0;
+    const ts = gv(v,'timestamp_recebido','timestamp') || '';
+    const priority = statusPriority[status] || 0;
+    
+    if (!map[id]) { map[id] = {row:v, priority, version, ts}; return; }
+    
+    // Keep the one with higher status priority, then higher version, then later timestamp
+    const existing = map[id];
+    if (priority > existing.priority || 
+        (priority === existing.priority && version > existing.version) ||
+        (priority === existing.priority && version === existing.version && ts > existing.ts)) {
+      map[id] = {row:v, priority, version, ts};
+    }
+  });
+  return Object.values(map).map(m => m.row);
+}
+
 /* LOAD */
 async function loadData() {
   setL(true);
@@ -1325,8 +1351,8 @@ async function loadData() {
     D.trafego  = json.trafego  || [];
     D.pesquisa = json.pesquisa || [];
     D.api_disparos = json.api_disparos || [];
-    D.vendas = json.vendas || [];
-    log('✅ leads: '+D.leads.length+' | pesquisa: '+D.pesquisa.length+' | api_disparos: '+D.api_disparos.length+' | vendas: '+D.vendas.length);
+    D.vendas = deduplicateVendas(json.vendas || []);
+    log('✅ leads: '+D.leads.length+' | pesquisa: '+D.pesquisa.length+' | api_disparos: '+D.api_disparos.length+' | vendas: '+D.vendas.length+' (dedup)');
     if(D.leads[0])    log('   cols leads: '+Object.keys(D.leads[0]).join(', '));
     if(D.trafego[0])  log('   cols tráfego: '+Object.keys(D.trafego[0]).join(', '));
     if(D.pesquisa[0]) log('   cols pesquisa: '+Object.keys(D.pesquisa[0]).join(', '));

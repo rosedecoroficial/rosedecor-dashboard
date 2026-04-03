@@ -780,11 +780,16 @@ select.fi{cursor:pointer;min-width:130px}
   💰 PERFORMANCE DE VENDAS
 ══════════════════════════════════════════ -->
 <section id="sec-vendas" class="sec">
-  <div class="stitle">💰 Performance de Vendas — Hubla</div>
-  <div class="ssub" id="vendasSub">Vendas em tempo real via webhook Hubla · Dados atualizados a cada refresh</div>
+  <div class="stitle">💰 Performance de Vendas — Consolidado</div>
+  <div class="ssub" id="vendasSub">Hubla + TMB Boleto Parcelado · Dados atualizados a cada refresh</div>
 
-  <!-- FILTROS DE PRODUTO -->
+  <!-- FILTROS -->
   <div class="filt mb">
+    <select class="fi" id="vPlatFilter" onchange="renderVendas()" style="min-width:180px">
+      <option value="">Todas as Plataformas</option>
+      <option value="hubla">Hubla</option>
+      <option value="tmb">TMB (Boleto Parcelado)</option>
+    </select>
     <select class="fi" id="vProdFilter" onchange="renderVendas()" style="min-width:250px">
       <option value="">Todos os Produtos</option>
     </select>
@@ -812,12 +817,12 @@ select.fi{cursor:pointer;min-width:130px}
     </select>
   </div>
 
-  <!-- KPIs HERO VENDAS -->
+  <!-- KPIs HERO — LÍQUIDO COMO PRINCIPAL -->
   <div class="g g4 mb">
     <div class="card" style="border-top:3px solid var(--green)">
-      <div class="ch"><span class="ct">Faturamento Aprovado</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+      <div class="ch"><span class="ct">Receita Líquida Total</span><div class="ci g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
       <div class="cv" id="vFaturamento" style="color:var(--green)">–</div>
-      <div class="cl" id="vFatSub">total aprovado</div>
+      <div class="cl" id="vFatSub">sua parte real após taxas</div>
     </div>
     <div class="card" style="border-top:3px solid var(--accent)">
       <div class="ch"><span class="ct">Vendas Aprovadas</span><div class="ci b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
@@ -825,14 +830,42 @@ select.fi{cursor:pointer;min-width:130px}
       <div class="cl" id="vVendasSub">vendas confirmadas</div>
     </div>
     <div class="card" style="border-top:3px solid var(--yellow)">
-      <div class="ch"><span class="ct">Ticket Médio</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div>
+      <div class="ch"><span class="ct">Ticket Médio Líquido</span><div class="ci y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div></div>
       <div class="cv sm" id="vTicketMedio" style="color:var(--yellow)">–</div>
-      <div class="cl">valor médio por venda</div>
+      <div class="cl">valor líquido médio por venda</div>
     </div>
     <div class="card" style="border-top:3px solid var(--purple)">
-      <div class="ch"><span class="ct">Receita Líquida (Seller)</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 17"/><polyline points="17 6 23 6 23 12"/></svg></div></div>
+      <div class="ch"><span class="ct">Faturamento Bruto</span><div class="ci p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 17"/><polyline points="17 6 23 6 23 12"/></svg></div></div>
       <div class="cv sm" id="vReceitaLiquida" style="color:var(--purple)">–</div>
-      <div class="cl">sua parte após taxas Hubla</div>
+      <div class="cl">valor total antes de taxas</div>
+    </div>
+  </div>
+
+  <!-- SPLIT: HUBLA vs TMB -->
+  <div class="g g2 mb">
+    <div class="card" style="border-left:4px solid var(--accent)">
+      <div class="ch"><span class="ct" style="color:var(--accent)">🟦 HUBLA</span></div>
+      <div class="split-wrap">
+        <div class="split-item"><div class="split-lbl">Vendas</div><div class="split-val" id="vHublaQtd" style="font-size:22px">–</div></div>
+        <div class="split-item"><div class="split-lbl">Líquido</div><div class="split-val" id="vHublaLiq" style="font-size:18px;color:var(--green)">–</div></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:10px">
+        <div style="flex:1;font-size:11px;color:var(--text3)">Bruto: <span id="vHublaBruto" style="color:var(--text)">–</span></div>
+        <div style="flex:1;font-size:11px;color:var(--text3)">Ticket Líq: <span id="vHublaTicket" style="color:var(--text)">–</span></div>
+        <div style="flex:1;font-size:11px;color:var(--text3)">Taxas: <span id="vHublaTaxas" style="color:var(--red)">–</span></div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--purple)">
+      <div class="ch"><span class="ct" style="color:var(--purple)">🟪 TMB — Boleto Parcelado</span></div>
+      <div class="split-wrap">
+        <div class="split-item"><div class="split-lbl">Vendas</div><div class="split-val" id="vTmbQtd" style="font-size:22px">–</div></div>
+        <div class="split-item"><div class="split-lbl">Líquido</div><div class="split-val" id="vTmbLiq" style="font-size:18px;color:var(--green)">–</div></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:10px">
+        <div style="flex:1;font-size:11px;color:var(--text3)">Bruto: <span id="vTmbBruto" style="color:var(--text)">–</span></div>
+        <div style="flex:1;font-size:11px;color:var(--text3)">Ticket Líq: <span id="vTmbTicket" style="color:var(--text)">–</span></div>
+        <div style="flex:1;font-size:11px;color:var(--text3)">Taxas: <span id="vTmbTaxas" style="color:var(--red)">–</span></div>
+      </div>
     </div>
   </div>
 
@@ -860,10 +893,10 @@ select.fi{cursor:pointer;min-width:130px}
     </div>
   </div>
 
-  <!-- META DE VENDAS -->
+  <!-- META DE VENDAS — baseada no líquido -->
   <div class="cc mb">
     <div class="cch">
-      <div><div class="cct">🎯 Meta de Vendas</div><div class="ccs">Configure sua meta e acompanhe o progresso em tempo real</div></div>
+      <div><div class="cct">🎯 Meta de Receita Líquida</div><div class="ccs">Meta sobre o valor que efetivamente retorna para você</div></div>
       <div style="display:flex;align-items:center;gap:8px">
         <label style="font-size:11px;color:var(--text3)">Meta R$:</label>
         <input class="fi" type="number" id="vMetaInput" value="100000" style="width:120px" onchange="renderVendas()">
@@ -891,21 +924,21 @@ select.fi{cursor:pointer;min-width:130px}
   <!-- GRÁFICOS -->
   <div class="g g2 mb">
     <div class="cc">
-      <div class="cch"><div><div class="cct">📈 Vendas por Dia</div><div class="ccs">Barras = vendas aprovadas por dia | Linha = faturamento acumulado</div></div></div>
+      <div class="cch"><div><div class="cct">📈 Vendas por Dia</div><div class="ccs">Barras = vendas por dia | Linha = receita líquida acumulada</div></div></div>
       <div class="chart-box tall"><canvas id="cVendasDay"></canvas></div>
     </div>
     <div class="cc">
-      <div class="cch"><div><div class="cct">💳 Por Método de Pagamento</div><div class="ccs">Distribuição dos métodos usados</div></div></div>
+      <div class="cch"><div><div class="cct">💳 Por Método de Pagamento</div><div class="ccs">Distribuição dos métodos — inclui Boleto TMB</div></div></div>
       <div class="chart-box"><canvas id="cVendasPay"></canvas></div>
     </div>
   </div>
 
   <!-- VENDAS POR PRODUTO -->
   <div class="cc mb">
-    <div class="cch"><div><div class="cct">📦 Vendas por Produto</div><div class="ccs">Performance de cada produto — ordenado por faturamento</div></div></div>
+    <div class="cch"><div><div class="cct">📦 Vendas por Produto</div><div class="ccs">Performance por produto — valores líquidos · ordenado por receita</div></div></div>
     <div class="tw">
       <table>
-        <thead><tr><th>#</th><th>Produto</th><th>Oferta</th><th>Vendas</th><th>Faturamento</th><th>Receita Líq.</th><th>Ticket Médio</th><th>Reemb.</th><th>% do Total</th></tr></thead>
+        <thead><tr><th>#</th><th>Produto</th><th>Oferta</th><th>Plataforma</th><th>Vendas</th><th>Receita Líq.</th><th>Bruto</th><th>Ticket Líq.</th><th>Reemb.</th><th>% do Total</th></tr></thead>
         <tbody id="tbVendasProd"></tbody>
       </table>
     </div>
@@ -921,14 +954,14 @@ select.fi{cursor:pointer;min-width:130px}
       <div class="cch"><div><div class="cct">📊 Funil Lead → Venda por Origem</div><div class="ccs">Taxa de conversão por canal de aquisição</div></div></div>
       <div class="tw">
         <table>
-          <thead><tr><th>Origem</th><th>Leads</th><th>Vendas</th><th>Conv. %</th><th>Faturamento</th><th>CPL→CPA</th></tr></thead>
+          <thead><tr><th>Origem</th><th>Leads</th><th>Vendas</th><th>Conv. %</th><th>Receita Líq.</th><th>Plataforma</th></tr></thead>
           <tbody id="tbVendasUtm"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- TABELA DETALHADA DE TODAS AS VENDAS -->
+  <!-- TABELA DETALHADA -->
   <div class="cc">
     <div class="cch">
       <div><div class="cct">📝 Todas as Vendas</div><div class="ccs" id="vTableCount">– vendas registradas</div></div>
@@ -938,7 +971,7 @@ select.fi{cursor:pointer;min-width:130px}
     </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Data</th><th>Cliente</th><th>Email</th><th>Produto</th><th>Oferta</th><th>Valor</th><th>Líquido</th><th>Método</th><th>Parcelas</th><th>Cupom</th><th>UTM Source</th><th>Status</th></tr></thead>
+        <thead><tr><th>Data</th><th>Cliente</th><th>Email</th><th>Produto</th><th>Valor Líq.</th><th>Bruto</th><th>Método</th><th>Parcelas</th><th>Plataforma</th><th>UTM Source</th><th>Status</th></tr></thead>
         <tbody id="tbVendasAll"></tbody>
       </table>
     </div>
@@ -3014,13 +3047,29 @@ function parseVendaCents(row, field) {
 function centsToReal(c) { return (c / 100); }
 function fmtReal(v) { return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
+function isTMB(r) {
+  const id = VD.invoiceId(r) || '';
+  const ver = gv(r,'version') || '';
+  const pm = (VD.payMethod(r)||'').toLowerCase();
+  return id.startsWith('TMB-') || ver === 'TMB' || pm === 'boleto_parcelado';
+}
+function getPlatform(r) { return isTMB(r) ? 'TMB' : 'Hubla'; }
+function platBadge(r) {
+  return isTMB(r) 
+    ? '<span class="badge bp" style="font-size:10px">TMB</span>' 
+    : '<span class="badge bb" style="font-size:10px">Hubla</span>';
+}
+
 function getFilteredVendas() {
   let v = D.vendas.slice();
+  const plat = q('vPlatFilter') ? q('vPlatFilter').value : '';
   const prod = q('vProdFilter').value;
   const status = q('vStatusFilter').value;
   const period = q('vPeriodFilter').value;
   const payM = q('vPayMethodFilter').value;
 
+  if (plat === 'hubla') v = v.filter(r => !isTMB(r));
+  if (plat === 'tmb') v = v.filter(r => isTMB(r));
   if (prod) v = v.filter(r => VD.produto(r) === prod || VD.produtoId(r) === prod);
   if (status) v = v.filter(r => (VD.status(r)||'').toLowerCase() === status);
   if (payM) v = v.filter(r => (VD.payMethod(r)||'').toLowerCase().replace(/[\s_-]/g,'') === payM.replace(/[\s_-]/g,''));
@@ -3081,13 +3130,32 @@ function renderVendas() {
   const fatReal = centsToReal(fatTotal);
   const sellerReal = centsToReal(sellerTotal);
   const refundReal = centsToReal(refundTotal);
-  const ticketMedio = paid.length > 0 ? fatReal / paid.length : 0;
+  const ticketMedioLiq = paid.length > 0 ? sellerReal / paid.length : 0;
+
+  // ═══ SPLIT: Hubla vs TMB ═══
+  const hublaPaid = paid.filter(r => !isTMB(r));
+  const tmbPaid = paid.filter(r => isTMB(r));
+  let hublaLiq=0, hublaBruto=0, tmbLiq=0, tmbBruto=0;
+  hublaPaid.forEach(r => { hublaLiq += parseVendaCents(r, VD.sellerCents); hublaBruto += parseVendaCents(r, VD.totalCents); });
+  tmbPaid.forEach(r => { tmbLiq += parseVendaCents(r, VD.sellerCents); tmbBruto += parseVendaCents(r, VD.totalCents); });
+
+  q('vHublaQtd').textContent = hublaPaid.length;
+  q('vHublaLiq').textContent = fmtReal(centsToReal(hublaLiq));
+  q('vHublaBruto').textContent = fmtReal(centsToReal(hublaBruto));
+  q('vHublaTicket').textContent = hublaPaid.length > 0 ? fmtReal(centsToReal(hublaLiq)/hublaPaid.length) : '–';
+  q('vHublaTaxas').textContent = fmtReal(centsToReal(hublaBruto - hublaLiq));
+
+  q('vTmbQtd').textContent = tmbPaid.length;
+  q('vTmbLiq').textContent = fmtReal(centsToReal(tmbLiq));
+  q('vTmbBruto').textContent = fmtReal(centsToReal(tmbBruto));
+  q('vTmbTicket').textContent = tmbPaid.length > 0 ? fmtReal(centsToReal(tmbLiq)/tmbPaid.length) : '–';
+  q('vTmbTaxas').textContent = fmtReal(centsToReal(tmbBruto - tmbLiq));
 
   // Vendas hoje
   const todayStr = new Date().toISOString().slice(0,10);
   const paidToday = paid.filter(r => normVendaDate(VD.date(r)) === todayStr);
-  let fatHoje = 0;
-  paidToday.forEach(r => { fatHoje += parseVendaCents(r, VD.totalCents); });
+  let liqHoje = 0;
+  paidToday.forEach(r => { liqHoje += parseVendaCents(r, VD.sellerCents); });
 
   // Método preferido
   const methods = {};
@@ -3099,41 +3167,40 @@ function renderVendas() {
   const totalLeads = D.leads.length;
   const convRate = totalLeads > 0 ? ((paid.length / totalLeads) * 100).toFixed(2) : '–';
 
-  // ═══ KPIs ═══
-  q('vFaturamento').textContent = fmtReal(fatReal);
-  q('vFatSub').textContent = paid.length + ' vendas aprovadas';
+  // ═══ KPIs — LÍQUIDO como principal ═══
+  q('vFaturamento').textContent = fmtReal(sellerReal);
+  q('vFatSub').textContent = paid.length + ' vendas · Hubla: ' + hublaPaid.length + ' · TMB: ' + tmbPaid.length;
   q('vTotalVendas').textContent = paid.length.toLocaleString('pt-BR');
   q('vVendasSub').textContent = vendas.length + ' total (incl. pendentes)';
-  q('vTicketMedio').textContent = fmtReal(ticketMedio);
-  q('vReceitaLiquida').textContent = fmtReal(sellerReal);
+  q('vTicketMedio').textContent = fmtReal(ticketMedioLiq);
+  q('vReceitaLiquida').textContent = fmtReal(fatReal);
   q('vHoje').textContent = paidToday.length;
-  q('vHojeFat').textContent = fmtReal(centsToReal(fatHoje));
+  q('vHojeFat').textContent = fmtReal(centsToReal(liqHoje)) + ' líquido';
   q('vReembolsos').textContent = refunded.length;
   q('vReembolsoVal').textContent = fmtReal(refundReal);
   q('vConvRate').textContent = convRate === '–' ? '–' : convRate + '%';
   q('vPayMethod').textContent = topMethod ? (methodLabels[topMethod[0]] || topMethod[0]) : '–';
   q('vPayMethodSub').textContent = topMethod ? topMethod[1] + ' vendas (' + ((topMethod[1]/paid.length)*100).toFixed(0) + '%)' : '';
-  q('vendasSub').textContent = vendas.length + ' vendas registradas · ' + paid.length + ' aprovadas · ' + fmtReal(fatReal) + ' faturado';
+  q('vendasSub').textContent = 'Hubla + TMB · ' + paid.length + ' vendas · ' + fmtReal(sellerReal) + ' líquido';
 
-  // ═══ META ═══
+  // ═══ META — baseada no líquido ═══
   const meta = parseFloat(q('vMetaInput').value) || 100000;
-  const pctMeta = Math.min(100, (fatReal / meta) * 100);
+  const pctMeta = Math.min(100, (sellerReal / meta) * 100);
   q('vMetaBar').style.width = Math.max(3, pctMeta) + '%';
   q('vMetaPct').textContent = pctMeta.toFixed(1) + '%';
-  q('vMetaAtual').textContent = fmtReal(fatReal);
+  q('vMetaAtual').textContent = fmtReal(sellerReal);
   q('vMetaTotal').textContent = 'Meta: ' + fmtReal(meta);
-  q('vMetaFalta').textContent = fatReal >= meta ? '✓ Batida!' : fmtReal(meta - fatReal);
-  if (fatReal >= meta) q('vMetaFalta').style.color = 'var(--green)';
-  else q('vMetaFalta').style.color = 'var(--accent)';
+  q('vMetaFalta').textContent = sellerReal >= meta ? '✓ Batida!' : fmtReal(meta - sellerReal);
+  q('vMetaFalta').style.color = sellerReal >= meta ? 'var(--green)' : 'var(--accent)';
 
-  // ═══ CHART: Vendas por dia ═══
+  // ═══ CHART: Vendas por dia — usa líquido ═══
   const dayMap = {};
   paid.forEach(r => {
     const d = normVendaDate(VD.date(r));
     if (!d) return;
     if (!dayMap[d]) dayMap[d] = {count:0, fat:0};
     dayMap[d].count++;
-    dayMap[d].fat += parseVendaCents(r, VD.totalCents);
+    dayMap[d].fat += parseVendaCents(r, VD.sellerCents);
   });
   const sortedDays = Object.keys(dayMap).sort();
   let acum = 0;
@@ -3176,8 +3243,9 @@ function renderVendas() {
   vendas.forEach(r => {
     const p = VD.produto(r) || '(sem nome)';
     const o = VD.oferta(r) || '–';
-    const key = p + '|||' + o;
-    if (!prodMap[key]) prodMap[key] = {produto:p, oferta:o, paid:0, fatCents:0, sellerCents:0, refunded:0, total:0};
+    const plat = getPlatform(r);
+    const key = p + '|||' + o + '|||' + plat;
+    if (!prodMap[key]) prodMap[key] = {produto:p, oferta:o, plat, paid:0, fatCents:0, sellerCents:0, refunded:0, total:0};
     prodMap[key].total++;
     const st = (VD.status(r)||'').toLowerCase();
     if (st === 'paid') {
@@ -3187,18 +3255,20 @@ function renderVendas() {
     }
     if (st === 'refunded' || st === 'chargeback') prodMap[key].refunded++;
   });
-  const prodArr = Object.values(prodMap).sort((a,b)=>b.fatCents-a.fatCents);
+  const prodArr = Object.values(prodMap).sort((a,b)=>b.sellerCents-a.sellerCents);
   q('tbVendasProd').innerHTML = prodArr.map((p, i) => {
-    const pct = fatTotal > 0 ? ((p.fatCents/fatTotal)*100).toFixed(1) : '0';
-    const tm = p.paid > 0 ? centsToReal(p.fatCents) / p.paid : 0;
-    return '<tr><td class="tb">'+(i+1)+'</td><td class="tb" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.produto+'</td><td>'+p.oferta+'</td>' +
+    const pct = sellerTotal > 0 ? ((p.sellerCents/sellerTotal)*100).toFixed(1) : '0';
+    const tmLiq = p.paid > 0 ? centsToReal(p.sellerCents) / p.paid : 0;
+    const platBdg = p.plat === 'TMB' ? '<span class="badge bp" style="font-size:10px">TMB</span>' : '<span class="badge bb" style="font-size:10px">Hubla</span>';
+    return '<tr><td class="tb">'+(i+1)+'</td><td class="tb" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.produto+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+p.oferta+'</td>' +
+      '<td>'+platBdg+'</td>' +
       '<td class="tb tm" style="color:var(--green)">'+p.paid+'</td>' +
-      '<td class="tb tm">'+fmtReal(centsToReal(p.fatCents))+'</td>' +
-      '<td class="tm">'+fmtReal(centsToReal(p.sellerCents))+'</td>' +
-      '<td class="tm">'+fmtReal(tm)+'</td>' +
+      '<td class="tb tm" style="color:var(--green)">'+fmtReal(centsToReal(p.sellerCents))+'</td>' +
+      '<td class="tm">'+fmtReal(centsToReal(p.fatCents))+'</td>' +
+      '<td class="tm">'+fmtReal(tmLiq)+'</td>' +
       '<td class="tm" style="color:var(--red)">'+(p.refunded||'–')+'</td>' +
       '<td class="tm">'+pct+'%</td></tr>';
-  }).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3)">Nenhuma venda encontrada</td></tr>';
+  }).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--text3)">Nenhuma venda encontrada</td></tr>';
 
   // ═══ CHART + TABLE: Vendas por UTM Source ═══
   const utmMap = {};
@@ -3261,17 +3331,16 @@ function renderVendas() {
     return '<tr>' +
       '<td class="tm">'+(VD.date(r)?fd(normVendaDate(VD.date(r))):'–')+'</td>' +
       '<td class="tb" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.cliente(r)||'–')+'</td>' +
-      '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.email(r)||'–')+'</td>' +
-      '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(VD.produto(r)||'–')+'</td>' +
-      '<td>'+(VD.oferta(r)||'–')+'</td>' +
-      '<td class="tb tm">'+fmtReal(centsToReal(total))+'</td>' +
-      '<td class="tm">'+fmtReal(centsToReal(seller))+'</td>' +
+      '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+(VD.email(r)||'–')+'</td>' +
+      '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+(VD.produto(r)||'–')+'</td>' +
+      '<td class="tb tm" style="color:var(--green)">'+fmtReal(centsToReal(seller))+'</td>' +
+      '<td class="tm">'+fmtReal(centsToReal(total))+'</td>' +
       '<td>'+mLabel+'</td>' +
       '<td class="tm">'+(VD.installments(r)||'1')+'x</td>' +
-      '<td>'+(VD.coupon(r)?'<span class="badge bb">'+VD.coupon(r)+'</span>':'–')+'</td>' +
+      '<td>'+platBadge(r)+'</td>' +
       '<td style="font-size:11px">'+(VD.utmSource(r)||'–')+'</td>' +
       '<td>'+statusBadge(VD.status(r))+'</td></tr>';
-  }).join('') || '<tr><td colspan="12" style="text-align:center;padding:24px;color:var(--text3)">Nenhuma venda registrada. Configure o webhook da Hubla para receber os dados automaticamente.</td></tr>';
+  }).join('') || '<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--text3)">Nenhuma venda registrada.</td></tr>';
 
   q('vTableCount').textContent = sorted.length + ' vendas registradas';
   q('vPinfo').textContent = 'Mostrando '+ ((vPg-1)*vPP+1) +'-'+ Math.min(vPg*vPP, sorted.length) +' de '+sorted.length;

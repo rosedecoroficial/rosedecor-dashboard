@@ -808,6 +808,7 @@ select.fi{cursor:pointer;min-width:130px}
       <option value="pix">PIX</option>
       <option value="credit_card">Cartão de Crédito</option>
       <option value="boleto">Boleto</option>
+      <option value="boleto_parcelado">Boleto Parcelado (TMB)</option>
     </select>
   </div>
 
@@ -3092,7 +3093,7 @@ function renderVendas() {
   const methods = {};
   paid.forEach(r => { const m = VD.payMethod(r)||'outro'; methods[m] = (methods[m]||0)+1; });
   const topMethod = Object.entries(methods).sort((a,b)=>b[1]-a[1])[0];
-  const methodLabels = {credit_card:'Cartão',pix:'PIX',boleto:'Boleto',credit:'Cartão'};
+  const methodLabels = {credit_card:'Cartão',pix:'PIX',boleto:'Boleto',boleto_parcelado:'Boleto TMB',credit:'Cartão',bank_slip:'Boleto'};
 
   // Conv rate (leads → vendas)
   const totalLeads = D.leads.length;
@@ -3159,7 +3160,7 @@ function renderVendas() {
   const cvp = q('cVendasPay');
   if (cvp && Object.keys(methods).length > 0) {
     const mKeys = Object.keys(methods).sort((a,b)=>methods[b]-methods[a]);
-    const mColors = {credit_card:'#f0b429',pix:'#22c97a',boleto:'#4f6ef7',credit:'#f0b429'};
+    const mColors = {credit_card:'#f0b429',pix:'#22c97a',boleto:'#4f6ef7',boleto_parcelado:'#a78bfa',credit:'#f0b429',bank_slip:'#4f6ef7'};
     CH.vendasPay = new Chart(cvp, {
       type:'doughnut',
       data:{
